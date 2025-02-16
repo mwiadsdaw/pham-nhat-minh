@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Địa chỉ IP và vị trí của bạn</title>
+    <script>
+        async function getIP() {
+            try {
+                let ipResponse = await fetch('https://api64.ipify.org?format=json');
+                let ipData = await ipResponse.json();
+                document.getElementById('ip').innerText = "Địa chỉ IP của bạn: " + ipData.ip;
+                
+                let locationResponse = await fetch('http://ip-api.com/json/' + ipData.ip);
+                let locationData = await locationResponse.json();
+                
+                document.getElementById('location').innerText = "Vị trí của bạn: " + locationData.city + ", " + locationData.regionName + ", " + locationData.country;
+            } catch (error) {
+                document.getElementById('ip').innerText = "Không thể lấy IP";
+                document.getElementById('location').innerText = "Không thể lấy vị trí";
+            }
+        }
+    </script>
+</head>
+<body onload="getIP()">
+    <h1>Thông tin của bạn</h1>
+    <p id="ip">Đang tải IP...</p>
+    <p id="location">Đang tải vị trí...</p>
+</body>
+</html>
