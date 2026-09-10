@@ -3,22 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phạm Nhật Minh - Personal Portfolio</title>
+  <title>Phạm Nhật Minh - Next-Gen Portfolio</title>
   
-  <!-- SEO & Open Graph -->
-  <meta name="description" content="Trang cá nhân của Phạm Nhật Minh - Học sinh 10A2 THPT Sóc Sơn, yêu thích C++, làm game & âm nhạc.">
-  <meta property="og:title" content="Phạm Nhật Minh - Personal Portfolio">
-  <meta property="og:description" content="Học sinh 10A2 THPT Sóc Sơn | C++ Developer | Music Club">
+  <meta name="description" content="Trang cá nhân cao cấp của Phạm Nhật Minh - Developer C++, Music Club 10A2 THPT Sóc Sơn.">
+  <meta property="og:title" content="Phạm Nhật Minh - Next-Gen Portfolio">
   
-  <!-- FontAwesome Icons -->
+  <!-- Icons & Fonts -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --primary-color: #38bdf8;
-      --accent-color: #a855f7;
-      --bg-glass: rgba(15, 23, 42, 0.75);
-      --border-glass: rgba(255, 255, 255, 0.125);
+      --primary: #38bdf8;
+      --secondary: #818cf8;
+      --accent: #c084fc;
+      --bg-dark: #030712;
+      --glass-bg: rgba(15, 23, 42, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.1);
+      --glass-glow: rgba(56, 189, 248, 0.15);
       --text-main: #f8fafc;
       --text-sub: #94a3b8;
     }
@@ -27,185 +29,229 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* Nền động chuyển màu */
     body {
-      min-height: 100vh;
-      background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #075985);
-      background-size: 400% 400%;
-      animation: gradientBG 15s ease infinite;
+      background-color: var(--bg-dark);
       color: var(--text-main);
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    @keyframes gradientBG {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    /* Canvas Nền Hạt Vũ Trụ / Neural Network */
+    #bg-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
     }
 
-    /* Header & Navigation */
+    /* Header Navigation */
     header {
       width: 100%;
       max-width: 900px;
-      padding: 20px;
+      padding: 24px 20px;
       position: sticky;
       top: 0;
       z-index: 100;
     }
 
     nav {
-      background: var(--bg-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-glass);
-      border-radius: 50px;
-      padding: 10px 25px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 99px;
+      padding: 8px 16px;
       display: flex;
-      justify-content: space-around;
+      justify-content: space-between;
       align-items: center;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
-    nav a {
-      color: var(--text-main);
+    .nav-btn {
+      color: var(--text-sub);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.95rem;
-      padding: 8px 16px;
-      border-radius: 20px;
-      transition: all 0.3s ease;
+      font-size: 0.9rem;
+      padding: 10px 18px;
+      border-radius: 99px;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 8px;
     }
 
-    nav a:hover, nav a.active {
-      background: rgba(56, 189, 248, 0.2);
-      color: var(--primary-color);
-      transform: translateY(-2px);
+    .nav-btn:hover, .nav-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, rgba(56, 189, 248, 0.2), rgba(192, 132, 252, 0.2));
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
     }
 
-    /* Main Container */
+    /* Main Content Container */
     main {
       width: 100%;
-      max-width: 800px;
-      padding: 20px;
+      max-width: 850px;
+      padding: 0 20px 40px;
+      z-index: 10;
       flex: 1;
     }
 
     .section {
       display: none;
-      background: var(--bg-glass);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border: 1px solid var(--border-glass);
-      border-radius: 24px;
-      padding: 40px 30px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-      animation: fadeIn 0.5s ease-in-out;
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--glass-border);
+      border-radius: 28px;
+      padding: 40px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4);
+      animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .section.active {
       display: block;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     /* Profile Header */
     .profile-header {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 30px;
     }
 
-    .avatar-wrapper {
-      width: 110px;
-      height: 110px;
-      margin: 0 auto 15px;
+    .avatar-glow {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+    }
+
+    .avatar-glow::before {
+      content: '';
+      position: absolute;
+      inset: -4px;
       border-radius: 50%;
-      padding: 3px;
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+      background: linear-gradient(45deg, var(--primary), var(--accent));
+      filter: blur(12px);
+      opacity: 0.7;
+      animation: pulse 3s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.95); }
+      100% { opacity: 0.8; transform: scale(1.05); }
     }
 
     .avatar {
+      position: relative;
       width: 100%;
       height: 100%;
       border-radius: 50%;
-      background: #0f172a;
+      background: #090d16;
+      border: 2px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
-      color: var(--primary-color);
+      font-size: 3rem;
+      color: var(--primary);
     }
 
     h1 {
-      font-size: 2rem;
-      margin-bottom: 8px;
-      background: linear-gradient(to right, #38bdf8, #a855f7);
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--accent));
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
     }
 
     .tagline {
       color: var(--text-sub);
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
-    /* Thẻ Giới Thiệu Hạ Tầng & Công Nghệ */
-    .intro-box {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-glass);
-      border-left: 4px solid var(--primary-color);
-      border-radius: 16px;
-      padding: 20px 24px;
-      margin-bottom: 25px;
-      line-height: 1.6;
-      font-size: 0.95rem;
-      color: #e2e8f0;
+    /* Tech Showcase Box */
+    .tech-box {
+      background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 30px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .intro-box h2 {
-      font-size: 1.1rem;
-      color: var(--primary-color);
-      margin-bottom: 10px;
+    .tech-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 4px; height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--accent));
+    }
+
+    .tech-box h2 {
+      font-size: 1.15rem;
+      color: var(--primary);
+      margin-bottom: 12px;
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
+    .tech-box p {
+      color: #cbd5e1;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    /* Info Grid */
     .info-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 15px;
+      gap: 16px;
     }
 
     .info-card {
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--border-glass);
-      padding: 18px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      gap: 15px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      padding: 20px;
+      border-radius: 18px;
+      transition: all 0.3s;
+    }
+
+    .info-card:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-3px);
     }
 
     .info-card i {
-      font-size: 1.5rem;
-      color: var(--primary-color);
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 12px;
     }
 
     .info-card h3 {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 4px;
     }
 
     .info-card p {
@@ -213,19 +259,79 @@
       font-weight: 600;
     }
 
-    /* Section Âm Nhạc */
-    .video-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 20px;
+    /* Game Arcade Container */
+    .game-wrapper {
+      position: relative;
+      background: #000;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 0 30px rgba(56, 189, 248, 0.15);
       margin-top: 20px;
     }
 
+    #space-game {
+      width: 100%;
+      height: 420px;
+      display: block;
+      background: #030712;
+      cursor: crosshair;
+    }
+
+    .game-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .game-overlay h3 {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin-bottom: 10px;
+    }
+
+    .btn-action {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      border: none;
+      padding: 14px 32px;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 99px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+      transition: all 0.3s;
+      margin-top: 15px;
+    }
+
+    .btn-action:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 30px rgba(192, 132, 252, 0.6);
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 20px;
+      background: rgba(15, 23, 42, 0.8);
+      border-bottom: 1px solid var(--glass-border);
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+    }
+
+    /* Media Links */
     .video-card {
-      background: rgba(0, 0, 0, 0.2);
-      border-radius: 16px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
       overflow: hidden;
-      border: 1px solid var(--border-glass);
+      border: 1px solid var(--glass-border);
     }
 
     .video-container {
@@ -236,301 +342,430 @@
 
     .video-container iframe {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
-
-    .video-info {
-      padding: 15px;
-    }
-
-    /* Section Game */
-    #game-canvas {
-      background: #090d16;
-      border-radius: 12px;
-      display: block;
-      margin: 20px auto 0;
-      max-width: 100%;
-      border: 1px solid var(--border-glass);
-    }
-
-    .game-controls {
-      text-align: center;
-      margin-top: 15px;
-    }
-
-    .btn {
-      background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-      color: white;
-      border: none;
-      padding: 10px 24px;
-      font-weight: 600;
-      border-radius: 20px;
-      cursor: pointer;
-      transition: opacity 0.2s;
-    }
-
-    .btn:hover { opacity: 0.9; }
-
-    /* Section Liên Hệ */
-    .contact-links {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      margin-top: 20px;
+      top: 0; left: 0; width: 100%; height: 100%; border: none;
     }
 
     .contact-btn {
       display: flex;
       align-items: center;
-      gap: 15px;
-      padding: 16px 20px;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid var(--border-glass);
-      border-radius: 12px;
-      color: var(--text-main);
+      gap: 16px;
+      padding: 18px 24px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      color: #fff;
       text-decoration: none;
-      font-size: 1.05rem;
+      font-weight: 600;
+      margin-top: 14px;
       transition: all 0.3s;
     }
 
     .contact-btn:hover {
-      background: rgba(56, 189, 248, 0.15);
-      border-color: var(--primary-color);
-      transform: translateX(5px);
+      background: rgba(56, 189, 248, 0.1);
+      border-color: var(--primary);
+      transform: translateX(6px);
     }
 
     footer {
+      position: relative;
+      z-index: 10;
       padding: 20px;
       color: var(--text-sub);
       font-size: 0.85rem;
       text-align: center;
     }
 
-    @media (max-width: 600px) {
-      nav a span { display: none; }
-      nav a { padding: 10px; }
-      .section { padding: 25px 15px; }
+    @media (max-width: 640px) {
+      .nav-btn span { display: none; }
+      .section { padding: 24px 18px; }
+      h1 { font-size: 1.8rem; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Menu Điều Hướng -->
+  <!-- Background Particle Network -->
+  <canvas id="bg-canvas"></canvas>
+
   <header>
     <nav>
-      <a onclick="showTab('home')" id="tab-home" class="active"><i class="fa-solid fa-user"></i><span>Trang Chủ</span></a>
-      <a onclick="showTab('music')" id="tab-music"><i class="fa-solid fa-music"></i><span>Âm Nhạc</span></a>
-      <a onclick="showTab('game')" id="tab-game"><i class="fa-solid fa-gamepad"></i><span>Game</span></a>
-      <a onclick="showTab('contact')" id="tab-contact"><i class="fa-solid fa-paper-plane"></i><span>Liên Hệ</span></a>
+      <a onclick="showTab('home')" id="tab-home" class="nav-btn active"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+      <a onclick="showTab('music')" id="tab-music" class="nav-btn"><i class="fa-solid fa-compact-disc"></i><span>Âm Nhạc</span></a>
+      <a onclick="showTab('game')" id="tab-game" class="nav-btn"><i class="fa-solid fa-gamepad"></i><span>Game 3D Arcade</span></a>
+      <a onclick="showTab('contact')" id="tab-contact" class="nav-btn"><i class="fa-solid fa-paper-plane"></i><span>Liên Hệ</span></a>
     </nav>
   </header>
 
   <main>
-    <!-- Tab 1: Trang Chủ -->
+    <!-- Home Tab -->
     <section id="home" class="section active">
       <div class="profile-header">
-        <div class="avatar-wrapper">
+        <div class="avatar-glow">
           <div class="avatar"><i class="fa-solid fa-code"></i></div>
         </div>
         <h1>Phạm Nhật Minh</h1>
-        <p class="tagline">Developer & Music Lover | 10A2 - THPT Sóc Sơn</p>
+        <p class="tagline">Developer & Music Enthusiast • 10A2 THPT Sóc Sơn</p>
       </div>
 
-      <!-- Giới Thiệu Hạ Tầng -->
-      <div class="intro-box">
-        <h2><i class="fa-solid fa-server"></i> Giới Thiệu Hạ Tầng & Công Nghệ</h2>
+      <div class="tech-box">
+        <h2><i class="fa-solid fa-microchip"></i> Hạ Tầng & Công Nghệ Cloud</h2>
         <p>
-          Tôi đã tự mình làm chủ mã nguồn giao diện để chuyển đổi hoàn toàn khỏi nền tảng Google Sites, sau đó triển khai toàn bộ hệ thống lên hạ tầng Cloud hiện đại của Vercel nhằm tối ưu tốc độ và tự động hóa quy trình cập nhật. Đồng thời, tôi cũng tự tay thiết lập định tuyến DNS chuyên sâu với các bản ghi A và CNAME để tên miền cá nhân <strong>pminh83.name.vn</strong> vận hành mượt mà, kết hợp hoàn tất đầy đủ quy trình xác thực danh tính chủ sở hữu (CCCD) đạt chuẩn an ninh mạng VNNIC trên hệ thống Nhân Hòa.
+          Tôi đã tự làm chủ toàn bộ mã nguồn giao diện để chuyển đổi hoàn toàn khỏi Google Sites, triển khai ứng dụng trên hạ tầng Vercel Edge Network nhằm tối ưu hóa tốc độ toàn cầu. Tự tay cấu hình định tuyến DNS chuyên sâu (Bản ghi A & CNAME) vận hành mượt mà tên miền chính chủ <strong>pminh83.name.vn</strong>, hoàn tất xác thực danh tính điện tử (CCCD) đạt tiêu chuẩn an ninh mạng VNNIC trên hệ thống Nhân Hòa.
         </p>
       </div>
 
       <div class="info-grid">
         <div class="info-card">
           <i class="fa-solid fa-graduation-cap"></i>
-          <div>
-            <h3>Trường học</h3>
-            <p>Học sinh Lớp 10A2<br>THPT Sóc Sơn</p>
-          </div>
+          <h3>Trường Học</h3>
+          <p>Lớp 10A2 - THPT Sóc Sơn</p>
         </div>
         <div class="info-card">
-          <i class="fa-solid fa-laptop-code"></i>
-          <div>
-            <h3>Đam mê</h3>
-            <p>Thích học C++<br>Tự tạo Website & Game</p>
-          </div>
+          <i class="fa-code-branch"></i>
+          <h3>Đam Mê Kỹ Thuật</h3>
+          <p>Lập trình C++ & Game Dev</p>
         </div>
         <div class="info-card">
           <i class="fa-solid fa-guitar"></i>
-          <div>
-            <h3>Hoạt động</h3>
-            <p>Thành viên<br>Sóc Sơn Music Club</p>
-          </div>
+          <h3>CLB Ngoại Khóa</h3>
+          <p>Thành viên Sóc Sơn Music Club</p>
         </div>
         <div class="info-card">
           <i class="fa-solid fa-shield-halved"></i>
-          <div>
-            <h3>Tên Miền</h3>
-            <p>Chính Chủ VNNIC<br>pminh83.name.vn</p>
-          </div>
+          <h3>Tên Miền Quốc Gia</h3>
+          <p>pminh83.name.vn (VNNIC)</p>
         </div>
       </div>
     </section>
 
-    <!-- Tab 2: Âm Nhạc -->
+    <!-- Music Tab -->
     <section id="music" class="section">
-      <h2><i class="fa-solid fa-headphones"></i> Video Âm Nhạc</h2>
-      <p style="color: var(--text-sub); margin-top: 5px;">Sản phẩm & Hoạt động tại Sóc Sơn Music Club</p>
+      <h2 style="margin-bottom: 8px;"><i class="fa-solid fa-headphones"></i> Sóc Sơn Music Club</h2>
+      <p style="color: var(--text-sub); margin-bottom: 20px;">Sản phẩm âm nhạc & các buổi tập luyện nhóm</p>
 
-      <div class="video-grid">
-        <div class="video-card">
-          <div class="video-container">
-            <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube video player" allowfullscreen></iframe>
-          </div>
-          <div class="video-info">
-            <h3>Lofi Chill Beats - Relaxing Study Music</h3>
-            <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">Sóc Sơn Music Club Session</p>
-          </div>
+      <div class="video-card">
+        <div class="video-container">
+          <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk" title="Music Video" allowfullscreen></iframe>
         </div>
       </div>
     </section>
 
-    <!-- Tab 3: Game -->
+    <!-- Game Tab (Super Arcade Space Defender) -->
     <section id="game" class="section">
-      <h2><i class="fa-solid fa-gamepad"></i> Hứng Sao Vũ Trụ (Star Catcher)</h2>
-      <p style="color: var(--text-sub); margin-top: 5px;">Game mini bằng JavaScript (Dùng phím ⬅️ ➡️ hoặc vuốt màn hình để di chuyển)</p>
-      
-      <canvas id="game-canvas" width="360" height="400"></canvas>
-      
-      <div class="game-controls">
-        <p style="margin-bottom: 10px;">Điểm số: <span id="score" style="color: var(--primary-color); font-weight: bold; font-size: 1.2rem;">0</span></p>
-        <button class="btn" onclick="resetGame()">Chơi Lại</button>
+      <h2><i class="fa-solid fa-rocket"></i> C++ Space Defender (Arcade Edition)</h2>
+      <p style="color: var(--text-sub); margin-top: 4px; margin-bottom: 16px;">
+        Mô phỏng tựa game Bắn Phi Thuyền viết bằng C++ Engine logic. Sử dụng chuột/tay để di chuyển & tự động bắn!
+      </p>
+
+      <div class="game-wrapper">
+        <div class="game-stats">
+          <span>SCORE: <b id="g-score" style="color: var(--primary);">0</b></span>
+          <span>WAVE: <b id="g-wave" style="color: var(--accent);">1</b></span>
+          <span>SHIELD: <b id="g-hp" style="color: #4ade80;">100%</b></span>
+        </div>
+
+        <canvas id="space-game"></canvas>
+
+        <div id="game-start-overlay" class="game-overlay">
+          <i class="fa-solid fa-user-astronaut" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 15px;"></i>
+          <h3>SPACE DEFENDER</h3>
+          <p style="color: var(--text-sub);">Bảo vệ không gian khỏi Thiên Thạch Vũ Trụ</p>
+          <button class="btn-action" onclick="startGame()">BẮT ĐẦU CHƠI</button>
+        </div>
       </div>
     </section>
 
-    <!-- Tab 4: Liên Hệ -->
+    <!-- Contact Tab -->
     <section id="contact" class="section">
-      <h2><i class="fa-solid fa-envelope"></i> Kết Nối Với Tôi</h2>
-      <p style="color: var(--text-sub); margin-top: 5px;">Đừng ngần ngại liên hệ với mình qua các nền tảng bên dưới:</p>
+      <h2><i class="fa-solid fa-satellite-dish"></i> Kết Nối Trực Tiếp</h2>
+      <p style="color: var(--text-sub); margin-top: 4px;">Liên hệ với tôi qua các kênh truyền thông chính thức:</p>
 
-      <div class="contact-links">
-        <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" rel="noopener" class="contact-btn">
-          <i class="fa-brands fa-facebook" style="color: #1877f2; font-size: 1.5rem;"></i>
-          <span>Facebook Cá Nhân (Phạm Nhật Minh)</span>
-        </a>
-        <a href="https://github.com/mwiadsdaw" target="_blank" rel="noopener" class="contact-btn">
-          <i class="fa-brands fa-github" style="color: #fff; font-size: 1.5rem;"></i>
-          <span>GitHub (mwiadsdaw)</span>
-        </a>
-        <a href="mailto:contact@pminh83.name.vn" class="contact-btn">
-          <i class="fa-solid fa-paper-plane" style="color: #38bdf8; font-size: 1.5rem;"></i>
-          <span>Gửi Email Trực Tiếp</span>
-        </a>
-      </div>
+      <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" class="contact-btn">
+        <i class="fa-brands fa-facebook" style="font-size: 1.8rem; color: #1877f2;"></i>
+        <div>
+          <div style="font-size: 1.05rem;">Facebook Cá Nhân</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">Phạm Nhật Minh</div>
+        </div>
+      </a>
+
+      <a href="https://github.com/mwiadsdaw" target="_blank" class="contact-btn">
+        <i class="fa-brands fa-github" style="font-size: 1.8rem; color: #fff;"></i>
+        <div>
+          <div style="font-size: 1.05rem;">GitHub Repository</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">@mwiadsdaw</div>
+        </div>
+      </a>
+
+      <a href="mailto:contact@pminh83.name.vn" class="contact-btn">
+        <i class="fa-solid fa-envelope" style="font-size: 1.8rem; color: var(--primary);"></i>
+        <div>
+          <div style="font-size: 1.05rem;">Email Công Việc</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">contact@pminh83.name.vn</div>
+        </div>
+      </a>
     </section>
   </main>
 
   <footer>
-    &copy; 2026 Phạm Nhật Minh • Built with HTML/CSS/JS & Vercel
+    &copy; 2026 Phạm Nhật Minh • pminh83.name.vn • Built for World-Class Standards
   </footer>
 
   <script>
-    // Chuyển Tab
+    // ----------------------------------------------------
+    // 1. NEURAL PARTICLE NETWORK BACKGROUND (Nền Thế Giới)
+    // ----------------------------------------------------
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let particles = [];
+
+    function resizeBg() {
+      bgCanvas.width = window.innerWidth;
+      bgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeBg);
+    resizeBg();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * bgCanvas.width;
+        this.y = Math.random() * bgCanvas.height;
+        this.vx = (Math.random() - 0.5) * 0.8;
+        this.vy = (Math.random() - 0.5) * 0.8;
+        this.radius = Math.random() * 2 + 1;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        if (this.x < 0 || this.x > bgCanvas.width) this.vx *= -1;
+        if (this.y < 0 || this.y > bgCanvas.height) this.vy *= -1;
+      }
+      draw() {
+        bgCtx.beginPath();
+        bgCtx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        bgCtx.fillStyle = 'rgba(56, 189, 248, 0.4)';
+        bgCtx.fill();
+      }
+    }
+
+    for (let i = 0; i < 65; i++) particles.push(new Particle());
+
+    function renderBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      for (let i = 0; i < particles.length; i++) {
+        particles[i].update();
+        particles[i].draw();
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            bgCtx.beginPath();
+            bgCtx.moveTo(particles[i].x, particles[i].y);
+            bgCtx.lineTo(particles[j].x, particles[j].y);
+            bgCtx.strokeStyle = `rgba(56, 189, 248, ${0.15 * (1 - dist / 120)})`;
+            bgCtx.lineWidth = 0.8;
+            bgCtx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(renderBg);
+    }
+    renderBg();
+
+    // ----------------------------------------------------
+    // 2. TAB ROUTING
+    // ----------------------------------------------------
     function showTab(tabId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('nav a').forEach(btn => btn.classList.remove('active'));
-      
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       document.getElementById('tab-' + tabId).classList.add('active');
-
-      if (tabId === 'game') {
-        initGame();
-      }
+      if (tabId === 'game') resizeGameCanvas();
     }
 
-    // Mini Game Hứng Sao
-    const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
-    let score = 0;
-    let gameLoop;
-    
-    let paddle = { x: 130, width: 100, height: 12, speed: 7 };
-    let star = { x: Math.random() * 340 + 10, y: 0, radius: 8, speed: 3 };
-    let rightPressed = false;
-    let leftPressed = false;
+    // ----------------------------------------------------
+    // 3. HOÀNH TRÁNG: GAME C++ SPACE DEFENDER ARCADE
+    // ----------------------------------------------------
+    const gCanvas = document.getElementById('space-game');
+    const gCtx = gCanvas.getContext('2d');
+    let gLoop, gActive = false;
+    let score = 0, wave = 1, hp = 100;
 
-    document.addEventListener("keydown", (e) => {
-      if(e.key === "Right" || e.key === "ArrowRight") rightPressed = true;
-      else if(e.key === "Left" || e.key === "ArrowLeft") leftPressed = true;
+    let player = { x: 0, y: 0, size: 24 };
+    let bullets = [], enemies = [], particlesExp = [];
+
+    // Âm thanh tổng hợp Web Audio API
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(freq, type, duration) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function resizeGameCanvas() {
+      gCanvas.width = gCanvas.offsetWidth;
+      gCanvas.height = 420;
+      player.x = gCanvas.width / 2;
+      player.y = gCanvas.height - 50;
+    }
+
+    gCanvas.addEventListener('mousemove', (e) => {
+      const rect = gCanvas.getBoundingClientRect();
+      player.x = e.clientX - rect.left;
     });
 
-    document.addEventListener("keyup", (e) => {
-      if(e.key === "Right" || e.key === "ArrowRight") rightPressed = false;
-      else if(e.key === "Left" || e.key === "ArrowLeft") leftPressed = false;
+    gCanvas.addEventListener('touchmove', (e) => {
+      const rect = gCanvas.getBoundingClientRect();
+      player.x = e.touches[0].clientX - rect.left;
     });
 
-    canvas.addEventListener("touchmove", (e) => {
-      let rect = canvas.getBoundingClientRect();
-      let touchX = e.touches[0].clientX - rect.left;
-      paddle.x = touchX - paddle.width / 2;
-    });
-
-    function updateGame() {
-      if(rightPressed && paddle.x < canvas.width - paddle.width) paddle.x += paddle.speed;
-      else if(leftPressed && paddle.x > 0) paddle.x -= paddle.speed;
-
-      star.y += star.speed;
-
-      if(star.y + star.radius > canvas.height - paddle.height && 
-         star.x > paddle.x && star.x < paddle.x + paddle.width) {
-        score += 10;
-        document.getElementById('score').innerText = score;
-        star.y = 0;
-        star.x = Math.random() * (canvas.width - 20) + 10;
-        star.speed += 0.2;
-      }
-
-      if(star.y > canvas.height) {
-        star.y = 0;
-        star.x = Math.random() * (canvas.width - 20) + 10;
-        score = Math.max(0, score - 5);
-        document.getElementById('score').innerText = score;
-      }
-    }
-
-    function drawGame() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#38bdf8";
-      ctx.beginPath();
-      ctx.roundRect(paddle.x, canvas.height - paddle.height, paddle.width, paddle.height, 6);
-      ctx.fill();
-
-      ctx.fillStyle = "#facc15";
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    function gameStep() {
-      updateGame();
-      drawGame();
-      gameLoop = requestAnimationFrame(gameStep);
-    }
-
-    function initGame() {
-      cancelAnimationFrame(gameLoop);
+    function startGame() {
+      document.getElementById('game-start-overlay').style.display = 'none';
+      score = 0; wave = 1; hp = 100;
+      bullets = []; enemies = []; particlesExp = [];
+      updateStats();
+      gActive = true;
+      resizeGameCanvas();
+      cancelAnimationFrame(gLoop);
       gameStep();
     }
 
-    function resetGame() {
-      score = 0;
-      star.speed = 3;
-      star.y = 0;
-      document.getElementById('score').innerText = score;
+    function updateStats() {
+      document.getElementById('g-score').innerText = score;
+      document.getElementById('g-wave').innerText = wave;
+      document.getElementById('g-hp').innerText = hp + '%';
+    }
+
+    function createExplosion(x, y, color) {
+      for (let i = 0; i < 12; i++) {
+        particlesExp.push({
+          x: x, y: y,
+          vx: (Math.random() - 0.5) * 6,
+          vy: (Math.random() - 0.5) * 6,
+          life: 1, color: color
+        });
+      }
+    }
+
+    let lastShoot = 0;
+    function gameStep() {
+      if (!gActive) return;
+
+      gCtx.fillStyle = '#030712';
+      gCtx.fillRect(0, 0, gCanvas.width, gCanvas.height);
+
+      // Auto Shooting
+      const now = Date.now();
+      if (now - lastShoot > 180) {
+        bullets.push({ x: player.x, y: player.y - 15, speed: 9 });
+        playSound(600, 'square', 0.05);
+        lastShoot = now;
+      }
+
+      // Draw Player
+      gCtx.save();
+      gCtx.translate(player.x, player.y);
+      gCtx.fillStyle = '#38bdf8';
+      gCtx.beginPath();
+      gCtx.moveTo(0, -20);
+      gCtx.lineTo(-15, 15);
+      gCtx.lineTo(15, 15);
+      gCtx.closePath();
+      gCtx.fill();
+      gCtx.restore();
+
+      // Bullets
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        let b = bullets[i];
+        b.y -= b.speed;
+        gCtx.fillStyle = '#c084fc';
+        gCtx.shadowBlur = 10;
+        gCtx.shadowColor = '#c084fc';
+        gCtx.fillRect(b.x - 2, b.y, 4, 12);
+        gCtx.shadowBlur = 0;
+
+        if (b.y < 0) bullets.splice(i, 1);
+      }
+
+      // Enemy Spawn
+      if (Math.random() < 0.03 + wave * 0.005) {
+        enemies.push({
+          x: Math.random() * (gCanvas.width - 30) + 15,
+          y: -20,
+          speed: 1.5 + Math.random() * 2 + wave * 0.2,
+          radius: 14 + Math.random() * 10
+        });
+      }
+
+      // Enemies Loop
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        let e = enemies[i];
+        e.y += e.speed;
+
+        // Draw Asteroid Enemy
+        gCtx.fillStyle = '#f43f5e';
+        gCtx.beginPath();
+        gCtx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+        gCtx.fill();
+
+        // Collision Bullet - Enemy
+        for (let j = bullets.length - 1; j >= 0; j--) {
+          let b = bullets[j];
+          let dist = Math.hypot(b.x - e.x, b.y - e.y);
+          if (dist < e.radius + 4) {
+            createExplosion(e.x, e.y, '#f43f5e');
+            playSound(150, 'sawtooth', 0.1);
+            score += 20;
+            if (score % 200 === 0) wave++;
+            updateStats();
+            enemies.splice(i, 1);
+            bullets.splice(j, 1);
+            break;
+          }
+        }
+
+        // Collision Player
+        if (e && Math.hypot(player.x - e.x, player.y - e.y) < e.radius + 15) {
+          createExplosion(e.x, e.y, '#f59e0b');
+          playSound(80, 'sawtooth', 0.2);
+          hp -= 20;
+          updateStats();
+          enemies.splice(i, 1);
+          if (hp <= 0) {
+            gActive = false;
+            document.getElementById('game-start-overlay').style.display = 'flex';
+            document.getElementById('game-start-overlay').querySelector('h3').innerText = "GAME OVER";
+          }
+        }
+
+        if (e && e.y > gCanvas.height + 30) enemies.splice(i, 1);
+      }
+
+      // Explosions
+      for (let i = particlesExp.length - 1; i >= 0; i--) {
+        let p = particlesExp[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.life -= 0.04;
+        gCtx.fillStyle = p.color;
+        gCtx.globalAlpha = Math.max(0, p.life);
+        gCtx.beginPath();
+        gCtx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+        gCtx.fill();
+        gCtx.globalAlpha = 1;
+
+        if (p.life <= 0) particlesExp.splice(i, 1);
+      }
+
+      gLoop = requestAnimationFrame(gameStep);
     }
   </script>
 </body>
