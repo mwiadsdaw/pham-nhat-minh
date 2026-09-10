@@ -87,7 +87,7 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;
     }
 
-    /* KHUNG GAME 3D BẮN SÚNG ĐÚNG THEO ẢNH MAU */
+    /* KHUNG GAME 3D BẮN SÚNG */
     .game-3d-wrapper {
       position: relative; width: 100%; height: 520px; border-radius: 20px;
       overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.2);
@@ -106,8 +106,7 @@
     .crosshair::before { top: 7px; left: 0; width: 16px; height: 2px; }
     .crosshair::after { top: 0; left: 7px; width: 2px; height: 16px; }
 
-    /* ---------------- HUD GAME NHƯ TRONG ẢNH ---------------- */
-    /* 1. TOP LEFT: MINIMAP & KILL COUNTER */
+    /* HUD GAME */
     .hud-top-left {
       position: absolute; top: 15px; left: 15px; z-index: 20;
       display: flex; flex-direction: column; gap: 8px; pointer-events: none;
@@ -126,7 +125,6 @@
       border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 6px;
     }
 
-    /* 2. TOP CENTER: WAVE TITLE */
     .hud-wave-title {
       position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
       font-family: 'Teko', sans-serif; font-size: 2.2rem; font-weight: 700;
@@ -134,7 +132,6 @@
       font-style: italic; letter-spacing: 2px; z-index: 20; pointer-events: none;
     }
 
-    /* 3. TOP RIGHT: CONTROLS BUTTONS */
     .hud-top-right {
       position: absolute; top: 15px; right: 15px; z-index: 20; display: flex; gap: 8px;
     }
@@ -145,7 +142,6 @@
     }
     .btn-icon-hud:hover { background: rgba(255,255,255,0.2); }
 
-    /* 4. BOTTOM CENTER: LOCK CURSOR INSTRUCTION (Đúng dòng chữ trong ảnh) */
     .hud-lock-text {
       position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
       font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
@@ -153,7 +149,6 @@
       z-index: 20; pointer-events: none; letter-spacing: 0.5px;
     }
 
-    /* 5. BOTTOM LEFT: HEALTH BAR CHÉO */
     .hud-bottom-left {
       position: absolute; bottom: 20px; left: 20px; z-index: 20; pointer-events: none;
       display: flex; align-items: flex-end; gap: 8px;
@@ -168,7 +163,6 @@
       box-shadow: 0 0 10px #22c55e; transition: width 0.3s;
     }
 
-    /* 6. BOTTOM RIGHT: AMMO MAGAZINE */
     .hud-bottom-right {
       position: absolute; bottom: 20px; right: 20px; z-index: 20; pointer-events: none;
       background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.25);
@@ -177,7 +171,6 @@
     .ammo-icon { font-size: 1.3rem; color: var(--gold); }
     .ammo-count { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: #fff; letter-spacing: 1px; }
 
-    /* DAY TIME SHOP OVERLAY PANEL */
     .day-shop-bar {
       position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
       background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px);
@@ -265,19 +258,19 @@
       </div>
     </section>
 
-    <!-- Music Tab -->
+    <!-- Music Tab (ĐÃ CẬP NHẬT VIDEO YOUTUBE CỦA BẠN & KHẢ NĂNG TỰ PHÁT) -->
     <section id="music" class="section">
       <h2><i class="fa-solid fa-headphones"></i> Sóc Sơn Music Club</h2>
       <p style="color: var(--text-sub); margin-top: 4px; margin-bottom: 20px;">Sản phẩm âm nhạc & các buổi luyện tập</p>
 
       <div style="background: rgba(0,0,0,0.3); border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border);">
         <div style="position: relative; padding-bottom: 56.25%; height: 0;">
-          <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+          <iframe id="yt-player" src="https://www.youtube.com/embed/XCkXpGcCBqE?enablejsapi=1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="autoplay" allowfullscreen></iframe>
         </div>
       </div>
     </section>
 
-    <!-- 3D FPS GAME TAB (GIAO DIỆN CHUẨN NHƯ ẢNH MAU) -->
+    <!-- 3D FPS GAME TAB -->
     <section id="game" class="section">
       <h2><i class="fa-solid fa-crosshairs"></i> 3D Desert Base FPS Survival</h2>
       <p style="color: var(--text-sub); margin-top: 4px;">Dùng <b>W,A,S,D</b> để di chuyển. Nhấn phím <b>L</b> để Khóa/Mở Khóa Con Trỏ Chuột!</p>
@@ -285,7 +278,6 @@
       <div class="game-3d-wrapper">
         <div class="crosshair"></div>
 
-        <!-- 1. TOP LEFT HUD (MINIMAP + KILL) -->
         <div class="hud-top-left">
           <div class="kill-tracker-box">
             <div class="kill-avatar"><i class="fa-solid fa-user-ninja"></i></div>
@@ -294,19 +286,15 @@
           <canvas id="minimap-canvas" width="110" height="110"></canvas>
         </div>
 
-        <!-- 2. TOP CENTER HUD (WAVE TITLE) -->
         <div class="hud-wave-title" id="wave-title">WAVE 1</div>
 
-        <!-- 3. TOP RIGHT HUD (BUTTONS) -->
         <div class="hud-top-right">
           <button class="btn-icon-hud" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
           <button class="btn-icon-hud" title="Pause"><i class="fa-solid fa-pause"></i></button>
         </div>
 
-        <!-- 4. BOTTOM CENTER HUD (LOCK CURSOR INSTRUCTION IN IMAGE) -->
         <div class="hud-lock-text">Press L to Lock and Unlock Cursor</div>
 
-        <!-- 5. BOTTOM LEFT HUD (HEALTH BAR) -->
         <div class="hud-bottom-left">
           <div class="hp-text"><span id="hp-value">100</span> %</div>
           <div class="hp-bar-bg">
@@ -314,13 +302,11 @@
           </div>
         </div>
 
-        <!-- 6. BOTTOM RIGHT HUD (AMMO MAGAZINE) -->
         <div class="hud-bottom-right">
           <i class="fa-solid fa-fire ammo-icon"></i>
           <div class="ammo-count"><span id="ammo-clip">30</span> / <span id="ammo-reserve">970</span></div>
         </div>
 
-        <!-- SHOP/DAYTIME PANEL -->
         <div id="day-shop-bar" class="day-shop-bar">
           <button class="btn-shop-act" onclick="doMission()">
             <i class="fa-solid fa-coins" style="color: var(--gold);"></i>
@@ -344,10 +330,8 @@
           </button>
         </div>
 
-        <!-- Canvas chứa 3D World -->
         <div id="fps-container"></div>
 
-        <!-- Start Overlay -->
         <div id="fps-overlay" class="fps-overlay">
           <i class="fa-solid fa-shield-cat" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 12px;"></i>
           <h3 style="font-size: 1.8rem; color: #fff;">DESERT BASE SURVIVAL 3D</h3>
@@ -423,17 +407,24 @@
     }
     renderBg();
 
-    // 2. NAV TAB ROUTING
+    // 2. NAV TAB ROUTING (TỰ ĐỘNG PHÁT/TẠM DỪNG VIDEO YOUTUBE)
     function showTab(tabId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
       document.getElementById(tabId).classList.add('active');
       document.getElementById('tab-' + tabId).classList.add('active');
+
+      // Tự động phát Video khi nhấn vào tab Âm Nhạc
+      const iframe = document.getElementById('yt-player');
+      if (tabId === 'music' && iframe) {
+        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+      } else if (iframe) {
+        // Tự động dừng video khi chuyển sang tab khác
+        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
+      }
     }
 
-    // ----------------------------------------------------
     // 3. THREE.JS 3D SURVIVAL GAME ENGINE (FPS)
-    // ----------------------------------------------------
     let scene, camera, renderer, weaponMesh, muzzleFlash;
     let isDayTime = true, waveNum = 1;
     let money = 100, baseHP = 100, kills = 0, totalWaveZombies = 10;
@@ -477,7 +468,7 @@
 
     function init3DWorld() {
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xd6c0b0, 0.012); // Sương Sa mạc
+      scene.fog = new THREE.FogExp2(0xd6c0b0, 0.012);
 
       camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
       camera.position.set(0, 2, 8);
@@ -487,28 +478,24 @@
       renderer.setPixelRatio(window.devicePixelRatio);
       container.appendChild(renderer.domElement);
 
-      // Lightings
       const ambientLight = new THREE.AmbientLight(0xffedd5, 1.2);
       scene.add(ambientLight);
       const sunLight = new THREE.DirectionalLight(0xfff7ed, 1.5);
       sunLight.position.set(30, 50, 20);
       scene.add(sunLight);
 
-      // Sàn Sa Mạc
       const groundGeo = new THREE.PlaneGeometry(160, 160);
       const groundMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 });
       const ground = new THREE.Mesh(groundGeo, groundMat);
       ground.rotation.x = -Math.PI / 2;
       scene.add(ground);
 
-      // Căn Cứ Base Wall
       const wallGeo = new THREE.BoxGeometry(32, 4, 2);
       const wallMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.3 });
       const baseWall = new THREE.Mesh(wallGeo, wallMat);
       baseWall.position.set(0, 2, -5);
       scene.add(baseWall);
 
-      // KHẨU SÚNG 3D CẦM TRÊN TAY (GÓC NHÌN FPS)
       const gunGroup = new THREE.Group();
       const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 1.2);
       const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 });
@@ -523,7 +510,6 @@
       gunGroup.add(gunBody);
       gunGroup.add(gunBarrel);
 
-      // Muzzle Flash Effect (Ánh sáng đầu nòng)
       const flashGeo = new THREE.SphereGeometry(0.15, 8, 8);
       const flashMat = new THREE.MeshBasicMaterial({ color: 0xfffb26, visible: false });
       muzzleFlash = new THREE.Mesh(flashGeo, flashMat);
@@ -534,7 +520,6 @@
       camera.add(gunGroup);
       scene.add(camera);
 
-      // 🔐 KHÓA & MỞ KHÓA CHUỘT BẰNG PHÍM "L"
       window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
         
@@ -564,7 +549,6 @@
         }
       });
 
-      // Nhấp bắn
       container.addEventListener('mousedown', (e) => {
         if (isGameRunning && e.button === 0 && document.pointerLockElement === container) {
           shootGun();
@@ -578,11 +562,9 @@
       updateHUD();
       playSound(400 + Math.random() * 200, 'sawtooth', 0.08);
 
-      // Muzzle Flash
       muzzleFlash.material.visible = true;
       setTimeout(() => muzzleFlash.material.visible = false, 50);
 
-      // Đạn
       const bulletGeo = new THREE.SphereGeometry(0.1, 8, 8);
       const bulletMat = new THREE.MeshBasicMaterial({ color: 0xfffb26 });
       const bullet = new THREE.Mesh(bulletGeo, bulletMat);
@@ -598,11 +580,9 @@
     function renderMinimap() {
       miniCtx.clearRect(0, 0, 110, 110);
       
-      // Vẽ Căn cứ
       miniCtx.fillStyle = '#38bdf8';
       miniCtx.fillRect(35, 50, 40, 6);
 
-      // Vẽ Người chơi (Nón màu xanh)
       const px = 55 + camera.position.x * 1.5;
       const pz = 55 + camera.position.z * 1.5;
       miniCtx.beginPath();
@@ -610,7 +590,6 @@
       miniCtx.fillStyle = '#22c55e';
       miniCtx.fill();
 
-      // Vẽ Zombie (Chấm đỏ)
       zombies.forEach(z => {
         const zx = 55 + z.position.x * 1.5;
         const zz = 55 + z.position.z * 1.5;
@@ -678,7 +657,6 @@
       if (!isGameRunning) return;
       requestAnimationFrame(animate3D);
 
-      // WASD Movement
       const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
       const side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
 
@@ -691,7 +669,6 @@
       camera.position.z = Math.max(-4, Math.min(25, camera.position.z));
       camera.position.x = Math.max(-14, Math.min(14, camera.position.x));
 
-      // Bullets
       for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
         b.position.addScaledVector(b.userData.dir, 1.3);
@@ -701,7 +678,6 @@
         }
       }
 
-      // Zombies
       for (let i = zombies.length - 1; i >= 0; i--) {
         let z = zombies[i];
         z.position.z += z.userData.speed;
@@ -732,7 +708,7 @@
             isGameRunning = false;
             document.exitPointerLock();
             document.getElementById('fps-overlay').style.display = 'flex';
-            document.getElementById('fps-overlay').querySelector('h3').innerText = "CĂN CỨ THẤT THỦ!";
+            break;
           }
         }
       }
