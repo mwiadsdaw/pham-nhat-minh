@@ -3,28 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Địa chỉ IP và vị trí của bạn</title>
-    <script>
-        async function getIP() {
-            try {
-                let ipResponse = await fetch('https://api64.ipify.org?format=json');
-                let ipData = await ipResponse.json();
-                document.getElementById('ip').innerText = "Địa chỉ IP của bạn: " + ipData.ip;
-                
-                let locationResponse = await fetch('http://ip-api.com/json/' + ipData.ip);
-                let locationData = await locationResponse.json();
-                
-                document.getElementById('location').innerText = "Vị trí của bạn: " + locationData.city + ", " + locationData.regionName + ", " + locationData.country;
-            } catch (error) {
-                document.getElementById('ip').innerText = "Không thể lấy IP";
-                document.getElementById('location').innerText = "Không thể lấy vị trí";
-            }
+    <title>Phạm Nhật Minh | Personal Website</title>
+    <meta name="description" content="Trang web cá nhân của Phạm Nhật Minh.">
+    
+    <!-- Open Graph for Social Media Sharing -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://pminh83.name.vn/">
+    <meta property="og:title" content="Phạm Nhật Minh | Personal Website">
+    <meta property="og:description" content="Trang web cá nhân của Phạm Nhật Minh.">
+
+    <style>
+        /* CSS Style Trực Tiếp Trong File */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-    </script>
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 40px 30px;
+            max-width: 480px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .avatar-placeholder {
+            width: 96px;
+            height: 96px;
+            background: linear-gradient(135deg, #0070f3, #00dfa2);
+            border-radius: 50%;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        p.subtitle {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 24px;
+        }
+
+        .badge {
+            display: inline-block;
+            background-color: rgba(0, 112, 243, 0.15);
+            color: #38bdf8;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 28px;
+            border: 1px solid rgba(56, 189, 248, 0.2);
+        }
+
+        .links-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .link-btn {
+            display: block;
+            background-color: #334155;
+            color: #f8fafc;
+            text-decoration: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .link-btn:hover {
+            background-color: #0070f3;
+            color: #ffffff;
+            transform: translateY(-2px);
+        }
+
+        footer {
+            margin-top: 32px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
 </head>
-<body onload="getIP()">
-    <h1>Thông tin của bạn</h1>
-    <p id="ip">Đang tải IP...</p>
-    <p id="location">Đang tải vị trí...</p>
+<body>
+
+    <div class="card">
+        <div class="avatar-placeholder">NM</div>
+        <h1>Phạm Nhật Minh</h1>
+        <p class="subtitle">Welcome to my personal site</p>
+        <div class="badge">pminh83.name.vn</div>
+
+        <div class="links-container">
+            <a href="https://facebook.com" target="_blank" class="link-btn">Facebook</a>
+            <a href="https://zalo.me" target="_blank" class="link-btn">Zalo</a>
+            <a href="mailto:contact@pminh83.name.vn" class="link-btn">Gửi Email</a>
+        </div>
+
+        <footer>
+            &copy; 2026 pminh83.name.vn. All rights reserved.
+        </footer>
+    </div>
+
 </body>
 </html>
