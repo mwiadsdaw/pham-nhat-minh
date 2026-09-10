@@ -3,391 +3,705 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Desert Base FPS Survival 3D</title>
+  <title>Phạm Nhật Minh - 3D Cyber FPS Survival</title>
+  
+  <meta name="description" content="Trang cá nhân Phạm Nhật Minh - Game 3D Bắn Súng Sinh Tồn Căn Cứ">
+  <meta property="og:title" content="Phạm Nhật Minh - 3D Cyber FPS Survival">
   
   <!-- Font & Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Teko:wght@600;700&family=Plus+Jakarta+Sans:wght@600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Teko:wght@600;700&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
 
-  <!-- Engine 3D Three.js -->
+  <!-- Thư viện Three.js 3D Engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-    body, html { width: 100%; height: 100%; overflow: hidden; background: #000; font-family: 'Plus Jakarta Sans', sans-serif; }
+    :root {
+      --primary: #38bdf8;
+      --accent: #c084fc;
+      --gold: #f59e0b;
+      --health: #22c55e;
+      --danger: #ef4444;
+      --bg-dark: #030712;
+      --glass-bg: rgba(15, 23, 42, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --text-main: #f8fafc;
+      --text-sub: #94a3b8;
+    }
 
-    #game-container { position: relative; width: 100vw; height: 100vh; overflow: hidden; }
-    #fps-canvas { width: 100%; height: 100%; display: block; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-    /* Crosshair */
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      overflow-x: hidden;
+    }
+
+    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+
+    header { width: 100%; max-width: 900px; padding: 20px; position: sticky; top: 0; z-index: 100; }
+    nav {
+      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border); border-radius: 99px; padding: 8px 16px;
+      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .nav-btn {
+      color: var(--text-sub); text-decoration: none; font-weight: 600; font-size: 0.9rem;
+      padding: 10px 18px; border-radius: 99px; transition: all 0.3s; cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .nav-btn:hover, .nav-btn.active {
+      color: #fff; background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(192,132,252,0.25));
+      border: 1px solid rgba(56,189,248,0.4); box-shadow: 0 0 15px rgba(56,189,248,0.3);
+    }
+
+    main { width: 100%; max-width: 920px; padding: 0 20px 40px; z-index: 10; flex: 1; }
+
+    .section {
+      display: none; background: var(--glass-bg); backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border);
+      border-radius: 28px; padding: 32px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+      animation: slideUp 0.5s ease-out;
+    }
+    .section.active { display: block; }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Profile UI Header */
+    .profile-header { text-align: center; margin-bottom: 25px; }
+    .avatar-glow { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
+    .avatar-glow::before {
+      content: ''; position: absolute; inset: -4px; border-radius: 50%;
+      background: linear-gradient(45deg, var(--primary), var(--accent)); filter: blur(10px); opacity: 0.8;
+    }
+    .avatar {
+      position: relative; width: 100%; height: 100%; border-radius: 50%; background: #090d16;
+      border: 2px solid var(--glass-border); display: flex; align-items: center; justify-content: center;
+      font-size: 2.5rem; color: var(--primary);
+    }
+    h1 {
+      font-size: 2.2rem; font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--accent));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;
+    }
+
+    /* KHUNG GAME 3D BẮN SÚNG ĐÚNG THEO ẢNH MAU */
+    .game-3d-wrapper {
+      position: relative; width: 100%; height: 520px; border-radius: 20px;
+      overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); background: #000; margin-top: 15px;
+      user-select: none;
+    }
+
+    #fps-container { width: 100%; height: 100%; cursor: crosshair; }
+
+    /* Crosshair Tâm Bắn Nhỏ Gọn Nhỏ Ở Giữa */
     .crosshair {
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 14px; height: 14px; pointer-events: none; z-index: 20;
+      width: 16px; height: 16px; pointer-events: none; z-index: 20;
     }
-    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255, 255, 255, 0.95); box-shadow: 0 0 2px #000; }
-    .crosshair::before { top: 6px; left: 0; width: 14px; height: 2px; }
-    .crosshair::after { top: 0; left: 6px; width: 2px; height: 14px; }
+    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.9); box-shadow: 0 0 4px #000; }
+    .crosshair::before { top: 7px; left: 0; width: 16px; height: 2px; }
+    .crosshair::after { top: 0; left: 7px; width: 2px; height: 16px; }
 
-    /* HUD TOP LEFT: MINIMAP & KILL COUNTER */
+    /* ---------------- HUD GAME NHƯ TRONG ẢNH ---------------- */
+    /* 1. TOP LEFT: MINIMAP & KILL COUNTER */
     .hud-top-left {
-      position: absolute; top: 20px; left: 20px; z-index: 20;
-      display: flex; flex-direction: column; gap: 10px; pointer-events: none;
+      position: absolute; top: 15px; left: 15px; z-index: 20;
+      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
     }
 
-    .kill-box {
-      background: rgba(0, 0, 0, 0.7); border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 4px 12px; border-radius: 4px; display: flex; align-items: center; gap: 10px; width: 130px;
+    .kill-tracker-box {
+      background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px; width: 140px;
     }
-    .kill-icon { width: 22px; height: 22px; background: #475569; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 0.75rem; color: #fff; }
-    .kill-text { font-family: 'Teko', sans-serif; font-size: 1.6rem; color: #fff; line-height: 1; }
+    .kill-avatar { width: 24px; height: 24px; background: #38bdf8; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #000; }
+    .kill-num { font-family: 'Teko', sans-serif; font-size: 1.4rem; color: #fff; letter-spacing: 1px; }
 
-    #minimap {
-      width: 120px; height: 120px; background: rgba(20, 15, 10, 0.75);
-      border: 2px solid rgba(255, 255, 255, 0.35); border-radius: 4px;
+    /* Radar Minimap */
+    #minimap-canvas {
+      width: 110px; height: 110px; background: rgba(0, 0, 0, 0.7);
+      border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 6px;
     }
 
-    /* HUD TOP CENTER: WAVE TITLE */
-    .hud-wave {
+    /* 2. TOP CENTER: WAVE TITLE */
+    .hud-wave-title {
       position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-      font-family: 'Teko', sans-serif; font-size: 2.8rem; font-weight: 700;
-      color: #fff; text-shadow: 0 0 12px rgba(0,0,0,0.9), 0 0 5px rgba(255,255,255,0.5);
+      font-family: 'Teko', sans-serif; font-size: 2.2rem; font-weight: 700;
+      color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.9), 0 0 20px rgba(255,255,255,0.4);
       font-style: italic; letter-spacing: 2px; z-index: 20; pointer-events: none;
     }
 
-    /* HUD TOP RIGHT: BUTTONS */
-    .hud-top-right { position: absolute; top: 20px; right: 20px; z-index: 20; display: flex; gap: 8px; }
-    .hud-btn {
-      width: 40px; height: 40px; background: rgba(0,0,0,0.65); border: 1px solid rgba(255,255,255,0.3);
-      color: #fff; border-radius: 4px; font-size: 1.1rem; display: flex; align-items: center; justify-content: center;
-      cursor: pointer;
+    /* 3. TOP RIGHT: CONTROLS BUTTONS */
+    .hud-top-right {
+      position: absolute; top: 15px; right: 15px; z-index: 20; display: flex; gap: 8px;
     }
+    .btn-icon-hud {
+      width: 38px; height: 38px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2);
+      color: #fff; border-radius: 6px; font-size: 1rem; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-icon-hud:hover { background: rgba(255,255,255,0.2); }
 
-    /* HUD BOTTOM CENTER: LOCK CURSOR TEXT */
+    /* 4. BOTTOM CENTER: LOCK CURSOR INSTRUCTION (Đúng dòng chữ trong ảnh) */
     .hud-lock-text {
-      position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
-      font-size: 1.1rem; font-weight: 800; color: rgba(255, 255, 255, 0.9);
-      font-style: italic; text-shadow: 0 2px 6px rgba(0,0,0,0.95); z-index: 20; pointer-events: none;
+      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
+      color: rgba(255, 255, 255, 0.85); font-style: italic; text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+      z-index: 20; pointer-events: none; letter-spacing: 0.5px;
     }
 
-    /* HUD BOTTOM LEFT: HEALTH BAR */
+    /* 5. BOTTOM LEFT: HEALTH BAR CHÉO */
     .hud-bottom-left {
-      position: absolute; bottom: 25px; left: 25px; z-index: 20; pointer-events: none;
-      display: flex; align-items: flex-end; gap: 10px;
+      position: absolute; bottom: 20px; left: 20px; z-index: 20; pointer-events: none;
+      display: flex; align-items: flex-end; gap: 8px;
     }
-    .hp-num { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: #fff; line-height: 1; }
+    .hp-text { font-family: 'Teko', sans-serif; font-size: 1.6rem; color: #fff; }
     .hp-bar-bg {
-      width: 220px; height: 18px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.4);
-      transform: skewX(-22deg); overflow: hidden; padding: 2px;
+      width: 180px; height: 16px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.3);
+      transform: skewX(-20deg); overflow: hidden; padding: 2px;
     }
     .hp-bar-fill {
-      width: 100%; height: 100%; background: linear-gradient(90deg, #15803d, #4ade80);
-      box-shadow: 0 0 10px #22c55e; transition: width 0.2s;
+      width: 100%; height: 100%; background: linear-gradient(90deg, #16a34a, #4ade80);
+      box-shadow: 0 0 10px #22c55e; transition: width 0.3s;
     }
 
-    /* HUD BOTTOM RIGHT: AMMO */
+    /* 6. BOTTOM RIGHT: AMMO MAGAZINE */
     .hud-bottom-right {
-      position: absolute; bottom: 25px; right: 25px; z-index: 20; pointer-events: none;
-      background: rgba(0, 0, 0, 0.8); border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 4px 18px; border-radius: 4px; display: flex; align-items: center; gap: 12px;
+      position: absolute; bottom: 20px; right: 20px; z-index: 20; pointer-events: none;
+      background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 6px 16px; border-radius: 6px; display: flex; align-items: center; gap: 10px;
     }
-    .ammo-icon { font-size: 1.2rem; color: #f59e0b; }
-    .ammo-num { font-family: 'Teko', sans-serif; font-size: 2.2rem; color: #fff; letter-spacing: 1px; line-height: 1; }
+    .ammo-icon { font-size: 1.3rem; color: var(--gold); }
+    .ammo-count { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: #fff; letter-spacing: 1px; }
 
-    /* DAY TIME SHOP OVERLAY */
-    .shop-bar {
-      position: absolute; top: 80px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(255,255,255,0.25);
-      padding: 10px 20px; border-radius: 12px; display: flex; gap: 12px; z-index: 22;
+    /* DAY TIME SHOP OVERLAY PANEL */
+    .day-shop-bar {
+      position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
+      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2); padding: 10px 18px; border-radius: 16px;
+      display: flex; gap: 12px; z-index: 22; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
-    .shop-btn {
-      background: rgba(255,255,255,0.08); border: 1px solid #38bdf8; color: #fff;
-      padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 700; cursor: pointer;
-      display: flex; flex-direction: column; align-items: center; gap: 2px;
+    .btn-shop-act {
+      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--primary);
+      color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600;
+      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px;
     }
+    .btn-shop-act:hover { background: rgba(56, 189, 248, 0.2); }
 
-    /* START OVERLAY */
-    .overlay {
+    .fps-overlay {
       position: absolute; inset: 0; background: rgba(3, 7, 18, 0.92);
-      display: flex; flex-direction: column; justify-content: center; align-items: center;
-      z-index: 30; text-align: center; color: #fff;
+      backdrop-filter: blur(12px); display: flex; flex-direction: column;
+      justify-content: center; align-items: center; z-index: 30; text-align: center; padding: 20px;
     }
-    .start-btn {
-      background: linear-gradient(135deg, #38bdf8, #c084fc); color: #fff; border: none;
-      padding: 16px 45px; font-size: 1.2rem; font-weight: 800; border-radius: 99px;
-      cursor: pointer; box-shadow: 0 0 30px rgba(56, 189, 248, 0.5); margin-top: 20px;
+    .btn-play {
+      background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff;
+      border: none; padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
+      border-radius: 99px; cursor: pointer; box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
+      transition: all 0.3s; margin-top: 18px;
     }
+    .btn-play:hover { transform: scale(1.05); }
+
+    .contact-btn {
+      display: flex; align-items: center; gap: 16px; padding: 16px 20px;
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border);
+      border-radius: 16px; color: #fff; text-decoration: none; font-weight: 600;
+      margin-top: 12px; transition: all 0.3s;
+    }
+    .contact-btn:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); transform: translateX(5px); }
+
+    footer { padding: 20px; color: var(--text-sub); font-size: 0.85rem; text-align: center; z-index: 10; }
   </style>
 </head>
 <body>
 
-  <div id="game-container">
-    <div class="crosshair"></div>
+  <canvas id="bg-canvas"></canvas>
 
-    <!-- 1. TOP LEFT -->
-    <div class="hud-top-left">
-      <div class="kill-box">
-        <div class="kill-icon"><i class="fa-solid fa-user"></i></div>
-        <div class="kill-text"><span id="kills">6</span> / <span id="total-zombies">10</span></div>
+  <header>
+    <nav>
+      <a onclick="showTab('home')" id="tab-home" class="nav-btn active"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+      <a onclick="showTab('music')" id="tab-music" class="nav-btn"><i class="fa-solid fa-compact-disc"></i><span>Âm Nhạc</span></a>
+      <a onclick="showTab('game')" id="tab-game" class="nav-btn"><i class="fa-solid fa-crosshairs"></i><span>Game 3D FPS</span></a>
+      <a onclick="showTab('contact')" id="tab-contact" class="nav-btn"><i class="fa-solid fa-paper-plane"></i><span>Liên Hệ</span></a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Home Tab -->
+    <section id="home" class="section active">
+      <div class="profile-header">
+        <div class="avatar-glow">
+          <div class="avatar"><i class="fa-solid fa-code"></i></div>
+        </div>
+        <h1>Phạm Nhật Minh</h1>
+        <p style="color: var(--text-sub);">Developer & Music Lover • 10A2 THPT Sóc Sơn</p>
       </div>
-      <canvas id="minimap" width="120" height="120"></canvas>
-    </div>
 
-    <!-- 2. TOP CENTER -->
-    <div class="hud-wave" id="wave-text">WAVE 1</div>
-
-    <!-- 3. TOP RIGHT -->
-    <div class="hud-top-right">
-      <button class="hud-btn"><i class="fa-solid fa-volume-high"></i></button>
-      <button class="hud-btn"><i class="fa-solid fa-pause"></i></button>
-    </div>
-
-    <!-- 4. BOTTOM CENTER -->
-    <div class="hud-lock-text">Press L to Lock and Unlock Cursor</div>
-
-    <!-- 5. BOTTOM LEFT -->
-    <div class="hud-bottom-left">
-      <div class="hp-num"><span id="hp-val">100</span> %</div>
-      <div class="hp-bar-bg">
-        <div class="hp-bar-fill" id="hp-fill"></div>
+      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary); border-radius: 18px; padding: 20px; margin-bottom: 20px;">
+        <h2 style="color: var(--primary); margin-bottom: 8px; font-size: 1.1rem;"><i class="fa-solid fa-server"></i> Hạ Tầng & Công Nghệ Cloud</h2>
+        <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
+          Tôi đã tự làm chủ toàn bộ mã nguồn giao diện để chuyển đổi hoàn toàn khỏi Google Sites, triển khai ứng dụng trên hạ tầng Vercel Edge Network nhằm tối ưu hóa tốc độ toàn cầu. Tự tay cấu hình định tuyến DNS chuyên sâu (Bản ghi A & CNAME) vận hành mượt mà tên miền chính chủ <strong>pminh83.name.vn</strong>, hoàn tất xác thực danh tính điện tử (CCCD) đạt tiêu chuẩn an ninh mạng VNNIC trên hệ thống Nhân Hòa.
+        </p>
       </div>
-    </div>
 
-    <!-- 6. BOTTOM RIGHT -->
-    <div class="hud-bottom-right">
-      <i class="fa-solid fa-fire ammo-icon"></i>
-      <div class="ammo-num"><span id="clip">13</span> / <span id="reserve">970</span></div>
-    </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
+          <i class="fa-solid fa-graduation-cap" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
+          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Trường Học</h3>
+          <p style="font-weight: 600;">Lớp 10A2 - THPT Sóc Sơn</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
+          <i class="fa-solid fa-laptop-code" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
+          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Kỹ Thuật Lập Trình</h3>
+          <p style="font-weight: 600;">Lập trình C++ & Game Web 3D</p>
+        </div>
+        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
+          <i class="fa-solid fa-guitar" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
+          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Hoạt Động</h3>
+          <p style="font-weight: 600;">Sóc Sơn Music Club</p>
+        </div>
+      </div>
+    </section>
 
-    <!-- DAYTIME SHOP -->
-    <div id="shop-bar" class="shop-bar">
-      <button class="shop-btn" onclick="doMission()"><i class="fa-solid fa-coins" style="color:#f59e0b;"></i> NHIỆM VỤ (+50$)</button>
-      <button class="shop-btn" onclick="upgradeGun()"><i class="fa-solid fa-gun" style="color:#38bdf8;"></i> NÂNG SÚNG (100$)</button>
-      <button class="shop-btn" onclick="repairBase()"><i class="fa-solid fa-wrench" style="color:#22c55e;"></i> SỬA CĂN CỨ (40$)</button>
-      <button class="shop-btn" onclick="startNightWave()" style="background:#ef4444; border:none;"><i class="fa-solid fa-moon"></i> VÀO BAN ĐÊM</button>
-    </div>
+    <!-- Music Tab -->
+    <section id="music" class="section">
+      <h2><i class="fa-solid fa-headphones"></i> Sóc Sơn Music Club</h2>
+      <p style="color: var(--text-sub); margin-top: 4px; margin-bottom: 20px;">Sản phẩm âm nhạc & các buổi luyện tập</p>
 
-    <div id="canvas-holder" style="width:100%; height:100%;"></div>
+      <div style="background: rgba(0,0,0,0.3); border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border);">
+        <div style="position: relative; padding-bottom: 56.25%; height: 0;">
+          <iframe src="https://www.youtube.com/embed/jfKfPfyJRdk" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+        </div>
+      </div>
+    </section>
 
-    <div id="start-overlay" class="overlay">
-      <i class="fa-solid fa-crosshairs" style="font-size: 4rem; color: #38bdf8; margin-bottom: 15px;"></i>
-      <h1 style="font-size: 2.5rem; font-family: 'Teko', sans-serif; letter-spacing: 2px;">DESERT BASE SURVIVAL 3D</h1>
-      <p style="color: #94a3b8; max-width: 400px; margin-top: 5px;">Nhấn phím <b>L</b> trong khi chơi để Bật/Tắt Khóa Chuột xoay 360 độ!</p>
-      <button class="start-btn" onclick="startGame()">BẮT ĐẦU VÀO TRẬN</button>
-    </div>
-  </div>
+    <!-- 3D FPS GAME TAB (GIAO DIỆN CHUẨN NHƯ ẢNH MAU) -->
+    <section id="game" class="section">
+      <h2><i class="fa-solid fa-crosshairs"></i> 3D Desert Base FPS Survival</h2>
+      <p style="color: var(--text-sub); margin-top: 4px;">Dùng <b>W,A,S,D</b> để di chuyển. Nhấn phím <b>L</b> để Khóa/Mở Khóa Con Trỏ Chuột!</p>
+
+      <div class="game-3d-wrapper">
+        <div class="crosshair"></div>
+
+        <!-- 1. TOP LEFT HUD (MINIMAP + KILL) -->
+        <div class="hud-top-left">
+          <div class="kill-tracker-box">
+            <div class="kill-avatar"><i class="fa-solid fa-user-ninja"></i></div>
+            <div class="kill-num"><span id="kills-num">0</span> / <span id="total-wave-zombies">10</span></div>
+          </div>
+          <canvas id="minimap-canvas" width="110" height="110"></canvas>
+        </div>
+
+        <!-- 2. TOP CENTER HUD (WAVE TITLE) -->
+        <div class="hud-wave-title" id="wave-title">WAVE 1</div>
+
+        <!-- 3. TOP RIGHT HUD (BUTTONS) -->
+        <div class="hud-top-right">
+          <button class="btn-icon-hud" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
+          <button class="btn-icon-hud" title="Pause"><i class="fa-solid fa-pause"></i></button>
+        </div>
+
+        <!-- 4. BOTTOM CENTER HUD (LOCK CURSOR INSTRUCTION IN IMAGE) -->
+        <div class="hud-lock-text">Press L to Lock and Unlock Cursor</div>
+
+        <!-- 5. BOTTOM LEFT HUD (HEALTH BAR) -->
+        <div class="hud-bottom-left">
+          <div class="hp-text"><span id="hp-value">100</span> %</div>
+          <div class="hp-bar-bg">
+            <div class="hp-bar-fill" id="hp-bar-fill"></div>
+          </div>
+        </div>
+
+        <!-- 6. BOTTOM RIGHT HUD (AMMO MAGAZINE) -->
+        <div class="hud-bottom-right">
+          <i class="fa-solid fa-fire ammo-icon"></i>
+          <div class="ammo-count"><span id="ammo-clip">30</span> / <span id="ammo-reserve">970</span></div>
+        </div>
+
+        <!-- SHOP/DAYTIME PANEL -->
+        <div id="day-shop-bar" class="day-shop-bar">
+          <button class="btn-shop-act" onclick="doMission()">
+            <i class="fa-solid fa-coins" style="color: var(--gold);"></i>
+            <span>NHIỆM VỤ</span>
+            <small style="color: var(--gold);">+50 $</small>
+          </button>
+          <button class="btn-shop-act" onclick="upgradeMinigun()">
+            <i class="fa-solid fa-gun" style="color: var(--primary);"></i>
+            <span>NÂNG SÚNG</span>
+            <small id="gun-cost" style="color: var(--gold);">100 $</small>
+          </button>
+          <button class="btn-shop-act" onclick="repairBase()">
+            <i class="fa-solid fa-wrench" style="color: var(--health);"></i>
+            <span>SỬA CĂN CỨ</span>
+            <small style="color: var(--gold);">40 $</small>
+          </button>
+          <button class="btn-shop-act" onclick="startNightWave()" style="background: linear-gradient(135deg, #ef4444, #b91c1c); border: none;">
+            <i class="fa-solid fa-moon"></i>
+            <span>SANG ĐÊM</span>
+            <small>ĐẤU ZOMBIE</small>
+          </button>
+        </div>
+
+        <!-- Canvas chứa 3D World -->
+        <div id="fps-container"></div>
+
+        <!-- Start Overlay -->
+        <div id="fps-overlay" class="fps-overlay">
+          <i class="fa-solid fa-shield-cat" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 12px;"></i>
+          <h3 style="font-size: 1.8rem; color: #fff;">DESERT BASE SURVIVAL 3D</h3>
+          <p style="color: var(--text-sub); max-width: 420px; margin-top: 6px; font-size: 0.9rem;">
+            Bảo vệ Căn Cứ sa mạc. Dùng phím <b>L</b> để khóa/mở khóa chuột tự do!
+          </p>
+          <button class="btn-play" onclick="initAndStartGame()">VÀO TRẬN ĐẤU</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Tab -->
+    <section id="contact" class="section">
+      <h2><i class="fa-solid fa-satellite-dish"></i> Liên Hệ Trực Tiếp</h2>
+      <p style="color: var(--text-sub); margin-top: 4px;">Kết nối với mình qua các kênh chính thức:</p>
+
+      <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" class="contact-btn">
+        <i class="fa-brands fa-facebook" style="font-size: 1.8rem; color: #1877f2;"></i>
+        <div>
+          <div>Facebook Cá Nhân</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">Phạm Nhật Minh</div>
+        </div>
+      </a>
+
+      <a href="https://github.com/mwiadsdaw" target="_blank" class="contact-btn">
+        <i class="fa-brands fa-github" style="font-size: 1.8rem; color: #fff;"></i>
+        <div>
+          <div>GitHub Repository</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">@mwiadsdaw</div>
+        </div>
+      </a>
+
+      <a href="mailto:contact@pminh83.name.vn" class="contact-btn">
+        <i class="fa-solid fa-envelope" style="font-size: 1.8rem; color: var(--primary);"></i>
+        <div>
+          <div>Email Chính Thức</div>
+          <div style="font-size: 0.85rem; color: var(--text-sub);">contact@pminh83.name.vn</div>
+        </div>
+      </a>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Phạm Nhật Minh • pminh83.name.vn • Powered by Three.js 3D Engine
+  </footer>
 
   <script>
-    let scene, camera, renderer, gunGroup, muzzleFlash;
-    let isGameRunning = false, isDayTime = true;
-    let kills = 6, totalZombies = 10, wave = 1, hp = 100, clip = 13, reserve = 970, money = 100;
-    let zombies = [], bullets = [], keys = {};
-    let yaw = 0, pitch = 0;
+    // 1. NEURAL BACKGROUND
+    const bgCanvas = document.getElementById('bg-canvas');
+    const bgCtx = bgCanvas.getContext('2d');
+    let bgParticles = [];
 
-    const minimapCanvas = document.getElementById('minimap');
-    const miniCtx = minimapCanvas.getContext('2d');
+    function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
+    window.addEventListener('resize', resizeBg); resizeBg();
 
-    function updateHUD() {
-      document.getElementById('kills').innerText = kills;
-      document.getElementById('total-zombies').innerText = totalZombies;
-      document.getElementById('wave-text').innerText = 'WAVE ' + wave;
-      document.getElementById('hp-val').innerText = Math.max(0, Math.floor(hp));
-      document.getElementById('hp-fill').style.width = Math.max(0, hp) + '%';
-      document.getElementById('clip').innerText = clip;
-      document.getElementById('reserve').innerText = reserve;
+    for (let i = 0; i < 40; i++) {
+      bgParticles.push({
+        x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
+        vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8
+      });
     }
 
-    function init3D() {
-      const holder = document.getElementById('canvas-holder');
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xe0ab76, 0.018); // Màu cát sa mạc
+    function renderBg() {
+      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+      bgParticles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+        bgCtx.beginPath(); bgCtx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        bgCtx.fillStyle = 'rgba(56, 189, 248, 0.4)'; bgCtx.fill();
+      });
+      requestAnimationFrame(renderBg);
+    }
+    renderBg();
 
-      camera = new THREE.PerspectiveCamera(65, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.set(0, 2, 5);
+    // 2. NAV TAB ROUTING
+    function showTab(tabId) {
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+      document.getElementById(tabId).classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // ----------------------------------------------------
+    // 3. THREE.JS 3D SURVIVAL GAME ENGINE (FPS)
+    // ----------------------------------------------------
+    let scene, camera, renderer, weaponMesh, muzzleFlash;
+    let isDayTime = true, waveNum = 1;
+    let money = 100, baseHP = 100, kills = 0, totalWaveZombies = 10;
+    let ammoClip = 30, ammoReserve = 970, gunLevel = 1, gunCost = 100;
+    let isGameRunning = false;
+
+    let zombies = [], bullets = [];
+    let keys = {}, moveSpeed = 0.16;
+    let yaw = 0, pitch = 0;
+
+    const container = document.getElementById('fps-container');
+    const minimapCanvas = document.getElementById('minimap-canvas');
+    const miniCtx = minimapCanvas.getContext('2d');
+
+    // Audio API
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playSound(freq, type, duration) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function updateHUD() {
+      document.getElementById('kills-num').innerText = kills;
+      document.getElementById('total-wave-zombies').innerText = totalWaveZombies;
+      document.getElementById('wave-title').innerText = 'WAVE ' + waveNum;
+      
+      const hp = Math.max(0, Math.floor(baseHP));
+      document.getElementById('hp-value').innerText = hp;
+      document.getElementById('hp-bar-fill').style.width = hp + '%';
+
+      document.getElementById('ammo-clip').innerText = ammoClip;
+      document.getElementById('ammo-reserve').innerText = ammoReserve;
+      document.getElementById('gun-cost').innerText = gunCost + ' $';
+    }
+
+    function init3DWorld() {
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0xd6c0b0, 0.012); // Sương Sa mạc
+
+      camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
+      camera.position.set(0, 2, 8);
 
       renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setSize(container.offsetWidth, container.offsetHeight);
       renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.shadowMap.enabled = true;
-      holder.appendChild(renderer.domElement);
+      container.appendChild(renderer.domElement);
 
-      // Ánh sáng Sa mạc
+      // Lightings
       const ambientLight = new THREE.AmbientLight(0xffedd5, 1.2);
       scene.add(ambientLight);
-
-      const sunLight = new THREE.DirectionalLight(0xfffaed, 2.0);
-      sunLight.position.set(40, 60, 20);
-      sunLight.castShadow = true;
+      const sunLight = new THREE.DirectionalLight(0xfff7ed, 1.5);
+      sunLight.position.set(30, 50, 20);
       scene.add(sunLight);
 
-      // Địa hình Sa Mạc Cát
-      const groundGeo = new THREE.PlaneGeometry(200, 200, 32, 32);
-      const groundMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.95 });
+      // Sàn Sa Mạc
+      const groundGeo = new THREE.PlaneGeometry(160, 160);
+      const groundMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 });
       const ground = new THREE.Mesh(groundGeo, groundMat);
       ground.rotation.x = -Math.PI / 2;
       scene.add(ground);
 
-      // Các Mỏm Đá Sa Mạc (Desert Rocks trong ảnh)
-      for(let i = 0; i < 15; i++) {
-        const rockGeo = new THREE.DodecahedronGeometry(2 + Math.random() * 4, 1);
-        const rockMat = new THREE.MeshStandardMaterial({ color: 0xb45309, roughness: 0.8 });
-        const rock = new THREE.Mesh(rockGeo, rockMat);
-        rock.position.set((Math.random() - 0.5) * 120, 1, -10 - Math.random() * 80);
-        scene.add(rock);
-      }
-
-      // Tường Căn Cứ Base Wall
-      const wallGeo = new THREE.BoxGeometry(36, 5, 2);
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0x475569 });
+      // Căn Cứ Base Wall
+      const wallGeo = new THREE.BoxGeometry(32, 4, 2);
+      const wallMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.3 });
       const baseWall = new THREE.Mesh(wallGeo, wallMat);
-      baseWall.position.set(0, 2.5, -4);
+      baseWall.position.set(0, 2, -5);
       scene.add(baseWall);
 
-      // DỰNG MODEL KHẨU SÚNG 3D M4A1 NÓNG MÀU VÀNG NÂU CÓ KÍNH NGẮM (ĐÚNG NHƯ ẢNH MAU)
-      gunGroup = new THREE.Group();
+      // KHẨU SÚNG 3D CẦM TRÊN TAY (GÓC NHÌN FPS)
+      const gunGroup = new THREE.Group();
+      const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 1.2);
+      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 });
+      const gunBody = new THREE.Mesh(bodyGeo, bodyMat);
 
-      // Thân súng
-      const bodyGeo = new THREE.BoxGeometry(0.18, 0.28, 0.9);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0xd97706, metalness: 0.7 });
-      const body = new THREE.Mesh(bodyGeo, bodyMat);
-
-      // Nòng súng
-      const barrelGeo = new THREE.CylinderGeometry(0.04, 0.04, 0.7, 12);
+      const barrelGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.8, 12);
       barrelGeo.rotateX(Math.PI / 2);
-      const barrelMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.9 });
-      const barrel = new THREE.Mesh(barrelGeo, barrelMat);
-      barrel.position.set(0, 0.05, -0.7);
+      const barrelMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9 });
+      const gunBarrel = new THREE.Mesh(barrelGeo, barrelMat);
+      gunBarrel.position.set(0, 0.05, -0.8);
 
-      // Kính ngắm Holographic Red Dot
-      const sightGeo = new THREE.BoxGeometry(0.14, 0.18, 0.22);
-      const sightMat = new THREE.MeshStandardMaterial({ color: 0x0f172a });
-      const sight = new THREE.Mesh(sightGeo, sightMat);
-      sight.position.set(0, 0.22, -0.1);
+      gunGroup.add(gunBody);
+      gunGroup.add(gunBarrel);
 
-      // Ánh sáng phát ra từ kính ngắm (như ảnh)
-      const lightGeo = new THREE.SphereGeometry(0.06, 8, 8);
-      const lightMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-      const sightLight = new THREE.Mesh(lightGeo, lightMat);
-      sightLight.position.set(0, 0.22, -0.15);
-
-      // Muzzle Flash (Lửa đầu nòng)
-      const flashGeo = new THREE.SphereGeometry(0.12, 8, 8);
-      const flashMat = new THREE.MeshBasicMaterial({ color: 0xffea00, visible: false });
+      // Muzzle Flash Effect (Ánh sáng đầu nòng)
+      const flashGeo = new THREE.SphereGeometry(0.15, 8, 8);
+      const flashMat = new THREE.MeshBasicMaterial({ color: 0xfffb26, visible: false });
       muzzleFlash = new THREE.Mesh(flashGeo, flashMat);
-      muzzleFlash.position.set(0, 0.05, -1.1);
+      muzzleFlash.position.set(0, 0.05, -1.2);
+      gunGroup.add(muzzleFlash);
 
-      gunGroup.add(body, barrel, sight, sightLight, muzzleFlash);
-      gunGroup.position.set(0.38, -0.32, -0.65);
+      gunGroup.position.set(0.45, -0.35, -0.8);
       camera.add(gunGroup);
       scene.add(camera);
 
-      // PHÍM L LOCK/UNLOCK CHUỘT
+      // 🔐 KHÓA & MỞ KHÓA CHUỘT BẰNG PHÍM "L"
       window.addEventListener('keydown', (e) => {
         keys[e.code] = true;
+        
         if (e.code === 'KeyL' && isGameRunning) {
-          if (document.pointerLockElement === holder) document.exitPointerLock();
-          else holder.requestPointerLock();
+          if (document.pointerLockElement === container) {
+            document.exitPointerLock();
+          } else {
+            container.requestPointerLock();
+          }
         }
       });
       window.addEventListener('keyup', (e) => keys[e.code] = false);
 
-      holder.addEventListener('click', () => { if (isGameRunning) holder.requestPointerLock(); });
+      container.addEventListener('click', () => {
+        if (isGameRunning) container.requestPointerLock();
+      });
 
       document.addEventListener('mousemove', (e) => {
-        if (document.pointerLockElement === holder) {
-          yaw -= e.movementX * 0.0022;
-          pitch -= e.movementY * 0.0022;
-          pitch = Math.max(-Math.PI / 2.3, Math.min(Math.PI / 2.3, pitch));
+        if (document.pointerLockElement === container) {
+          yaw -= e.movementX * 0.0024;
+          pitch -= e.movementY * 0.0024;
+          pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
+
           camera.rotation.order = 'YXZ';
-          camera.rotation.y = yaw; camera.rotation.x = pitch;
+          camera.rotation.y = yaw;
+          camera.rotation.x = pitch;
         }
       });
 
-      holder.addEventListener('mousedown', (e) => {
-        if (isGameRunning && e.button === 0 && clip > 0) {
-          clip--; updateHUD();
-          muzzleFlash.material.visible = true;
-          setTimeout(() => muzzleFlash.material.visible = false, 40);
-
-          // Tạo viên đạn
-          const bulletGeo = new THREE.SphereGeometry(0.08, 8, 8);
-          const bulletMat = new THREE.MeshBasicMaterial({ color: 0xfffb26 });
-          const bullet = new THREE.Mesh(bulletGeo, bulletMat);
-          bullet.position.copy(camera.position);
-          bullet.userData = { dir: new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion) };
-          scene.add(bullet); bullets.push(bullet);
+      // Nhấp bắn
+      container.addEventListener('mousedown', (e) => {
+        if (isGameRunning && e.button === 0 && document.pointerLockElement === container) {
+          shootGun();
         }
       });
+    }
+
+    function shootGun() {
+      if (ammoClip <= 0) return;
+      ammoClip--;
+      updateHUD();
+      playSound(400 + Math.random() * 200, 'sawtooth', 0.08);
+
+      // Muzzle Flash
+      muzzleFlash.material.visible = true;
+      setTimeout(() => muzzleFlash.material.visible = false, 50);
+
+      // Đạn
+      const bulletGeo = new THREE.SphereGeometry(0.1, 8, 8);
+      const bulletMat = new THREE.MeshBasicMaterial({ color: 0xfffb26 });
+      const bullet = new THREE.Mesh(bulletGeo, bulletMat);
+
+      bullet.position.copy(camera.position);
+      const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+      bullet.userData = { dir: dir, damage: 30 * gunLevel };
+
+      scene.add(bullet);
+      bullets.push(bullet);
     }
 
     function renderMinimap() {
-      miniCtx.clearRect(0, 0, 120, 120);
-      // Căn cứ
-      miniCtx.fillStyle = '#38bdf8'; miniCtx.fillRect(40, 55, 40, 5);
-      // Bạn (Hình nón xanh)
-      const px = 60 + camera.position.x * 1.4;
-      const pz = 60 + camera.position.z * 1.4;
-      miniCtx.beginPath(); miniCtx.arc(px, pz, 4, 0, Math.PI * 2); miniCtx.fillStyle = '#22c55e'; miniCtx.fill();
-      // Zombie (Chấm đỏ)
+      miniCtx.clearRect(0, 0, 110, 110);
+      
+      // Vẽ Căn cứ
+      miniCtx.fillStyle = '#38bdf8';
+      miniCtx.fillRect(35, 50, 40, 6);
+
+      // Vẽ Người chơi (Nón màu xanh)
+      const px = 55 + camera.position.x * 1.5;
+      const pz = 55 + camera.position.z * 1.5;
+      miniCtx.beginPath();
+      miniCtx.arc(px, pz, 4, 0, Math.PI * 2);
+      miniCtx.fillStyle = '#22c55e';
+      miniCtx.fill();
+
+      // Vẽ Zombie (Chấm đỏ)
       zombies.forEach(z => {
-        const zx = 60 + z.position.x * 1.4;
-        const zz = 60 + z.position.z * 1.4;
-        miniCtx.beginPath(); miniCtx.arc(zx, zz, 3, 0, Math.PI * 2); miniCtx.fillStyle = '#ef4444'; miniCtx.fill();
+        const zx = 55 + z.position.x * 1.5;
+        const zz = 55 + z.position.z * 1.5;
+        miniCtx.beginPath();
+        miniCtx.arc(zx, zz, 3, 0, Math.PI * 2);
+        miniCtx.fillStyle = '#ef4444';
+        miniCtx.fill();
       });
     }
 
-    function doMission() { if (isDayTime) { money += 50; updateHUD(); } }
-    function upgradeGun() { if (isDayTime && money >= 100) { money -= 100; updateHUD(); } }
-    function repairBase() { if (isDayTime && money >= 40) { money -= 40; hp = Math.min(100, hp + 30); updateHUD(); } }
+    function doMission() { if (!isDayTime) return; money += 50; updateHUD(); }
+    function upgradeMinigun() {
+      if (!isDayTime || money < gunCost) return;
+      money -= gunCost; gunLevel++; gunCost += 80; updateHUD();
+    }
+    function repairBase() {
+      if (!isDayTime || money < 40) return;
+      money -= 40; baseHP = Math.min(100, baseHP + 35); updateHUD();
+    }
 
     function startNightWave() {
       isDayTime = false;
-      document.getElementById('shop-bar').style.display = 'none';
-      scene.fog.color.setHex(0x0a0f1d);
-      for(let i=0; i<totalZombies; i++) {
+      document.getElementById('day-shop-bar').style.display = 'none';
+      scene.fog.color.setHex(0x030712);
+      spawnZombieWave(totalWaveZombies);
+    }
+
+    function startDayTime() {
+      isDayTime = true;
+      document.getElementById('day-shop-bar').style.display = 'flex';
+      scene.fog.color.setHex(0xd6c0b0);
+    }
+
+    function spawnZombieWave(count) {
+      for (let i = 0; i < count; i++) {
         setTimeout(() => {
           if (!isDayTime && isGameRunning) {
-            const zGeo = new THREE.BoxGeometry(1.2, 2.2, 1.2);
-            const zMat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
-            const zombie = new THREE.Mesh(zGeo, zMat);
-            zombie.position.set((Math.random() - 0.5) * 30, 1.1, -50 - Math.random() * 20);
-            zombie.userData = { hp: 60, speed: 0.06 };
-            scene.add(zombie); zombies.push(zombie);
+            const geo = new THREE.BoxGeometry(1.2, 2.2, 1.2);
+            const mat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
+            const zombie = new THREE.Mesh(geo, mat);
+
+            zombie.position.set((Math.random() - 0.5) * 28, 1.1, -45 - Math.random() * 20);
+            zombie.userData = { hp: 50 + waveNum * 10, speed: 0.05 + Math.random() * 0.03 };
+
+            scene.add(zombie);
+            zombies.push(zombie);
           }
-        }, i * 800);
+        }, i * 700);
       }
     }
 
-    function startGame() {
-      document.getElementById('start-overlay').style.display = 'none';
-      if (!scene) init3D();
-      isGameRunning = true; updateHUD();
-      animate();
+    function initAndStartGame() {
+      document.getElementById('fps-overlay').style.display = 'none';
+      if (!scene) init3DWorld();
+
+      money = 100; baseHP = 100; kills = 0; waveNum = 1; ammoClip = 30; ammoReserve = 970;
+      updateHUD();
+      startDayTime();
+
+      isGameRunning = true;
+      animate3D();
     }
 
-    function animate() {
+    function animate3D() {
       if (!isGameRunning) return;
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animate3D);
 
-      // WASD Di chuyển
+      // WASD Movement
       const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
       const side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-      if (keys['KeyW']) camera.position.addScaledVector(forward, 0.15);
-      if (keys['KeyS']) camera.position.addScaledVector(forward, -0.15);
-      if (keys['KeyA']) camera.position.addScaledVector(side, -0.15);
-      if (keys['KeyD']) camera.position.addScaledVector(side, 0.15);
+
+      if (keys['KeyW']) camera.position.addScaledVector(forward, moveSpeed);
+      if (keys['KeyS']) camera.position.addScaledVector(forward, -moveSpeed);
+      if (keys['KeyA']) camera.position.addScaledVector(side, -moveSpeed);
+      if (keys['KeyD']) camera.position.addScaledVector(side, moveSpeed);
 
       camera.position.y = 2;
-      camera.position.z = Math.max(-3, Math.min(25, camera.position.z));
-      camera.position.x = Math.max(-15, Math.min(15, camera.position.x));
+      camera.position.z = Math.max(-4, Math.min(25, camera.position.z));
+      camera.position.x = Math.max(-14, Math.min(14, camera.position.x));
 
-      // Đạn
+      // Bullets
       for (let i = bullets.length - 1; i >= 0; i--) {
         let b = bullets[i];
-        b.position.addScaledVector(b.userData.dir, 1.4);
-        if (b.position.distanceTo(camera.position) > 70) { scene.remove(b); bullets.splice(i, 1); }
+        b.position.addScaledVector(b.userData.dir, 1.3);
+
+        if (b.position.distanceTo(camera.position) > 60) {
+          scene.remove(b); bullets.splice(i, 1);
+        }
       }
 
-      // Zombie
+      // Zombies
       for (let i = zombies.length - 1; i >= 0; i--) {
         let z = zombies[i];
         z.position.z += z.userData.speed;
@@ -395,17 +709,31 @@
         for (let j = bullets.length - 1; j >= 0; j--) {
           let b = bullets[j];
           if (b.position.distanceTo(z.position) < 1.3) {
-            z.userData.hp -= 35; scene.remove(b); bullets.splice(j, 1);
+            z.userData.hp -= b.userData.damage;
+            scene.remove(b); bullets.splice(j, 1);
+
             if (z.userData.hp <= 0) {
               scene.remove(z); zombies.splice(i, 1);
-              kills++; updateHUD();
+              kills++; money += 20;
+              updateHUD();
+
+              if (kills >= totalWaveZombies && !isDayTime) {
+                waveNum++; totalWaveZombies += 5; kills = 0;
+                startDayTime(); updateHUD();
+              }
               break;
             }
           }
         }
 
-        if (z && z.position.z >= -5) {
-          hp -= 0.1; updateHUD();
+        if (z && z.position.z >= -6) {
+          baseHP -= 0.15; updateHUD();
+          if (baseHP <= 0) {
+            isGameRunning = false;
+            document.exitPointerLock();
+            document.getElementById('fps-overlay').style.display = 'flex';
+            document.getElementById('fps-overlay').querySelector('h3').innerText = "CĂN CỨ THẤT THỦ!";
+          }
         }
       }
 
