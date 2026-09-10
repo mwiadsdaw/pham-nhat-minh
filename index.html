@@ -30,7 +30,7 @@
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     }
 
-    /* Nền động tuyệt đẹp */
+    /* Nền động chuyển màu */
     body {
       min-height: 100vh;
       background: linear-gradient(-45deg, #0f172a, #1e1b4b, #311042, #075985);
@@ -48,7 +48,7 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Thanh Điều Hướng Header */
+    /* Header & Navigation */
     header {
       width: 100%;
       max-width: 900px;
@@ -91,7 +91,7 @@
       transform: translateY(-2px);
     }
 
-    /* Container Chính */
+    /* Main Container */
     main {
       width: 100%;
       max-width: 800px;
@@ -120,7 +120,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Section Trang Chủ - Thông Tin Cá Nhân */
+    /* Profile Header */
     .profile-header {
       text-align: center;
       margin-bottom: 25px;
@@ -230,7 +230,7 @@
 
     .video-container {
       position: relative;
-      padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+      padding-bottom: 56.25%;
       height: 0;
     }
 
@@ -247,7 +247,7 @@
       padding: 15px;
     }
 
-    /* Section Game - Catch The Stars */
+    /* Section Game */
     #game-canvas {
       background: #090d16;
       border-radius: 12px;
@@ -319,7 +319,7 @@
 </head>
 <body>
 
-  <!-- Thanh Menu Điều Hướng -->
+  <!-- Menu Điều Hướng -->
   <header>
     <nav>
       <a onclick="showTab('home')" id="tab-home" class="active"><i class="fa-solid fa-user"></i><span>Trang Chủ</span></a>
@@ -330,7 +330,7 @@
   </header>
 
   <main>
-    <!-- Tab 1: Trang Chủ (Thông tin cá nhân & Giới thiệu hạ tầng) -->
+    <!-- Tab 1: Trang Chủ -->
     <section id="home" class="section active">
       <div class="profile-header">
         <div class="avatar-wrapper">
@@ -340,7 +340,7 @@
         <p class="tagline">Developer & Music Lover | 10A2 - THPT Sóc Sơn</p>
       </div>
 
-      <!-- Khối Giới Thiệu Tự Làm Hệ Thống Web -->
+      <!-- Giới Thiệu Hạ Tầng -->
       <div class="intro-box">
         <h2><i class="fa-solid fa-server"></i> Giới Thiệu Hạ Tầng & Công Nghệ</h2>
         <p>
@@ -367,7 +367,7 @@
           <i class="fa-solid fa-guitar"></i>
           <div>
             <h3>Hoạt động</h3>
-            <p>Thành viên tích cực<br>Music Club</p>
+            <p>Thành viên<br>Sóc Sơn Music Club</p>
           </div>
         </div>
         <div class="info-card">
@@ -383,7 +383,7 @@
     <!-- Tab 2: Âm Nhạc -->
     <section id="music" class="section">
       <h2><i class="fa-solid fa-headphones"></i> Video Âm Nhạc</h2>
-      <p style="color: var(--text-sub); margin-top: 5px;">Sản phẩm & Hoạt động tại Music Club THPT Sóc Sơn</p>
+      <p style="color: var(--text-sub); margin-top: 5px;">Sản phẩm & Hoạt động tại Sóc Sơn Music Club</p>
 
       <div class="video-grid">
         <div class="video-card">
@@ -392,7 +392,7 @@
           </div>
           <div class="video-info">
             <h3>Lofi Chill Beats - Relaxing Study Music</h3>
-            <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">Music Club Practice Session</p>
+            <p style="color: var(--text-sub); font-size: 0.9rem; margin-top: 5px;">Sóc Sơn Music Club Session</p>
           </div>
         </div>
       </div>
@@ -401,7 +401,7 @@
     <!-- Tab 3: Game -->
     <section id="game" class="section">
       <h2><i class="fa-solid fa-gamepad"></i> Hứng Sao Vũ Trụ (Star Catcher)</h2>
-      <p style="color: var(--text-sub); margin-top: 5px;">Game mini được viết bằng JavaScript (Dùng phím ⬅️ ➡️ hoặc vuốt màn hình để di chuyển thanh hứng)</p>
+      <p style="color: var(--text-sub); margin-top: 5px;">Game mini bằng JavaScript (Dùng phím ⬅️ ➡️ hoặc vuốt màn hình để di chuyển)</p>
       
       <canvas id="game-canvas" width="360" height="400"></canvas>
       
@@ -438,7 +438,7 @@
   </footer>
 
   <script>
-    // Chuyển Tab Động
+    // Chuyển Tab
     function showTab(tabId) {
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
       document.querySelectorAll('nav a').forEach(btn => btn.classList.remove('active'));
@@ -451,7 +451,7 @@
       }
     }
 
-    // Logic Mini Game Hứng Sao
+    // Mini Game Hứng Sao
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     let score = 0;
