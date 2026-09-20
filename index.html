@@ -1,558 +1,504 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Destination A1 Grammar & Vocabulary Test</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A1 English Test - Week 1 Review</title>
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
+        :root {
+            --primary-color: #4F46E5;
+            --primary-hover: #4338CA;
+            --bg-color: #F3F4F6;
+            --card-bg: #FFFFFF;
+            --text-color: #1F2937;
+            --text-muted: #6B7280;
+            --border-color: #E5E7EB;
+            --correct-color: #10B981;
+            --correct-bg: #D1FAE5;
+            --wrong-color: #EF4444;
+            --wrong-bg: #FEE2E2;
         }
-        /* Custom scrollbar hiding for smooth pill navigation */
-        .no-scrollbar::-webkit-scrollbar {
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 12px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+            justify-content: space-between;
+        }
+
+        header {
+            background: var(--primary-color);
+            color: white;
+            padding: 20px 16px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 4px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.3);
+            margin-top: 12px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 10%;
+            background-color: #10B981;
+            transition: width 0.3s ease;
+        }
+
+        .main-content {
+            padding: 20px 16px;
+            flex-grow: 1;
+        }
+
+        .question-card {
             display: none;
         }
-        .no-scrollbar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+
+        .question-card.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .question-number {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            line-height: 1.4;
+            margin-bottom: 20px;
+        }
+
+        .options-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 14px 16px;
+            background-color: #F9FAFB;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 1rem;
+            text-align: left;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #EEF2FF;
+            color: var(--primary-color);
+        }
+
+        .option-btn.correct {
+            border-color: var(--correct-color);
+            background-color: var(--correct-bg);
+            color: #065F46;
+        }
+
+        .option-btn.wrong {
+            border-color: var(--wrong-color);
+            background-color: var(--wrong-bg);
+            color: #991B1B;
+        }
+
+        .explanation {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background-color: #F3F4F6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #374151;
+            display: none;
+        }
+
+        .explanation.show {
+            display: block;
+        }
+
+        footer {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            background: #FAFAFA;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            text-align: center;
+        }
+
+        .btn-prev {
+            background-color: #E5E7EB;
+            color: #374151;
+        }
+
+        .btn-next {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .btn-next:disabled {
+            background-color: #9CA3AF;
+            cursor: not-allowed;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            display: none;
+            text-align: center;
+            padding: 20px 10px;
+        }
+
+        .result-screen.active {
+            display: block;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+        }
+
+        .score-circle .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+
+        .score-circle .label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .result-status {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .result-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        .btn-restart {
+            background-color: var(--primary-color);
+            color: white;
+            width: 100%;
         }
     </style>
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between max-w-md mx-auto shadow-2xl relative border-x border-slate-200">
+<body>
 
-    <!-- App Header -->
-    <header class="bg-indigo-600 text-white px-4 py-3 sticky top-0 z-40 shadow-md">
-        <div class="flex items-center justify-between">
-            <div class="flex items-center space-x-2">
-                <div class="bg-white/20 p-1.5 rounded-lg">
-                    <svg class="w-5 h-5 text-indigo-100" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
-                <div>
-                    <h1 class="text-base font-bold leading-tight">Destination A1</h1>
-                    <p class="text-[10px] text-indigo-200 uppercase tracking-wider font-semibold">Grammar & Vocabulary</p>
-                </div>
-            </div>
-            <!-- Timer Badge -->
-            <div id="timerContainer" class="flex items-center space-x-1.5 bg-indigo-700/80 px-2.5 py-1 rounded-full text-xs font-semibold border border-indigo-400/30">
-                <svg class="w-3.5 h-3.5 text-indigo-200 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span id="timerDisplay" class="font-mono text-indigo-100">05:00</span>
-            </div>
-        </div>
-
-        <!-- Progress Line (Hidden on Welcome Screen) -->
-        <div id="progressHeader" class="mt-3 hidden">
-            <div class="flex justify-between items-center text-[11px] font-medium text-indigo-200 mb-1">
-                <span id="progressText">Question 1 of 10</span>
-                <span id="progressPercent">10%</span>
-            </div>
-            <div class="w-full bg-indigo-900/40 h-1.5 rounded-full overflow-hidden">
-                <div id="progressBar" class="bg-emerald-400 h-full transition-all duration-300 w-[10%]"></div>
-            </div>
+<div class="app-container">
+    <header>
+        <h1>Destination A1 Test</h1>
+        <p>Kiểm tra kiến thức Tuần 1 (Ngày 1–7)</p>
+        <div class="progress-bar-container">
+            <div class="progress-bar" id="progress-bar"></div>
         </div>
     </header>
 
-    <!-- Main Dynamic Content Container -->
-    <main class="flex-grow p-4 flex flex-col justify-start overflow-y-auto">
-
-        <!-- Welcome Screen -->
-        <div id="welcomeScreen" class="my-auto py-6 text-center space-y-6">
-            <div class="w-20 h-20 bg-indigo-100 text-indigo-600 rounded-3xl flex items-center justify-center mx-auto shadow-inner transform rotate-3">
-                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path>
-                </svg>
-            </div>
-
-            <div>
-                <h2 class="text-2xl font-extrabold text-slate-800">A1 English Practice</h2>
-                <p class="text-xs text-slate-500 mt-1 max-w-xs mx-auto">Master essential beginner grammar & vocabulary based on the Destination A1 syllabus.</p>
-            </div>
-
-            <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-200 text-left space-y-3">
-                <div class="flex items-center space-x-3 text-xs text-slate-600">
-                    <span class="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold">10</span>
-                    <span>10 Multiple Choice Questions</span>
-                </div>
-                <div class="flex items-center space-x-3 text-xs text-slate-600">
-                    <span class="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold">⏱</span>
-                    <span>5 Minutes Time Limit</span>
-                </div>
-                <div class="flex items-center space-x-3 text-xs text-slate-600">
-                    <span class="w-6 h-6 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center font-bold">💡</span>
-                    <span>Instant Bilingual Explanations (EN/VN)</span>
-                </div>
-            </div>
-
-            <button onclick="startTest()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center space-x-2">
-                <span>Start Test Now</span>
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
-                </svg>
-            </button>
+    <div class="main-content">
+        <!-- Questions Container -->
+        <div id="quiz-container">
+            <!-- Question Cards will be generated by JS -->
         </div>
 
-        <!-- Quiz Screen -->
-        <div id="quizScreen" class="hidden flex-grow flex flex-col justify-between space-y-4">
-            
-            <!-- Quick Question Navigation Pills -->
-            <div id="navPills" class="flex space-x-2 overflow-x-auto no-scrollbar py-1">
-                <!-- Injected via JavaScript -->
+        <!-- Result Screen -->
+        <div class="result-screen" id="result-screen">
+            <div class="score-circle">
+                <span class="number" id="score-text">0/10</span>
+                <span class="label">Điểm số</span>
             </div>
-
-            <!-- Question Card -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex-grow flex flex-col justify-between">
-                <div>
-                    <!-- Topic Tag -->
-                    <div class="mb-3">
-                        <span id="topicBadge" class="inline-block px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[11px] font-bold rounded-lg border border-indigo-100 uppercase tracking-wide">
-                            Grammar: Present Simple
-                        </span>
-                    </div>
-
-                    <!-- Question Prompt -->
-                    <h3 id="questionText" class="text-base font-bold text-slate-800 leading-snug mb-5">
-                        Loading question...
-                    </h3>
-
-                    <!-- Option List -->
-                    <div id="optionsContainer" class="space-y-2.5">
-                        <!-- Options injected dynamically -->
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Results Screen -->
-        <div id="resultScreen" class="hidden space-y-5 pb-6">
-            
-            <!-- Score Banner Card -->
-            <div id="scoreCard" class="bg-white rounded-2xl p-6 text-center shadow-sm border border-slate-200 space-y-3">
-                <div id="gradeBadge" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
-                    🏆
-                </div>
-                <div>
-                    <h2 id="gradeTitle" class="text-xl font-extrabold text-slate-800">Excellent! A1 Master</h2>
-                    <p id="scoreSubtitle" class="text-xs text-slate-500 mt-0.5">You passed the Destination A1 assessment.</p>
-                </div>
-
-                <div class="bg-slate-50 py-3 px-4 rounded-xl flex justify-around items-center border border-slate-100">
-                    <div>
-                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Score</p>
-                        <p id="scoreText" class="text-xl font-extrabold text-indigo-600">8 / 10</p>
-                    </div>
-                    <div class="h-8 w-px bg-slate-200"></div>
-                    <div>
-                        <p class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Accuracy</p>
-                        <p id="accuracyText" class="text-xl font-extrabold text-emerald-600">80%</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between pt-2">
-                <h3 class="text-sm font-bold text-slate-800">Answer Breakdown</h3>
-                <span class="text-[11px] text-slate-500 font-medium">Bilingual Review</span>
-            </div>
-
-            <!-- Review Items Accordion / List -->
-            <div id="reviewList" class="space-y-3">
-                <!-- Review cards injected via JS -->
-            </div>
-
-            <button onclick="resetTest()" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 active:scale-95 text-white font-bold rounded-xl shadow-lg transition-all text-sm flex items-center justify-center space-x-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                </svg>
-                <span>Try Again</span>
-            </button>
-
-        </div>
-
-    </main>
-
-    <!-- Bottom Controls Bar (Quiz View) -->
-    <footer id="bottomBar" class="hidden bg-white border-t border-slate-200 p-3 sticky bottom-0 z-40">
-        <div class="flex items-center justify-between space-x-2">
-            <button id="prevBtn" onclick="navigateQuestion(-1)" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition-colors disabled:opacity-40 disabled:pointer-events-none">
-                ← Previous
-            </button>
-            <button id="nextBtn" onclick="navigateQuestion(1)" class="flex-1 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition-colors shadow">
-                Next →
-            </button>
-            <button id="submitBtn" onclick="confirmSubmit()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-colors shadow">
-                Submit
-            </button>
-        </div>
-    </footer>
-
-    <!-- Confirmation Modal -->
-    <div id="modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-5 max-w-xs w-full shadow-2xl text-center space-y-4 border border-slate-100">
-            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center mx-auto">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
-                </svg>
-            </div>
-            <div>
-                <h3 class="text-base font-bold text-slate-800">Submit Test?</h3>
-                <p id="modalMsg" class="text-xs text-slate-500 mt-1">You have answered all questions.</p>
-            </div>
-            <div class="flex space-x-2 pt-1">
-                <button onclick="closeModal()" class="flex-1 py-2 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs">
-                    Continue
-                </button>
-                <button onclick="evaluateTest()" class="flex-1 py-2 bg-emerald-600 text-white font-bold rounded-xl text-xs shadow">
-                    Yes, Finish
-                </button>
-            </div>
+            <div class="result-status" id="result-status">Đang tính kết quả...</div>
+            <div class="result-desc" id="result-desc">...</div>
+            <button class="btn btn-restart" onclick="restartQuiz()">Làm lại bài test</button>
         </div>
     </div>
 
-    <script>
-        // 10 Destination A1 Syllabus Multiple Choice Questions
-        const questions = [
-            {
-                id: 1,
-                topic: "Grammar: Present Simple",
-                text: "She _______ to school by bus every morning.",
-                options: ["go", "goes", "is going", "went"],
-                answer: 1,
-                explanationEn: "Use Present Simple for daily habits. Third person singular (She) takes 'goes'.",
-                explanationVn: "Thì Hiện tại đơn chỉ thói quen hàng ngày. Chủ ngữ số ít (She) đi với động từ thêm -es 'goes'."
-            },
-            {
-                id: 2,
-                topic: "Grammar: Present Continuous",
-                text: "Listen! The teacher _______ to the students right now.",
-                options: ["speaks", "is speaking", "are speaking", "talked"],
-                answer: 1,
-                explanationEn: "'Listen!' and 'right now' signal Present Continuous (am/is/are + V-ing).",
-                explanationVn: "Từ nhận biết 'Listen!' và 'right now' cho biết hành động đang diễn ra -> dùng Present Continuous (is speaking)."
-            },
-            {
-                id: 3,
-                topic: "Grammar: Prepositions of Time",
-                text: "Our English class starts _______ 8:30 AM _______ Mondays.",
-                options: ["at / on", "in / at", "on / in", "at / in"],
-                answer: 0,
-                explanationEn: "Use 'at' for specific times (at 8:30 AM) and 'on' for days of the week (on Mondays).",
-                explanationVn: "Dùng giới từ 'at' trước giờ cụ thể và 'on' trước các ngày trong tuần."
-            },
-            {
-                id: 4,
-                topic: "Grammar: Articles",
-                text: "My brother wants to buy _______ new laptop and _______ uncle gave him some money.",
-                options: ["a / an", "a / his", "an / the", "the / an"],
-                answer: 1,
-                explanationEn: "'a' is used before singular consonant sound ('new'). 'his' is a possessive adjective.",
-                explanationVn: "'a' đi trước danh từ số ít bắt đầu bằng phụ âm ('new'). 'his' là tính từ sở hữu bổ nghĩa cho uncle."
-            },
-            {
-                id: 5,
-                topic: "Vocabulary: Daily Routine",
-                text: "I usually _______ my teeth and wash my face before going to bed.",
-                options: ["clean", "brush", "comb", "do"],
-                answer: 1,
-                explanationEn: "The correct collocation is 'brush my teeth'.",
-                explanationVn: "Cụm từ cố định trong tiếng Anh: 'brush my teeth' (đánh răng)."
-            },
-            {
-                id: 6,
-                topic: "Grammar: Possessives",
-                text: "Is this book _______ or is it _______?",
-                options: ["your / my", "yours / mine", "you / me", "your / mine"],
-                answer: 1,
-                explanationEn: "Possessive pronouns ('yours', 'mine') stand alone without a noun following them.",
-                explanationVn: "Đại từ sở hữu ('yours', 'mine') đứng độc lập không cần danh từ đi kèm phía sau."
-            },
-            {
-                id: 7,
-                topic: "Vocabulary: Food & Drink",
-                text: "Can I have a _______ of water and a _______ of bread, please?",
-                options: ["glass / slice", "cup / bowl", "piece / bottle", "slice / glass"],
-                answer: 0,
-                explanationEn: "Use 'a glass of water' for liquids and 'a slice of bread' for bread.",
-                explanationVn: "Từ chỉ định lượng: 'a glass of water' (1 cốc nước) và 'a slice of bread' (1 lát bánh mì)."
-            },
-            {
-                id: 8,
-                topic: "Grammar: Countable / Uncountable",
-                text: "There isn't _______ milk in the fridge, but we have _______ apples.",
-                options: ["some / any", "any / some", "many / much", "a / an"],
-                answer: 1,
-                explanationEn: "Use 'any' in negative sentences and 'some' in affirmative sentences with plural nouns.",
-                explanationVn: "Dùng 'any' trong câu phủ định (isn't) và 'some' trong câu khẳng định với danh từ số nhiều (apples)."
-            },
-            {
-                id: 9,
-                topic: "Grammar: Prepositions of Place",
-                text: "The cat is sleeping _______ the sofa _______ the living room.",
-                options: ["on / in", "in / at", "at / on", "under / on"],
-                answer: 0,
-                explanationEn: "Use 'on' for surfaces (on the sofa) and 'in' for enclosed spaces/rooms (in the living room).",
-                explanationVn: "Dùng 'on' cho bề mặt (trên ghế sofa) và 'in' cho không gian phòng học/nhà (trong phòng khách)."
-            },
-            {
-                id: 10,
-                topic: "Vocabulary: Family & Jobs",
-                text: "My aunt is a _______. She works in a hospital and helps sick people.",
-                options: ["teacher", "chef", "nurse", "pilot"],
-                answer: 2,
-                explanationEn: "A 'nurse' or doctor works in a hospital to care for sick people.",
-                explanationVn: "Y tá ('nurse') làm việc tại bệnh viện và chăm sóc người ốm."
-            }
-        ];
+    <footer id="footer-nav">
+        <button class="btn btn-prev" id="btn-prev" onclick="changeQuestion(-1)">Trở lại</button>
+        <button class="btn btn-next" id="btn-next" onclick="changeQuestion(1)">Tiếp theo</button>
+    </footer>
+</div>
 
-        // State Management
-        let currentIdx = 0;
-        let userAnswers = new Array(questions.length).fill(null);
-        let timeRemaining = 300; // 5 minutes
-        let timerInterval = null;
+<script>
+const quizData = [
+    {
+        q: "She _______ a doctor. She works in a hospital.",
+        options: ["am", "is", "are", "be"],
+        correct: 1,
+        explain: "Chủ ngữ 'She' đi với động từ To Be là 'is'."
+    },
+    {
+        q: "This is my brother. _______ name is Nam.",
+        options: ["He", "Him", "His", "Her"],
+        correct: 2,
+        explain: "Cần tính từ sở hữu 'His' đứng trước danh từ 'name' (His name = Tên của anh ấy)."
+    },
+    {
+        q: "Every morning, My _______ coffee at 7 AM.",
+        options: ["drink", "drinks", "drinking", "is drink"],
+        correct: 1,
+        explain: "Thì Hiện tại đơn, chủ ngữ số ít 'My' nên động từ phải thêm '-s' (drinks)."
+    },
+    {
+        q: "They _______ like eating seafood because they are allergic.",
+        options: ["don't", "doesn't", "isn't", "aren't"],
+        correct: 0,
+        explain: "Trợ động từ phủ định ở hiện tại đơn đi với chủ ngữ 'They' là 'don't'."
+    },
+    {
+        q: "Where _______ your parents live?",
+        options: ["is", "are", "do", "does"],
+        correct: 2,
+        explain: "Câu hỏi thì hiện tại đơn với động từ thường 'live', chủ ngữ số nhiều 'your parents' dùng trợ động từ 'do'."
+    },
+    {
+        q: "Can I have _______ apple, please?",
+        options: ["a", "an", "the", "không điền"],
+        correct: 1,
+        explain: "Mạo từ 'an' đứng trước danh từ bắt đầu bằng nguyên âm 'apple' (a, e, i, o, u)."
+    },
+    {
+        q: "Lan has three _______ in her room.",
+        options: ["cat", "cats", "cates", "caties"],
+        correct: 1,
+        explain: "Số đếm 'three' đi với danh từ số nhiều thêm '-s' (cats)."
+    },
+    {
+        q: "_______ do you usually go to bed? – At 10:30 PM.",
+        options: ["Where", "What time", "Who", "Why"],
+        correct: 1,
+        explain: "Hỏi về mốc thời gian / giờ giấc cụ thể ta dùng từ hỏi 'What time'."
+    },
+    {
+        q: "Look at _______! She is singing very well.",
+        options: ["she", "her", "his", "hers"],
+        correct: 1,
+        explain: "Đứng sau giới từ 'at' phải dùng đại từ tân ngữ 'her' (thay cho 'she')."
+    },
+    {
+        q: "My brother _______ play video games on weekdays.",
+        options: ["don't", "isn't", "doesn't", "not"],
+        correct: 2,
+        explain: "Phủ định thì hiện tại đơn với động từ thường 'play', chủ ngữ số ít 'My brother' dùng 'doesn't'."
+    }
+];
 
-        function startTest() {
-            document.getElementById('welcomeScreen').classList.add('hidden');
-            document.getElementById('quizScreen').classList.remove('hidden');
-            document.getElementById('bottomBar').classList.remove('hidden');
-            document.getElementById('progressHeader').classList.remove('hidden');
+let currentQuestion = 0;
+let userAnswers = new Array(quizData.length).fill(null);
 
-            renderNavPills();
-            loadQuestion(0);
-            startTimer();
+const quizContainer = document.getElementById('quiz-container');
+const progressBar = document.getElementById('progress-bar');
+const btnPrev = document.getElementById('btn-prev');
+const btnNext = document.getElementById('btn-next');
+const resultScreen = document.getElementById('result-screen');
+const footerNav = document.getElementById('footer-nav');
+
+function renderQuiz() {
+    quizContainer.innerHTML = '';
+    quizData.forEach((data, index) => {
+        const card = document.createElement('div');
+        card.className = `question-card ${index === 0 ? 'active' : ''}`;
+        card.id = `q-${index}`;
+
+        let optionsHTML = '';
+        data.options.forEach((opt, optIdx) => {
+            optionsHTML += `
+                <button class="option-btn" onclick="selectOption(${index}, ${optIdx})">
+                    <span style="margin-right: 8px; font-weight: bold;">${String.fromCharCode(65 + optIdx)}.</span> ${opt}
+                </button>
+            `;
+        });
+
+        card.innerHTML = `
+            <div class="question-number">Câu hỏi ${index + 1} / ${quizData.length}</div>
+            <div class="question-text">${data.q}</div>
+            <div class="options-list">${optionsHTML}</div>
+            <div class="explanation" id="explain-${index}">
+                <strong>Giải thích:</strong> ${data.explain}
+            </div>
+        `;
+
+        quizContainer.appendChild(card);
+    });
+    updateNav();
+}
+
+function selectOption(qIdx, optIdx) {
+    userAnswers[qIdx] = optIdx;
+    const card = document.getElementById(`q-${qIdx}`);
+    const options = card.querySelectorAll('.option-btn');
+    const explainBox = document.getElementById(`explain-${qIdx}`);
+    const correctIdx = quizData[qIdx].correct;
+
+    options.forEach((btn, idx) => {
+        btn.disabled = true; // Block change after selection for instant review
+        if (idx === correctIdx) {
+            btn.classList.add('correct');
         }
-
-        function startTimer() {
-            timeRemaining = 300;
-            updateTimerDisplay();
-            timerInterval = setInterval(() => {
-                timeRemaining--;
-                updateTimerDisplay();
-                if (timeRemaining <= 0) {
-                    clearInterval(timerInterval);
-                    evaluateTest();
-                }
-            }, 1000);
+        if (idx === optIdx && optIdx !== correctIdx) {
+            btn.classList.add('wrong');
         }
+    });
 
-        function updateTimerDisplay() {
-            const mins = Math.floor(timeRemaining / 60);
-            const secs = timeRemaining % 60;
-            document.getElementById('timerDisplay').innerText = 
-                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-        }
+    explainBox.classList.add('show');
+    btnNext.disabled = false;
+}
 
-        function renderNavPills() {
-            const pillsContainer = document.getElementById('navPills');
-            pillsContainer.innerHTML = '';
-            questions.forEach((_, idx) => {
-                const btn = document.createElement('button');
-                btn.id = `pill-${idx}`;
-                btn.onclick = () => loadQuestion(idx);
-                btn.className = `flex-shrink-0 w-8 h-8 rounded-full text-xs font-bold transition-all flex items-center justify-center border ${getPillStyle(idx)}`;
-                btn.innerText = idx + 1;
-                pillsContainer.appendChild(btn);
-            });
-        }
+function changeQuestion(direction) {
+    const cards = document.querySelectorAll('.question-card');
+    cards[currentQuestion].classList.remove('active');
 
-        function getPillStyle(idx) {
-            if (idx === currentIdx) {
-                return 'bg-indigo-600 text-white border-indigo-600 shadow-md ring-2 ring-indigo-300';
-            }
-            if (userAnswers[idx] !== null) {
-                return 'bg-indigo-100 text-indigo-800 border-indigo-300';
-            }
-            return 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50';
-        }
+    currentQuestion += direction;
 
-        function updateNavPills() {
-            questions.forEach((_, idx) => {
-                const pill = document.getElementById(`pill-${idx}`);
-                if (pill) pill.className = `flex-shrink-0 w-8 h-8 rounded-full text-xs font-bold transition-all flex items-center justify-center border ${getPillStyle(idx)}`;
-            });
-        }
+    if (currentQuestion >= quizData.length) {
+        showResults();
+        return;
+    }
 
-        function loadQuestion(index) {
-            currentIdx = index;
-            const q = questions[index];
+    cards[currentQuestion].classList.add('active');
+    updateNav();
+}
 
-            // Header progress updates
-            document.getElementById('progressText').innerText = `Question ${index + 1} of ${questions.length}`;
-            const pct = Math.round(((index + 1) / questions.length) * 100);
-            document.getElementById('progressPercent').innerText = `${pct}%`;
-            document.getElementById('progressBar').style.width = `${pct}%`;
+function updateNav() {
+    progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
+    btnPrev.style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
 
-            // Card content
-            document.getElementById('topicBadge').innerText = q.topic;
-            document.getElementById('questionText').innerText = q.text;
+    if (currentQuestion === quizData.length - 1) {
+        btnNext.textContent = 'Xem kết quả';
+    } else {
+        btnNext.textContent = 'Tiếp theo';
+    }
 
-            // Render Option List
-            const container = document.getElementById('optionsContainer');
-            container.innerHTML = '';
+    // Disable Next if not answered yet
+    btnNext.disabled = userAnswers[currentQuestion] === null;
+}
 
-            q.options.forEach((opt, optIdx) => {
-                const isSelected = userAnswers[index] === optIdx;
-                const optBtn = document.createElement('button');
-                optBtn.onclick = () => selectOption(optIdx);
-                optBtn.className = `w-full text-left p-3.5 rounded-xl border text-xs font-semibold transition-all flex items-center justify-between ${
-                    isSelected 
-                    ? 'border-indigo-600 bg-indigo-50/90 text-indigo-950 ring-2 ring-indigo-500/20 shadow-sm' 
-                    : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
-                }`;
+function showResults() {
+    quizContainer.style.display = 'none';
+    footerNav.style.display = 'none';
+    resultScreen.classList.add('active');
 
-                optBtn.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <span class="w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold ${
-                            isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
-                        }">
-                            ${String.fromCharCode(65 + optIdx)}
-                        </span>
-                        <span class="leading-tight">${opt}</span>
-                    </div>
-                `;
-                container.appendChild(optBtn);
-            });
+    let score = 0;
+    userAnswers.forEach((ans, idx) => {
+        if (ans === quizData[idx].correct) score++;
+    });
 
-            // Footer controls state
-            document.getElementById('prevBtn').disabled = index === 0;
-            if (index === questions.length - 1) {
-                document.getElementById('nextBtn').classList.add('hidden');
-                document.getElementById('submitBtn').classList.remove('hidden');
-            } else {
-                document.getElementById('nextBtn').classList.remove('hidden');
-                document.getElementById('submitBtn').classList.add('hidden');
-            }
+    document.getElementById('score-text').textContent = `${score}/${quizData.length}`;
+    
+    const statusEl = document.getElementById('result-status');
+    const descEl = document.getElementById('result-desc');
 
-            updateNavPills();
-        }
+    if (score >= 8) {
+        statusEl.textContent = "ĐẠT (Pass Tuần 1)";
+        statusEl.style.color = "var(--correct-color)";
+        descEl.textContent = "Chúc mừng! Cô ấy đã nắm chắc kiến thức Tuần 1 và sẵn sàng chuyển sang học tiếp Tuần 2.";
+    } else if (score >= 5) {
+        statusEl.textContent = "CHƯA ĐẠT (Cần ôn lại)";
+        statusEl.style.color = "#F59E0B";
+        descEl.textContent = "Cô ấy đã hiểu một chút nhưng vẫn nhầm lẫn giữa To Be và Do/Does hoặc chia động từ. Nên ôn lại 1-2 ngày trước khi qua Tuần 2.";
+    } else {
+        statusEl.textContent = "MẤT GỐC (Weak)";
+        statusEl.style.color = "var(--wrong-color)";
+        descEl.textContent = "Kiến thức nền vẫn còn rất hổng. Bạn nên cho cô ấy giảng lại lý thuyết và làm lại bài test này lần nữa.";
+    }
+}
 
-        function selectOption(optionIndex) {
-            userAnswers[currentIdx] = optionIndex;
-            loadQuestion(currentIdx);
-        }
+function restartQuiz() {
+    currentQuestion = 0;
+    userAnswers.fill(null);
+    quizContainer.style.display = 'block';
+    footerNav.style.display = 'flex';
+    resultScreen.classList.remove('active');
+    renderQuiz();
+}
 
-        function navigateQuestion(step) {
-            const nextIdx = currentIdx + step;
-            if (nextIdx >= 0 && nextIdx < questions.length) {
-                loadQuestion(nextIdx);
-            }
-        }
-
-        function confirmSubmit() {
-            const unanswered = userAnswers.filter(a => a === null).length;
-            const msg = unanswered > 0 
-                ? `You still have ${unanswered} unanswered question(s). Submit now anyway?`
-                : `Are you sure you want to complete your test now?`;
-            
-            document.getElementById('modalMsg').innerText = msg;
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
-
-        function evaluateTest() {
-            clearInterval(timerInterval);
-            closeModal();
-
-            // Hide Quiz Views
-            document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('bottomBar').classList.add('hidden');
-            document.getElementById('progressHeader').classList.add('hidden');
-            
-            // Show Result View
-            document.getElementById('resultScreen').classList.remove('hidden');
-
-            // Calculate Score
-            let correctCount = 0;
-            questions.forEach((q, idx) => {
-                if (userAnswers[idx] === q.answer) {
-                    correctCount++;
-                }
-            });
-
-            const scorePct = Math.round((correctCount / questions.length) * 100);
-            
-            // Score UI Update
-            document.getElementById('scoreText').innerText = `${correctCount} / ${questions.length}`;
-            document.getElementById('accuracyText').innerText = `${scorePct}%`;
-
-            const gradeBadge = document.getElementById('gradeBadge');
-            const gradeTitle = document.getElementById('gradeTitle');
-            const scoreSubtitle = document.getElementById('scoreSubtitle');
-
-            if (scorePct >= 80) {
-                gradeBadge.className = 'w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold bg-emerald-100 text-emerald-600';
-                gradeBadge.innerText = '🏆';
-                gradeTitle.innerText = 'Excellent! A1 Master';
-                scoreSubtitle.innerText = 'Great job! You have mastered these A1 concepts.';
-            } else if (scorePct >= 50) {
-                gradeBadge.className = 'w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold bg-amber-100 text-amber-600';
-                gradeBadge.innerText = '👍';
-                gradeTitle.innerText = 'Good Effort!';
-                scoreSubtitle.innerText = 'You passed, but review the explanations below to improve.';
-            } else {
-                gradeBadge.className = 'w-16 h-16 rounded-full flex items-center justify-center mx-auto text-2xl font-bold bg-rose-100 text-rose-600';
-                gradeBadge.innerText = '📖';
-                gradeTitle.innerText = 'Needs Practice';
-                scoreSubtitle.innerText = 'Keep studying! Read the grammar rules carefully.';
-            }
-
-            // Build Review List
-            const reviewList = document.getElementById('reviewList');
-            reviewList.innerHTML = '';
-
-            questions.forEach((q, idx) => {
-                const userAns = userAnswers[idx];
-                const isCorrect = userAns === q.answer;
-
-                const card = document.createElement('div');
-                card.className = `p-4 rounded-xl border bg-white shadow-xs space-y-2.5 ${
-                    isCorrect ? 'border-emerald-200' : 'border-rose-200'
-                }`;
-
-                card.innerHTML = `
-                    <div class="flex items-start justify-between">
-                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Q${idx + 1} • ${q.topic}</span>
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${
-                            isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'
-                        }">
-                            ${isCorrect ? 'Correct ✓' : 'Incorrect ✗'}
-                        </span>
-                    </div>
-
-                    <p class="text-xs font-bold text-slate-800 leading-snug">${q.text}</p>
-
-                    <div class="text-xs space-y-1">
-                        <p class="text-slate-600">Your Answer: <span class="font-bold ${isCorrect ? 'text-emerald-700' : 'text-rose-600'}">${userAns !== null ? q.options[userAns] : 'Not answered'}</span></p>
-                        ${!isCorrect ? `<p class="text-slate-600">Correct Answer: <span class="font-bold text-emerald-700">${q.options[q.answer]}</span></p>` : ''}
-                    </div>
-
-                    <div class="bg-slate-50 p-2.5 rounded-lg border border-slate-100 space-y-1 text-[11px] text-slate-600 leading-normal">
-                        <p><strong>EN:</strong> ${q.explanationEn}</p>
-                        <p><strong>VN:</strong> ${q.explanationVn}</p>
-                    </div>
-                `;
-
-                reviewList.appendChild(card);
-            });
-        }
-
-        function resetTest() {
-            currentIdx = 0;
-            userAnswers = new Array(questions.length).fill(null);
-            
-            document.getElementById('resultScreen').classList.add('hidden');
-            document.getElementById('welcomeScreen').classList.remove('hidden');
-        }
-    </script>
+// Init
+renderQuiz();
+</script>
 </body>
 </html>
