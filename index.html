@@ -3,502 +3,768 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A1 English Test - Week 1 Review</title>
+    <title>English Master Quiz - 60 Câu Luyện Tập</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #4F46E5;
-            --primary-hover: #4338CA;
-            --bg-color: #F3F4F6;
-            --card-bg: #FFFFFF;
-            --text-color: #1F2937;
-            --text-muted: #6B7280;
-            --border-color: #E5E7EB;
-            --correct-color: #10B981;
-            --correct-bg: #D1FAE5;
-            --wrong-color: #EF4444;
-            --wrong-bg: #FEE2E2;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
+        @import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap');
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 12px;
+            font-family: 'Lexend', sans-serif;
+            background-color: #f3f4f6;
         }
-
-        .app-container {
-            width: 100%;
-            max-width: 480px;
-            background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            min-height: 90vh;
-            justify-content: space-between;
+        .correct-anim {
+            animation: pulse-green 0.5s ease-in-out;
         }
-
-        header {
-            background: var(--primary-color);
-            color: white;
-            padding: 20px 16px;
-            text-align: center;
+        .wrong-anim {
+            animation: shake-red 0.5s ease-in-out;
         }
-
-        header h1 {
-            font-size: 1.25rem;
-            font-weight: 700;
+        @keyframes pulse-green {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+            100% { transform: scale(1); }
         }
-
-        header p {
-            font-size: 0.85rem;
-            opacity: 0.9;
-            margin-top: 4px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            height: 6px;
-            background-color: rgba(255, 255, 255, 0.3);
-            margin-top: 12px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 10%;
-            background-color: #10B981;
-            transition: width 0.3s ease;
-        }
-
-        .main-content {
-            padding: 20px 16px;
-            flex-grow: 1;
-        }
-
-        .question-card {
-            display: none;
-        }
-
-        .question-card.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .question-number {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 8px;
-        }
-
-        .question-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-            line-height: 1.4;
-            margin-bottom: 20px;
-        }
-
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .option-btn {
-            width: 100%;
-            padding: 14px 16px;
-            background-color: #F9FAFB;
-            border: 2px solid var(--border-color);
-            border-radius: 12px;
-            font-size: 1rem;
-            text-align: left;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            font-weight: 500;
-        }
-
-        .option-btn:active {
-            transform: scale(0.98);
-        }
-
-        .option-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #EEF2FF;
-            color: var(--primary-color);
-        }
-
-        .option-btn.correct {
-            border-color: var(--correct-color);
-            background-color: var(--correct-bg);
-            color: #065F46;
-        }
-
-        .option-btn.wrong {
-            border-color: var(--wrong-color);
-            background-color: var(--wrong-bg);
-            color: #991B1B;
-        }
-
-        .explanation {
-            margin-top: 16px;
-            padding: 12px 14px;
-            background-color: #F3F4F6;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            color: #374151;
-            display: none;
-        }
-
-        .explanation.show {
-            display: block;
-        }
-
-        footer {
-            padding: 16px;
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-            background: #FAFAFA;
-        }
-
-        .btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            text-align: center;
-        }
-
-        .btn-prev {
-            background-color: #E5E7EB;
-            color: #374151;
-        }
-
-        .btn-next {
-            background-color: var(--primary-color);
-            color: white;
-        }
-
-        .btn-next:disabled {
-            background-color: #9CA3AF;
-            cursor: not-allowed;
-        }
-
-        /* Result Screen */
-        .result-screen {
-            display: none;
-            text-align: center;
-            padding: 20px 10px;
-        }
-
-        .result-screen.active {
-            display: block;
-        }
-
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            margin: 20px auto;
-        }
-
-        .score-circle .number {
-            font-size: 2.5rem;
-            font-weight: 800;
-            line-height: 1;
-        }
-
-        .score-circle .label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            margin-top: 4px;
-        }
-
-        .result-status {
-            font-size: 1.3rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-        }
-
-        .result-desc {
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            margin-bottom: 24px;
-            line-height: 1.4;
-        }
-
-        .btn-restart {
-            background-color: var(--primary-color);
-            color: white;
-            width: 100%;
+        @keyframes shake-red {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-8px); }
+            40%, 80% { transform: translateX(8px); }
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen text-gray-800 flex flex-col items-center justify-between pb-10">
 
-<div class="app-container">
-    <header>
-        <h1>Destination A1 Test</h1>
-        <p>Kiểm tra kiến thức Tuần 1 (Ngày 1–7)</p>
-        <div class="progress-bar-container">
-            <div class="progress-bar" id="progress-bar"></div>
+    <!-- Header / Banner Slogan -->
+    <header class="w-full bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white shadow-lg py-6 px-4 text-center relative overflow-hidden mb-6">
+        <div class="max-w-4xl mx-auto relative z-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold tracking-wide uppercase flex items-center justify-center gap-3">
+                <i class="fa-solid fa-graduation-cap text-yellow-300"></i> English Master Test
+            </h1>
+            <p class="text-blue-100 mt-2 text-sm md:text-base font-medium italic">
+                ✨ "Mỗi câu sai là một bước tiến gần hơn tới sự thành thạo!" ✨
+            </p>
         </div>
+        <!-- Decorative Circle BG -->
+        <div class="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+        <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
     </header>
 
-    <div class="main-content">
-        <!-- Questions Container -->
-        <div id="quiz-container">
-            <!-- Question Cards will be generated by JS -->
-        </div>
-
-        <!-- Result Screen -->
-        <div class="result-screen" id="result-screen">
-            <div class="score-circle">
-                <span class="number" id="score-text">0/10</span>
-                <span class="label">Điểm số</span>
+    <!-- Main Container -->
+    <main class="w-full max-w-3xl px-4 flex-1">
+        
+        <!-- Progress Bar & Score Board -->
+        <div class="bg-white rounded-2xl shadow-sm p-4 mb-6 border border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="w-full sm:w-2/3">
+                <div class="flex justify-between items-center mb-1 text-sm font-semibold text-gray-600">
+                    <span id="part-title">Phần 1: Động từ To Be & Đại từ</span>
+                    <span id="progress-text">Câu 1/60</span>
+                </div>
+                <div class="w-full bg-gray-200 h-3 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="bg-indigo-600 h-full w-0 transition-all duration-300"></div>
+                </div>
             </div>
-            <div class="result-status" id="result-status">Đang tính kết quả...</div>
-            <div class="result-desc" id="result-desc">...</div>
-            <button class="btn btn-restart" onclick="restartQuiz()">Làm lại bài test</button>
+            <div class="flex items-center gap-4 text-sm font-bold">
+                <div class="bg-green-100 text-green-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span id="correct-count">0</span> Đúng
+                </div>
+                <div class="bg-red-100 text-red-700 px-3 py-1.5 rounded-lg flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-xmark"></i>
+                    <span id="wrong-count">0</span> Sai
+                </div>
+            </div>
         </div>
-    </div>
 
-    <footer id="footer-nav">
-        <button class="btn btn-prev" id="btn-prev" onclick="changeQuestion(-1)">Trở lại</button>
-        <button class="btn btn-next" id="btn-next" onclick="changeQuestion(1)">Tiếp theo</button>
-    </footer>
-</div>
+        <!-- Question Card -->
+        <div id="quiz-card" class="bg-white rounded-2xl shadow-md p-6 border border-gray-100 relative">
+            
+            <!-- Category Tag -->
+            <div class="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-50 text-indigo-600 mb-4" id="category-badge">
+                Phần 1: Động từ To Be & Đại từ
+            </div>
 
-<script>
-const quizData = [
-    {
-        q: "She _______ a doctor. She works in a hospital.",
-        options: ["am", "is", "are", "be"],
-        correct: 1,
-        explain: "Chủ ngữ 'She' đi với động từ To Be là 'is'."
-    },
-    {
-        q: "This is my brother. _______ name is Nam.",
-        options: ["He", "Him", "His", "Her"],
-        correct: 2,
-        explain: "Cần tính từ sở hữu 'His' đứng trước danh từ 'name' (His name = Tên của anh ấy)."
-    },
-    {
-        q: "Every morning, My _______ coffee at 7 AM.",
-        options: ["drink", "drinks", "drinking", "is drink"],
-        correct: 1,
-        explain: "Thì Hiện tại đơn, chủ ngữ số ít 'My' nên động từ phải thêm '-s' (drinks)."
-    },
-    {
-        q: "They _______ like eating seafood because they are allergic.",
-        options: ["don't", "doesn't", "isn't", "aren't"],
-        correct: 0,
-        explain: "Trợ động từ phủ định ở hiện tại đơn đi với chủ ngữ 'They' là 'don't'."
-    },
-    {
-        q: "Where _______ your parents live?",
-        options: ["is", "are", "do", "does"],
-        correct: 2,
-        explain: "Câu hỏi thì hiện tại đơn với động từ thường 'live', chủ ngữ số nhiều 'your parents' dùng trợ động từ 'do'."
-    },
-    {
-        q: "Can I have _______ apple, please?",
-        options: ["a", "an", "the", "không điền"],
-        correct: 1,
-        explain: "Mạo từ 'an' đứng trước danh từ bắt đầu bằng nguyên âm 'apple' (a, e, i, o, u)."
-    },
-    {
-        q: "Lan has three _______ in her room.",
-        options: ["cat", "cats", "cates", "caties"],
-        correct: 1,
-        explain: "Số đếm 'three' đi với danh từ số nhiều thêm '-s' (cats)."
-    },
-    {
-        q: "_______ do you usually go to bed? – At 10:30 PM.",
-        options: ["Where", "What time", "Who", "Why"],
-        correct: 1,
-        explain: "Hỏi về mốc thời gian / giờ giấc cụ thể ta dùng từ hỏi 'What time'."
-    },
-    {
-        q: "Look at _______! She is singing very well.",
-        options: ["she", "her", "his", "hers"],
-        correct: 1,
-        explain: "Đứng sau giới từ 'at' phải dùng đại từ tân ngữ 'her' (thay cho 'she')."
-    },
-    {
-        q: "My brother _______ play video games on weekdays.",
-        options: ["don't", "isn't", "doesn't", "not"],
-        correct: 2,
-        explain: "Phủ định thì hiện tại đơn với động từ thường 'play', chủ ngữ số ít 'My brother' dùng 'doesn't'."
-    }
-];
+            <!-- Question Text -->
+            <h2 id="question-text" class="text-xl md:text-2xl font-bold text-gray-800 mb-6 leading-relaxed">
+                Loading...
+            </h2>
 
-let currentQuestion = 0;
-let userAnswers = new Array(quizData.length).fill(null);
+            <!-- Motivational Image/Meme placeholder -->
+            <div id="image-container" class="mb-6 flex justify-center hidden">
+                <img id="question-img" src="" alt="Slogan" class="rounded-xl max-h-48 object-cover shadow">
+            </div>
 
-const quizContainer = document.getElementById('quiz-container');
-const progressBar = document.getElementById('progress-bar');
-const btnPrev = document.getElementById('btn-prev');
-const btnNext = document.getElementById('btn-next');
-const resultScreen = document.getElementById('result-screen');
-const footerNav = document.getElementById('footer-nav');
+            <!-- Options Container -->
+            <div id="options-container" class="grid grid-cols-1 gap-3 mb-6">
+                <!-- Buttons dynamically added here -->
+            </div>
 
-function renderQuiz() {
-    quizContainer.innerHTML = '';
-    quizData.forEach((data, index) => {
-        const card = document.createElement('div');
-        card.className = `question-card ${index === 0 ? 'active' : ''}`;
-        card.id = `q-${index}`;
+            <!-- Explanation Box (Initially Hidden) -->
+            <div id="explanation-box" class="hidden rounded-xl p-5 border text-sm leading-relaxed mb-6">
+                <div class="flex items-center gap-2 font-bold text-base mb-2" id="explanation-title">
+                    <!-- Dynamic title -->
+                </div>
+                <div id="explanation-text" class="text-gray-700 space-y-2">
+                    <!-- Dynamic explanation -->
+                </div>
+            </div>
 
-        let optionsHTML = '';
-        data.options.forEach((opt, optIdx) => {
-            optionsHTML += `
-                <button class="option-btn" onclick="selectOption(${index}, ${optIdx})">
-                    <span style="margin-right: 8px; font-weight: bold;">${String.fromCharCode(65 + optIdx)}.</span> ${opt}
+            <!-- Action Footer -->
+            <div class="flex justify-end pt-2 border-t border-gray-100">
+                <button id="next-btn" onclick="nextQuestion()" class="hidden bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-6 rounded-xl shadow transition duration-200 flex items-center gap-2">
+                    Câu tiếp theo <i class="fa-solid fa-arrow-right"></i>
                 </button>
-            `;
-        });
-
-        card.innerHTML = `
-            <div class="question-number">Câu hỏi ${index + 1} / ${quizData.length}</div>
-            <div class="question-text">${data.q}</div>
-            <div class="options-list">${optionsHTML}</div>
-            <div class="explanation" id="explain-${index}">
-                <strong>Giải thích:</strong> ${data.explain}
             </div>
-        `;
+        </div>
 
-        quizContainer.appendChild(card);
-    });
-    updateNav();
-}
+        <!-- Result Screen (Initially Hidden) -->
+        <div id="result-screen" class="hidden bg-white rounded-2xl shadow-md p-8 text-center border border-gray-100">
+            <div class="w-20 h-20 bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl">
+                <i class="fa-solid fa-trophy"></i>
+            </div>
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-2">Hoàn Thành Bài Test!</h2>
+            <p class="text-gray-600 mb-6">Bạn đã làm xong 60 câu hỏi thuộc phạm vi kiến thức Tuần 1.</p>
 
-function selectOption(qIdx, optIdx) {
-    userAnswers[qIdx] = optIdx;
-    const card = document.getElementById(`q-${qIdx}`);
-    const options = card.querySelectorAll('.option-btn');
-    const explainBox = document.getElementById(`explain-${qIdx}`);
-    const correctIdx = quizData[qIdx].correct;
+            <div class="bg-gray-50 rounded-xl p-6 max-w-md mx-auto mb-6 flex justify-around border">
+                <div>
+                    <div class="text-3xl font-black text-green-600" id="final-correct">0</div>
+                    <div class="text-xs uppercase font-semibold text-gray-500 mt-1">Câu Đúng</div>
+                </div>
+                <div class="border-r border-gray-300"></div>
+                <div>
+                    <div class="text-3xl font-black text-red-500" id="final-wrong">0</div>
+                    <div class="text-xs uppercase font-semibold text-gray-500 mt-1">Câu Sai</div>
+                </div>
+                <div class="border-r border-gray-300"></div>
+                <div>
+                    <div class="text-3xl font-black text-indigo-600" id="final-score">0%</div>
+                    <div class="text-xs uppercase font-semibold text-gray-500 mt-1">Tỷ Lệ Đúng</div>
+                </div>
+            </div>
 
-    options.forEach((btn, idx) => {
-        btn.disabled = true; // Block change after selection for instant review
-        if (idx === correctIdx) {
-            btn.classList.add('correct');
+            <div id="final-message" class="text-lg font-semibold text-gray-700 mb-6"></div>
+
+            <button onclick="restartQuiz()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow transition duration-200 inline-flex items-center gap-2">
+                <i class="fa-solid fa-rotate-right"></i> Làm Lại Bài Test
+            </button>
+        </div>
+    </main>
+
+    <footer class="text-center text-xs text-gray-500 mt-6">
+        Luyện Tập Tiếng Anh Căn Bản • Chúc bạn học tốt mỗi ngày!
+    </footer>
+
+    <!-- Quiz Logic & Questions Script -->
+    <script>
+        const questions = [
+            // ==========================================
+            // PHẦN 1: ĐỘNG TỪ TO BE & ĐẠI TỪ (Câu 1 - 10)
+            // ==========================================
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "1. She _____ a doctor at the city hospital.",
+                options: ["am", "is", "are", "be"],
+                correct: 1,
+                explanation: "💡 <b>Mẹo nhớ:</b> Chủ ngữ là <b>He / She / It / Danh từ số ít</b> đi với <b>IS</b>.<br>👉 <i>I</i> + am | <i>You/We/They</i> + are | <i>He/She/It</i> + is."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "2. _____ are my best friends.",
+                options: ["He", "She", "They", "It"],
+                correct: 2,
+                explanation: "💡 <b>Mẹo nhớ:</b> Động từ là <b>are</b> nên chủ ngữ phải là đại từ số nhiều: <b>They / We / You</b>."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "3. This is _____ new car. She bought it yesterday.",
+                options: ["she", "her", "hers", "him"],
+                correct: 1,
+                explanation: "💡 <b>Mẹo nhớ:</b> Đứng trước danh từ (<i>new car</i>) cần một <b>Tính từ sở hữu</b>.<br>👉 <i>She</i> (chủ ngữ) ➔ <b>Her</b> (tính từ sở hữu: 'của cô ấy')."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "4. I _____ not hungry right now.",
+                options: ["is", "are", "am", "be"],
+                correct: 2,
+                explanation: "💡 <b>Mẹo nhớ:</b> Chủ ngữ <b>I</b> luôn đi đi kèm với <b>am</b> trong thì hiện tại đơn với To Be.<br>👉 Thể phủ định: <i>I am not...</i>"
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "5. _____ your brother a teacher?",
+                options: ["Is", "Are", "Am", "Do"],
+                correct: 0,
+                explanation: "💡 <b>Mẹo nhớ:</b> 'Your brother' (anh trai của bạn) là danh từ số ít (tương đương với <i>He</i>) ➔ Dùng <b>Is</b> đứng đầu câu hỏi."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "6. That book is not yours. It is _____.",
+                options: ["my", "me", "mine", "I"],
+                correct: 2,
+                explanation: "💡 <b>Mẹo nhớ:</b> Đứng cuối câu và không có danh từ theo sau ➔ Dùng <b>Đại từ sở hữu (Mine)</b> thay vì tính từ sở hữu (My + danh từ)."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "7. Peter and Lucy _____ student teachers.",
+                options: ["is", "are", "am", "be"],
+                correct: 1,
+                explanation: "💡 <b>Mẹo nhớ:</b> 'Peter and Lucy' là 2 người (chủ ngữ số nhiều, tương đương <i>They</i>) ➔ Dùng <b>are</b>."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "8. _____ name is Anna. She is from London.",
+                options: ["She", "Her", "Hers", "His"],
+                correct: 1,
+                explanation: "💡 <b>Mẹo nhớ:</b> Trước danh từ 'name' cần tính từ sở hữu chỉ nữ giới ➔ <b>Her name</b> (Tên của cô ấy)."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "9. We _____ not ready for the exam yet.",
+                options: ["am", "is", "are", "be"],
+                correct: 2,
+                explanation: "💡 <b>Mẹo nhớ:</b> Chủ ngữ <b>We</b> (chúng tôi - số nhiều) luôn đi với <b>are</b>. Phủ định là <i>are not (aren't)</i>."
+            },
+            {
+                part: "Phần 1: Động từ To Be & Đại từ",
+                question: "10. Look at that dog! _____ tail is very short.",
+                options: ["It", "Its", "It's", "They"],
+                correct: 1,
+                explanation: "💡 <b>Mẹo nhớ:</b><br>- <b>Its</b> (không dấu phẩy) = Tính từ sở hữu ('của nó').<br>- <b>It's</b> (có dấu phẩy) = Viết tắt của <i>It is</i>.<br>Ở đây đứng trước danh từ 'tail' (cái đuôi) nên chọn <b>Its</b>."
+            },
+
+            // ==========================================
+            // PHẦN 2: HIỆN TẠI ĐƠN - ĐỘNG TỪ THƯỜNG (Câu 11 - 20)
+            // ==========================================
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "11. She _____ to school every morning.",
+                options: ["walk", "walks", "walking", "is walk"],
+                correct: 1,
+                explanation: "💡 <b>Quy tắc thì Hiện tại đơn:</b> Chủ ngữ là <b>He / She / It / Danh từ số ít</b> ➔ Động từ phải thêm <b>-s</b> hoặc <b>-es</b> (<i>walks</i>)."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "12. They _____ like playing football on Sundays.",
+                options: ["doesn't", "don't", "not", "aren't"],
+                correct: 1,
+                explanation: "💡 <b>Trợ động từ phủ định:</b><br>- <b>I / You / We / They</b> ➔ dùng <b>don't</b>.<br>- <b>He / She / It</b> ➔ dùng <b>doesn't</b>."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "13. My father _____ newspapers after dinner.",
+                options: ["read", "reads", "reading", "is read"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'My father' là chủ ngữ số ít (He) ➔ Động từ <i>read</i> thêm 's' thành <b>reads</b>."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "14. _____ you speak English fluently?",
+                options: ["Does", "Do", "Are", "Is"],
+                correct: 1,
+                explanation: "💡 <b>Trợ động từ nghi vấn:</b> Với động từ thường (<i>speak</i>) và chủ ngữ <b>You</b> ➔ Mượn trợ động từ <b>Do</b> đặt ở đầu câu."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "15. He _____ watch TV in the afternoon.",
+                options: ["don't", "doesn't", "isn't", "not"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> Chủ ngữ <b>He</b> ở thể phủ định dùng trợ động từ <b>doesn't</b> + động từ nguyên thể (<i>watch</i>)."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "16. John _____ English every evening.",
+                options: ["study", "studys", "studies", "is study"],
+                correct: 2,
+                explanation: "💡 <b>Quy tắc thêm -es:</b> Động từ kết thúc bằng <i>phụ âm + y</i> (như <i>study</i>) ➔ Đổi 'y' thành 'i' rồi thêm '-es' ➔ <b>studies</b>."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "17. We usually _____ lunch at 12 o'clock.",
+                options: ["have", "has", "having", "haves"],
+                correct: 0,
+                explanation: "💡 <b>Giải thích:</b> Chủ ngữ <b>We</b> (số nhiều) ➔ Động từ giữ nguyên dạng là <b>have</b> (chỉ dùng <i>has</i> cho He/She/It)."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "18. My cat _____ milk every day.",
+                options: ["drink", "drinks", "drinking", "is drink"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'My cat' là ngôi thứ 3 số ít (It) ➔ Động từ <i>drink</i> thêm 's' thành <b>drinks</b>."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "19. _____ your sister live in Hanoi?",
+                options: ["Do", "Does", "Is", "Are"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'Your sister' là số ít (She), câu hỏi có động từ thường 'live' ➔ Mượn trợ động từ <b>Does</b>."
+            },
+            {
+                part: "Phần 2: Hiện Tại Đơn (Động Từ Thường)",
+                question: "20. I _____ go to bed late on weekdays.",
+                options: ["doesn't", "am not", "don't", "not"],
+                correct: 2,
+                explanation: "💡 <b>Mẹo tránh sai:</b> Với động từ thường 'go', chủ ngữ là <b>I</b> ➔ Dùng <b>don't</b>. Tuyệt đối KHÔNG dùng <i>am not go</i>!"
+            },
+
+            // ==========================================
+            // PHẦN 3: CÂU HỎI WH-WORDS (Câu 21 - 30)
+            // ==========================================
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "21. _____ is your name?",
+                options: ["Where", "What", "Who", "Why"],
+                correct: 1,
+                explanation: "💡 <b>Nghĩa của từ hỏi:</b><br>- <b>What</b>: Cái gì / Tên gì.<br>- <i>Where</i>: Ở đâu | <i>Who</i>: Ai | <i>Why</i>: Tại sao."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "22. _____ do you live? - I live in Da Nang.",
+                options: ["What", "When", "Where", "How"],
+                correct: 2,
+                explanation: "💡 <b>Giải thích:</b> Hỏi về vị trí, nơi chốn (in Da Nang) ➔ Dùng từ hỏi <b>Where</b> (Ở đâu)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "23. _____ is that girl? - She is my classmate.",
+                options: ["Who", "What", "Where", "Why"],
+                correct: 0,
+                explanation: "💡 <b>Giải thích:</b> Hỏi về người ('my classmate') ➔ Dùng từ hỏi <b>Who</b> (Ai)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "24. _____ do you go to school? - At 7 AM.",
+                options: ["What", "When", "Where", "Who"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> Hỏi về thời gian ('At 7 AM') ➔ Dùng từ hỏi <b>When</b> (Khi nào / Mấy giờ)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "25. _____ are you crying? - Because I lost my keys.",
+                options: ["Why", "How", "What", "When"],
+                correct: 0,
+                explanation: "💡 <b>Mẹo nhớ:</b> Câu trả lời có <b>Because...</b> (Bởi vì...) ➔ Câu hỏi chắc chắn dùng <b>Why</b> (Tại sao)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "26. _____ old are you? - I am 20 years old.",
+                options: ["What", "How", "Where", "When"],
+                correct: 1,
+                explanation: "💡 <b>Cấu trúc quen thuộc:</b> <b>How old...</b> dùng để hỏi tuổi."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "27. _____ book is this? - It's mine.",
+                options: ["Who", "Whose", "What", "Where"],
+                correct: 1,
+                explanation: "💡 <b>Phân biệt Who vs Whose:</b><br>- <b>Whose</b>: Của ai (hỏi về sở hữu).<br>- <i>Who</i>: Ai."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "28. _____ do you go to work? - By bus.",
+                options: ["When", "Where", "How", "Why"],
+                correct: 2,
+                explanation: "💡 <b>Giải thích:</b> Trả lời bằng phương tiện giao thông ('By bus') ➔ Dùng <b>How</b> (Bằng cách nào / Đi bằng gì)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "29. _____ many apples are there on the table?",
+                options: ["How", "What", "Where", "When"],
+                correct: 0,
+                explanation: "💡 <b>Cấu trúc hỏi số lượng:</b> <b>How many + Danh từ số nhiều</b> (Dùng cho danh từ đếm được)."
+            },
+            {
+                part: "Phần 3: Câu Hỏi Wh-Words",
+                question: "30. _____ does he do? - He is an engineer.",
+                options: ["Where", "What", "Who", "How"],
+                correct: 0,
+                explanation: "💡 <b>Cấu trúc hỏi nghề nghiệp:</b> <b>What + do/does + S + do?</b> (Anh ấy làm nghề gì?)."
+            },
+
+            // ==========================================
+            // PHẦN 4: DANH TỪ & MẠO TỪ (Câu 31 - 40)
+            // ==========================================
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "31. She eats _____ apple every morning.",
+                options: ["a", "an", "the", "ø (không mạo từ)"],
+                correct: 1,
+                explanation: "💡 <b>Quy tắc A / AN:</b><br>- Dùng <b>AN</b> trước từ bắt đầu bằng một <b>nguyên âm</b> (u, e, o, a, i - uể uải).<br>➔ <i>Apple</i> bắt đầu bằng chữ <b>A</b> nên dùng <b>an apple</b>."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "32. I have two _____ in my family.",
+                options: ["brother", "brothers", "brotheres", "brother's"],
+                correct: 1,
+                explanation: "💡 <b>Danh từ số nhiều:</b> Có số lượng từ 2 trở lên ('two') ➔ Thêm <b>-s</b> vào danh từ đếm được (<i>brothers</i>)."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "33. Look at _____ sun! It is shining brightly.",
+                options: ["a", "an", "the", "ø"],
+                correct: 2,
+                explanation: "💡 <b>Quy tắc dùng THE:</b> Dùng <b>THE</b> trước các sự vật duy nhất trong tự nhiên (<i>the sun, the moon, the earth</i>)."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "34. There are three _____ under the table.",
+                options: ["cat", "cats", "cates", "cat's"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'Three' (3) ➔ Danh từ số nhiều đếm được bình thường chỉ cần thêm <b>-s</b> thành <b>cats</b>."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "35. He is _____ university student.",
+                options: ["a", "an", "the", "ø"],
+                correct: 0,
+                explanation: "⚠️ <b>BẪY RẤT HAY SAI:</b> 'University' bắt đầu bằng chữ 'u' nhưng phát âm là <b>/juː/</b> (bắt đầu bằng phụ âm /j/). Do đó phải dùng <b>A university</b> chứ không dùng <i>an</i>!"
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "36. The _____ are playing in the garden.",
+                options: ["child", "childs", "children", "childrens"],
+                correct: 2,
+                explanation: "💡 <b>Danh từ bất quy tắc:</b> Số ít: <i>Child</i> (1 đứa trẻ) ➔ Số nhiều: <b>Children</b> (nhiều đứa trẻ - KHÔNG thêm 's')."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "37. My father gave me _____ useful advice.",
+                options: ["a", "an", "the", "ø"],
+                correct: 3,
+                explanation: "💡 <b>Lưu ý nâng cao:</b> 'Advice' (lời khuyên) là <b>danh từ không đếm được</b> trong tiếng Anh, nên KHÔNG dùng <i>a/an</i> đứng trực tiếp trước nó."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "38. I saw three _____ in the kitchen.",
+                options: ["mouse", "mouses", "mice", "mices"],
+                correct: 2,
+                explanation: "💡 <b>Danh từ bất quy tắc:</b> Số ít: <i>Mouse</i> (con chuột) ➔ Số nhiều: <b>Mice</b> (những con chuột)."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "39. She wears _____ hour-glass shaped dress.",
+                options: ["a", "an", "the", "ø"],
+                correct: 1,
+                explanation: "💡 <b>Lưu ý phát âm:</b> Từ 'hour' có âm 'h' câm, phát âm bắt đầu bằng nguyên âm <b>/aʊər/</b> ➔ Dùng <b>an hour</b>."
+            },
+            {
+                part: "Phần 4: Danh Từ & Mạo Từ",
+                question: "40. How many _____ are on the bus?",
+                options: ["person", "persons", "people", "peoples"],
+                correct: 2,
+                explanation: "💡 <b>Danh từ bất quy tắc:</b> Số ít: <i>Person</i> (người) ➔ Số nhiều thông dụng nhất là <b>People</b> (mọi người/những người)."
+            },
+
+            // ==========================================
+            // PHẦN 5: LUYỆN TẬP TỔNG HỢP (Câu 41 - 50)
+            // ==========================================
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "41. _____ is your favorite subject?",
+                options: ["What", "Who", "Where", "How"],
+                correct: 0,
+                explanation: "💡 <b>Giải thích:</b> Hỏi về đồ vật/môn học (cái gì) ➔ Dùng từ hỏi <b>What</b>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "42. My brother _____ like eating vegetables.",
+                options: ["don't", "doesn't", "isn't", "aren't"],
+                correct: 1,
+                explanation: "💡 <b>Ôn tập:</b> 'My brother' (số ít = He) + Phủ định động từ thường ➔ Dùng <b>doesn't</b>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "43. Is this _____ umbrella?",
+                options: ["a", "an", "the", "ø"],
+                correct: 1,
+                explanation: "💡 <b>Ôn tập:</b> 'Umbrella' bắt đầu bằng nguyên âm /ʌ/ ➔ Dùng <b>an umbrella</b>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "44. They _____ teachers at my high school.",
+                options: ["am", "is", "are", "be"],
+                correct: 2,
+                explanation: "💡 <b>Ôn tập:</b> Chủ ngữ <b>They</b> đi với động từ To Be <b>are</b>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "45. Where _____ she live?",
+                options: ["do", "does", "is", "are"],
+                correct: 1,
+                explanation: "💡 <b>Cấu trúc câu hỏi Wh-:</b> <b>Wh- + do/does + S + V(nguyên thể)?</b><br>Với chủ ngữ <i>She</i> ➔ Dùng trợ động từ <b>does</b>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "46. These are my _____.",
+                options: ["key", "keys", "keyes", "key's"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'These are' (Đây là những...) chỉ số nhiều ➔ Chọn <b>keys</b> (chỉ cần thêm -s vì trước 'y' là nguyên âm 'e')."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "47. She doesn't _____ coffee in the morning.",
+                options: ["drink", "drinks", "drinking", "drank"],
+                correct: 0,
+                explanation: "💡 <b>QUY TẮC VÀNG:</b> Sau trợ động từ <i>don't / doesn't / do / does</i> ➔ Động từ chính LUÔN LUÔN ở dạng <b>nguyên thể (drink)</b>, KHÔNG thêm 's' nữa."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "48. That house is high, but _____ roof is old.",
+                options: ["it", "its", "it's", "their"],
+                correct: 1,
+                explanation: "💡 <b>Ôn tập:</b> Mái của ngôi nhà (vật số ít) ➔ Tính từ sở hữu là <b>its</b> (của nó)."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "49. How _____ money do you need?",
+                options: ["many", "much", "old", "often"],
+                correct: 1,
+                explanation: "💡 <b>Phân biệt How many & How much:</b><br>- <b>How much + Danh từ không đếm được</b> (<i>money, water, milk...</i>).<br>- <i>How many + Danh từ đếm được số nhiều</i>."
+            },
+            {
+                part: "Phần 5: Luyện Tập Tổng Hợp",
+                question: "50. _____ is that tall man over there? - He is Mr. Smith.",
+                options: ["What", "Where", "Who", "Why"],
+                correct: 2,
+                explanation: "💡 <b>Ôn tập:</b> Hỏi về danh tính người ('Mr. Smith') ➔ Dùng <b>Who</b>."
+            },
+
+            // ==========================================
+            // PHẦN 6: ÔN TẬP NÂNG CAO & SỬA LỖI (Câu 51 - 60)
+            // ==========================================
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "51. Tìm lỗi sai: <u>She</u> <u>don't</u> <u>like</u> <u>apples</u>.",
+                options: ["She", "don't", "like", "apples"],
+                correct: 1,
+                explanation: "❌ <b>Lỗi sai: don't</b><br>✅ <b>Sửa lại:</b> <i>doesn't</i>. Vì chủ ngữ 'She' đi với <i>doesn't</i> chứ không đi với <i>don't</i>."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "52. Tìm lỗi sai: <u>He</u> <u>is</u> <u>an</u> <u>teacher</u>.",
+                options: ["He", "is", "an", "teacher"],
+                correct: 2,
+                explanation: "❌ <b>Lỗi sai: an</b><br>✅ <b>Sửa lại:</b> <i>a</i>. Vì 'teacher' bắt đầu bằng phụ âm /t/."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "53. Tìm lỗi sai: <u>There are</u> <u>two</u> <u>childs</u> <u>in the room</u>.",
+                options: ["There are", "two", "childs", "in the room"],
+                correct: 2,
+                explanation: "❌ <b>Lỗi sai: childs</b><br>✅ <b>Sửa lại:</b> <i>children</i>. Dạng số nhiều của 'child' là 'children', không có 'childs'."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "54. Tìm lỗi sai: <u>Where</u> <u>is</u> <u>you</u> <u>going</u>?",
+                options: ["Where", "is", "you", "going"],
+                correct: 1,
+                explanation: "❌ <b>Lỗi sai: is</b><br>✅ <b>Sửa lại:</b> <i>are</i>. Chủ ngữ 'you' phải đi với động từ To Be 'are'."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "55. Tìm lỗi sai: <u>This</u> <u>is</u> <u>my</u> <u>book and that is her</u>.",
+                options: ["This", "is", "my", "her"],
+                correct: 3,
+                explanation: "❌ <b>Lỗi sai: her</b><br>✅ <b>Sửa lại:</b> <i>hers</i>. Đứng cuối câu không có danh từ đếm được đi kèm phải dùng <b>Đại từ sở hữu (hers)</b>."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "56. Tom always _____ his homework at 8 PM.",
+                options: ["do", "does", "doing", "is do"],
+                correct: 1,
+                explanation: "💡 <b>Quy tắc đuôi -o:</b> Động từ kết thúc bằng chữ 'o' (như <i>do, go</i>) khi đi với chủ ngữ số ít (Tom = He) phải thêm '-es' ➔ <b>does</b>."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "57. _____ water do you drink every day?",
+                options: ["How many", "How much", "How long", "How far"],
+                correct: 1,
+                explanation: "💡 <b>Giải thích:</b> 'Water' (nước) là danh từ không đếm được ➔ Dùng <b>How much</b>."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "58. Tìm lỗi sai: <u>Does</u> <u>she</u> <u>plays</u> <u>the piano</u>?",
+                options: ["Does", "she", "plays", "the piano"],
+                correct: 2,
+                explanation: "❌ <b>Lỗi sai: plays</b><br>✅ <b>Sửa lại:</b> <i>play</i>. Trong câu hỏi đã mượn trợ động từ 'Does' thì động từ chính 'play' phải trả về <b>nguyên thể</b> (không thêm -s)."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "59. Paris is _____ capital of France.",
+                options: ["a", "an", "the", "ø"],
+                correct: 2,
+                explanation: "💡 <b>Giải thích:</b> Thủ đô của nước Pháp là duy nhất và đã được xác định ➔ Dùng <b>the capital</b>."
+            },
+            {
+                part: "Phần 6: Ôn Tập Nâng Cao & Sửa Lỗi",
+                question: "60. The brush is on the table. _____ color is red.",
+                options: ["It's", "Its", "His", "Her"],
+                correct: 1,
+                explanation: "💡 <b>Câu chốt hạ:</b> 'Its' là tính từ sở hữu ('Màu của nó'). Tránh nhầm với <i>It's = It is</i>!"
+            }
+        ];
+
+        // Quiz State
+        let currentQuestion = 0;
+        let scoreCorrect = 0;
+        let scoreWrong = 0;
+        let selectedOption = null;
+
+        // Banner Slogans / Inspiring Quotes for Questions
+        const slogans = [
+            "💪 'Practice makes perfect!' - Luyện tập tạo nên sự hoàn hảo!",
+            "🔥 'Never stop learning, because life never stops teaching.'",
+            "🚀 'Small steps every day lead to big success!'",
+            "🌟 'Mistakes are proof that you are trying!'",
+            "🎯 'Focus on your progress, not perfection!'"
+        ];
+
+        // Initialize Quiz
+        function loadQuestion() {
+            const q = questions[currentQuestion];
+            selectedOption = null;
+
+            // Update Header & Progress
+            document.getElementById("part-title").innerText = q.part;
+            document.getElementById("category-badge").innerText = q.part;
+            document.getElementById("progress-text").innerText = `Câu ${currentQuestion + 1}/${questions.length}`;
+            
+            const progressPercent = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById("progress-bar").style.width = `${progressPercent}%`;
+
+            // Reset Animation
+            const card = document.getElementById("quiz-card");
+            card.classList.remove("correct-anim", "wrong-anim");
+
+            // Set Question Text
+            document.getElementById("question-text").innerText = q.question;
+
+            // Clear & Add Options
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement("button");
+                btn.className = "w-full text-left p-4 rounded-xl border-2 border-gray-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition font-medium flex items-center justify-between text-gray-700";
+                btn.innerHTML = `
+                    <span class="flex items-center gap-3">
+                        <span class="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-500">${String.fromCharCode(65 + idx)}</span>
+                        <span>${opt}</span>
+                    </span>
+                    <i class="fa-regular fa-circle text-gray-300"></i>
+                `;
+                btn.onclick = () => selectOption(idx);
+                optionsContainer.appendChild(btn);
+            });
+
+            // Hide Explanation & Next Button
+            document.getElementById("explanation-box").classList.add("hidden");
+            document.getElementById("next-btn").classList.add("hidden");
         }
-        if (idx === optIdx && optIdx !== correctIdx) {
-            btn.classList.add('wrong');
+
+        function selectOption(index) {
+            if (selectedOption !== null) return; // Prevent changing answer
+            selectedOption = index;
+
+            const q = questions[currentQuestion];
+            const optionsBtns = document.getElementById("options-container").children;
+            const explanationBox = document.getElementById("explanation-box");
+            const explanationTitle = document.getElementById("explanation-title");
+            const explanationText = document.getElementById("explanation-text");
+            const card = document.getElementById("quiz-card");
+
+            // Highlight Correct / Wrong Options
+            if (index === q.correct) {
+                scoreCorrect++;
+                document.getElementById("correct-count").innerText = scoreCorrect;
+                
+                // Style Selected Button (Green)
+                optionsBtns[index].className = "w-full text-left p-4 rounded-xl border-2 border-green-500 bg-green-50 font-semibold flex items-center justify-between text-green-800";
+                optionsBtns[index].querySelector("i").className = "fa-solid fa-circle-check text-green-600 text-lg";
+                
+                // Style Explanation Box
+                explanationBox.className = "rounded-xl p-5 border text-sm leading-relaxed mb-6 bg-green-50/60 border-green-200";
+                explanationTitle.className = "flex items-center gap-2 font-bold text-base text-green-800 mb-1";
+                explanationTitle.innerHTML = `<i class="fa-solid fa-face-smile text-xl"></i> Chính xác! Hoàn hảo lắm!`;
+                
+                card.classList.add("correct-anim");
+            } else {
+                scoreWrong++;
+                document.getElementById("wrong-count").innerText = scoreWrong;
+
+                // Style Selected Button (Red)
+                optionsBtns[index].className = "w-full text-left p-4 rounded-xl border-2 border-red-400 bg-red-50 font-semibold flex items-center justify-between text-red-800";
+                optionsBtns[index].querySelector("i").className = "fa-solid fa-circle-xmark text-red-500 text-lg";
+
+                // Highlight Correct Answer (Green)
+                optionsBtns[q.correct].className = "w-full text-left p-4 rounded-xl border-2 border-green-500 bg-green-50 font-semibold flex items-center justify-between text-green-800";
+                optionsBtns[q.correct].querySelector("i").className = "fa-solid fa-circle-check text-green-600 text-lg";
+
+                // Style Explanation Box
+                explanationBox.className = "rounded-xl p-5 border text-sm leading-relaxed mb-6 bg-red-50/60 border-red-200";
+                explanationTitle.className = "flex items-center gap-2 font-bold text-base text-red-800 mb-1";
+                explanationTitle.innerHTML = `<i class="fa-solid fa-lightbulb text-xl text-yellow-600"></i> Chưa đúng rồi, cùng xem giải thích chi tiết nhé:`;
+
+                card.classList.add("wrong-anim");
+            }
+
+            // Show Explanation Content
+            const randomSlogan = slogans[Math.floor(Math.random() * slogans.length)];
+            explanationText.innerHTML = `
+                <div>${q.explanation}</div>
+                <div class="mt-3 pt-2 border-t border-gray-200/60 text-xs italic text-indigo-600 font-medium">
+                    ${randomSlogan}
+                </div>
+            `;
+            explanationBox.classList.remove("hidden");
+
+            // Show Next Button
+            document.getElementById("next-btn").classList.remove("hidden");
         }
-    });
 
-    explainBox.classList.add('show');
-    btnNext.disabled = false;
-}
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
 
-function changeQuestion(direction) {
-    const cards = document.querySelectorAll('.question-card');
-    cards[currentQuestion].classList.remove('active');
+        function showResults() {
+            document.getElementById("quiz-card").classList.add("hidden");
+            document.getElementById("result-screen").classList.remove("hidden");
 
-    currentQuestion += direction;
+            const total = questions.length;
+            const percentage = Math.round((scoreCorrect / total) * 100);
 
-    if (currentQuestion >= quizData.length) {
-        showResults();
-        return;
-    }
+            document.getElementById("final-correct").innerText = scoreCorrect;
+            document.getElementById("final-wrong").innerText = scoreWrong;
+            document.getElementById("final-score").innerText = `${percentage}%`;
 
-    cards[currentQuestion].classList.add('active');
-    updateNav();
-}
+            let msg = "";
+            if (percentage >= 90) {
+                msg = "🏆 Xuất sắc! Bạn đã nắm rất vững toàn bộ kiến thức!";
+            } else if (percentage >= 70) {
+                msg = "🎉 Tốt lắm! Hãy ôn lại các câu chưa đúng để hoàn thiện hơn nhé.";
+            } else if (percentage >= 50) {
+                msg = "👍 Khá tốt! Hãy đọc kĩ phần giải thích để tránh các bẫy ngữ pháp lần sau.";
+            } else {
+                msg = "📚 Hãy dành thêm chút thời gian xem lại lý thuyết và làm lại bài kiểm tra nhé!";
+            }
+            document.getElementById("final-message").innerText = msg;
+        }
 
-function updateNav() {
-    progressBar.style.width = `${((currentQuestion + 1) / quizData.length) * 100}%`;
-    btnPrev.style.visibility = currentQuestion === 0 ? 'hidden' : 'visible';
+        function restartQuiz() {
+            currentQuestion = 0;
+            scoreCorrect = 0;
+            scoreWrong = 0;
+            document.getElementById("correct-count").innerText = "0";
+            document.getElementById("wrong-count").innerText = "0";
+            document.getElementById("result-screen").classList.add("hidden");
+            document.getElementById("quiz-card").classList.remove("hidden");
+            loadQuestion();
+        }
 
-    if (currentQuestion === quizData.length - 1) {
-        btnNext.textContent = 'Xem kết quả';
-    } else {
-        btnNext.textContent = 'Tiếp theo';
-    }
-
-    // Disable Next if not answered yet
-    btnNext.disabled = userAnswers[currentQuestion] === null;
-}
-
-function showResults() {
-    quizContainer.style.display = 'none';
-    footerNav.style.display = 'none';
-    resultScreen.classList.add('active');
-
-    let score = 0;
-    userAnswers.forEach((ans, idx) => {
-        if (ans === quizData[idx].correct) score++;
-    });
-
-    document.getElementById('score-text').textContent = `${score}/${quizData.length}`;
-    
-    const statusEl = document.getElementById('result-status');
-    const descEl = document.getElementById('result-desc');
-
-    if (score >= 8) {
-        statusEl.textContent = "ĐẠT (Pass Tuần 1)";
-        statusEl.style.color = "var(--correct-color)";
-        descEl.textContent = "Chúc mừng! Cô ấy đã nắm chắc kiến thức Tuần 1 và sẵn sàng chuyển sang học tiếp Tuần 2.";
-    } else if (score >= 5) {
-        statusEl.textContent = "CHƯA ĐẠT (Cần ôn lại)";
-        statusEl.style.color = "#F59E0B";
-        descEl.textContent = "Cô ấy đã hiểu một chút nhưng vẫn nhầm lẫn giữa To Be và Do/Does hoặc chia động từ. Nên ôn lại 1-2 ngày trước khi qua Tuần 2.";
-    } else {
-        statusEl.textContent = "MẤT GỐC (Weak)";
-        statusEl.style.color = "var(--wrong-color)";
-        descEl.textContent = "Kiến thức nền vẫn còn rất hổng. Bạn nên cho cô ấy giảng lại lý thuyết và làm lại bài test này lần nữa.";
-    }
-}
-
-function restartQuiz() {
-    currentQuestion = 0;
-    userAnswers.fill(null);
-    quizContainer.style.display = 'block';
-    footerNav.style.display = 'flex';
-    resultScreen.classList.remove('active');
-    renderQuiz();
-}
-
-// Init
-renderQuiz();
-</script>
+        // Start Quiz on Load
+        window.onload = loadQuestion;
+    </script>
 </body>
 </html>
