@@ -1,724 +1,543 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Phạm Nhật Minh - 3D Cyber FPS Survival</title>
-  <link rel="icon" type="image/png" href="gemini_generated_image_h4w3tyh4w3tyh4w3-1--pixel-art-2x.png">
-  <meta name="description" content="Trang cá nhân Phạm Nhật Minh - Game 3D Bắn Súng Sinh Tồn Căn Cứ">
-  <meta property="og:title" content="Phạm Nhật Minh - 3D Cyber FPS Survival">
-  
-  <!-- Font & Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Teko:wght@600;700&family=Fira+Code:wght@500;700&display=swap" rel="stylesheet">
-
-  <!-- Thư viện Three.js 3D Engine -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-
-  <style>
-    :root {
-      --primary: #38bdf8;
-      --accent: #c084fc;
-      --gold: #f59e0b;
-      --health: #22c55e;
-      --danger: #ef4444;
-      --bg-dark: #030712;
-      --glass-bg: rgba(15, 23, 42, 0.75);
-      --glass-border: rgba(255, 255, 255, 0.12);
-      --text-main: #f8fafc;
-      --text-sub: #94a3b8;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-
-    body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      min-height: 100vh;
-      display: flex; flex-direction: column; align-items: center;
-      overflow-x: hidden;
-    }
-
-    #bg-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
-
-    header { width: 100%; max-width: 900px; padding: 20px; position: sticky; top: 0; z-index: 100; }
-    nav {
-      background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid var(--glass-border); border-radius: 99px; padding: 8px 16px;
-      display: flex; justify-content: space-between; align-items: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-    }
-
-    .nav-btn {
-      color: var(--text-sub); text-decoration: none; font-weight: 600; font-size: 0.9rem;
-      padding: 10px 18px; border-radius: 99px; transition: all 0.3s; cursor: pointer;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .nav-btn:hover, .nav-btn.active {
-      color: #fff; background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(192,132,252,0.25));
-      border: 1px solid rgba(56,189,248,0.4); box-shadow: 0 0 15px rgba(56,189,248,0.3);
-    }
-
-    main { width: 100%; max-width: 920px; padding: 0 20px 40px; z-index: 10; flex: 1; }
-
-    .section {
-      display: none; background: var(--glass-bg); backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px); border: 1px solid var(--glass-border);
-      border-radius: 28px; padding: 32px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-      animation: slideUp 0.5s ease-out;
-    }
-    .section.active { display: block; }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-    /* Profile UI Header */
-    .profile-header { text-align: center; margin-bottom: 25px; }
-    .avatar-glow { position: relative; width: 100px; height: 100px; margin: 0 auto 15px; }
-    .avatar-glow::before {
-      content: ''; position: absolute; inset: -4px; border-radius: 50%;
-      background: linear-gradient(45deg, var(--primary), var(--accent)); filter: blur(10px); opacity: 0.8;
-    }
-    .avatar {
-      position: relative; width: 100%; height: 100%; border-radius: 50%; background: #090d16;
-      border: 2px solid var(--glass-border); display: flex; align-items: center; justify-content: center;
-      font-size: 2.5rem; color: var(--primary);
-    }
-    h1 {
-      font-size: 2.2rem; font-weight: 800;
-      background: linear-gradient(135deg, #fff 30%, var(--primary) 70%, var(--accent));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 6px;
-    }
-
-    /* KHUNG GAME 3D BẮN SÚNG */
-    .game-3d-wrapper {
-      position: relative; width: 100%; height: 520px; border-radius: 20px;
-      overflow: hidden; border: 2px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.8); background: #000; margin-top: 15px;
-      user-select: none;
-    }
-
-    #fps-container { width: 100%; height: 100%; cursor: crosshair; }
-
-    /* Crosshair Tâm Bắn Nhỏ Gọn Nhỏ Ở Giữa */
-    .crosshair {
-      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-      width: 16px; height: 16px; pointer-events: none; z-index: 20;
-    }
-    .crosshair::before, .crosshair::after { content: ''; position: absolute; background: rgba(255,255,255,0.9); box-shadow: 0 0 4px #000; }
-    .crosshair::before { top: 7px; left: 0; width: 16px; height: 2px; }
-    .crosshair::after { top: 0; left: 7px; width: 2px; height: 16px; }
-
-    /* HUD GAME */
-    .hud-top-left {
-      position: absolute; top: 15px; left: 15px; z-index: 20;
-      display: flex; flex-direction: column; gap: 8px; pointer-events: none;
-    }
-
-    .kill-tracker-box {
-      background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 4px 10px; border-radius: 6px; display: flex; align-items: center; gap: 10px; width: 140px;
-    }
-    .kill-avatar { width: 24px; height: 24px; background: #38bdf8; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; color: #000; }
-    .kill-num { font-family: 'Teko', sans-serif; font-size: 1.4rem; color: #fff; letter-spacing: 1px; }
-
-    /* Radar Minimap */
-    #minimap-canvas {
-      width: 110px; height: 110px; background: rgba(0, 0, 0, 0.7);
-      border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 6px;
-    }
-
-    .hud-wave-title {
-      position: absolute; top: 15px; left: 50%; transform: translateX(-50%);
-      font-family: 'Teko', sans-serif; font-size: 2.2rem; font-weight: 700;
-      color: #fff; text-shadow: 0 0 10px rgba(0,0,0,0.9), 0 0 20px rgba(255,255,255,0.4);
-      font-style: italic; letter-spacing: 2px; z-index: 20; pointer-events: none;
-    }
-
-    .hud-top-right {
-      position: absolute; top: 15px; right: 15px; z-index: 20; display: flex; gap: 8px;
-    }
-    .btn-icon-hud {
-      width: 38px; height: 38px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(255,255,255,0.2);
-      color: #fff; border-radius: 6px; font-size: 1rem; display: flex; align-items: center; justify-content: center;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .btn-icon-hud:hover { background: rgba(255,255,255,0.2); }
-
-    .hud-lock-text {
-      position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
-      font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 700;
-      color: rgba(255, 255, 255, 0.85); font-style: italic; text-shadow: 0 2px 4px rgba(0,0,0,0.9);
-      z-index: 20; pointer-events: none; letter-spacing: 0.5px;
-    }
-
-    .hud-bottom-left {
-      position: absolute; bottom: 20px; left: 20px; z-index: 20; pointer-events: none;
-      display: flex; align-items: flex-end; gap: 8px;
-    }
-    .hp-text { font-family: 'Teko', sans-serif; font-size: 1.6rem; color: #fff; }
-    .hp-bar-bg {
-      width: 180px; height: 16px; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.3);
-      transform: skewX(-20deg); overflow: hidden; padding: 2px;
-    }
-    .hp-bar-fill {
-      width: 100%; height: 100%; background: linear-gradient(90deg, #16a34a, #4ade80);
-      box-shadow: 0 0 10px #22c55e; transition: width 0.3s;
-    }
-
-    .hud-bottom-right {
-      position: absolute; bottom: 20px; right: 20px; z-index: 20; pointer-events: none;
-      background: rgba(0, 0, 0, 0.75); border: 1px solid rgba(255, 255, 255, 0.25);
-      padding: 6px 16px; border-radius: 6px; display: flex; align-items: center; gap: 10px;
-    }
-    .ammo-icon { font-size: 1.3rem; color: var(--gold); }
-    .ammo-count { font-family: 'Teko', sans-serif; font-size: 1.8rem; color: #fff; letter-spacing: 1px; }
-
-    .day-shop-bar {
-      position: absolute; top: 75px; left: 50%; transform: translateX(-50%);
-      background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(10px);
-      border: 1px solid rgba(255, 255, 255, 0.2); padding: 10px 18px; border-radius: 16px;
-      display: flex; gap: 12px; z-index: 22; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-    }
-    .btn-shop-act {
-      background: rgba(255, 255, 255, 0.05); border: 1px solid var(--primary);
-      color: #fff; padding: 6px 12px; border-radius: 10px; font-size: 0.8rem; font-weight: 600;
-      cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px;
-    }
-    .btn-shop-act:hover { background: rgba(56, 189, 248, 0.2); }
-
-    .fps-overlay {
-      position: absolute; inset: 0; background: rgba(3, 7, 18, 0.92);
-      backdrop-filter: blur(12px); display: flex; flex-direction: column;
-      justify-content: center; align-items: center; z-index: 30; text-align: center; padding: 20px;
-    }
-    .btn-play {
-      background: linear-gradient(135deg, var(--primary), var(--accent)); color: #fff;
-      border: none; padding: 14px 40px; font-size: 1.1rem; font-weight: 800;
-      border-radius: 99px; cursor: pointer; box-shadow: 0 0 25px rgba(56, 189, 248, 0.5);
-      transition: all 0.3s; margin-top: 18px;
-    }
-    .btn-play:hover { transform: scale(1.05); }
-
-    .contact-btn {
-      display: flex; align-items: center; gap: 16px; padding: 16px 20px;
-      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border);
-      border-radius: 16px; color: #fff; text-decoration: none; font-weight: 600;
-      margin-top: 12px; transition: all 0.3s;
-    }
-    .contact-btn:hover { background: rgba(56, 189, 248, 0.1); border-color: var(--primary); transform: translateX(5px); }
-
-    footer { padding: 20px; color: var(--text-sub); font-size: 0.85rem; text-align: center; z-index: 10; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vietnam A1 License Practice Test (English)</title>
+    <!-- Tailwind CSS for Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
-  <canvas id="bg-canvas"></canvas>
-
-  <header>
-    <nav>
-      <a onclick="showTab('home')" id="tab-home" class="nav-btn active"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
-      <a onclick="showTab('music')" id="tab-music" class="nav-btn"><i class="fa-solid fa-compact-disc"></i><span>Âm Nhạc</span></a>
-      <a onclick="showTab('game')" id="tab-game" class="nav-btn"><i class="fa-solid fa-crosshairs"></i><span>Game 3D FPS</span></a>
-      <a onclick="showTab('contact')" id="tab-contact" class="nav-btn"><i class="fa-solid fa-paper-plane"></i><span>Liên Hệ</span></a>
-    </nav>
-  </header>
-
-  <main>
-    <!-- Home Tab -->
-    <section id="home" class="section active">
-      <div class="profile-header">
-        <div class="avatar-glow">
-          <div class="avatar"><i class="fa-solid fa-code"></i></div>
+    <header class="bg-indigo-600 text-white shadow-lg sticky top-0 z-50">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <svg class="w-8 h-8 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <h1 class="text-xl md:text-2xl font-bold tracking-tight">Vietnam A1 Driving Test</h1>
+            </div>
+            <div id="timerContainer" class="hidden flex items-center space-x-2 bg-indigo-700 px-3 py-1.5 rounded-lg text-sm font-semibold border border-indigo-500">
+                <svg class="w-5 h-5 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span id="timeDisplay">10:00</span>
+            </div>
         </div>
-        <h1>Phạm Nhật Minh</h1>
-        <p style="color: var(--text-sub);">Developer & Music Lover • 10A2 THPT Sóc Sơn</p>
-      </div>
+    </header>
 
-      <div style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--glass-border); border-left: 4px solid var(--primary); border-radius: 18px; padding: 20px; margin-bottom: 20px;">
-        <h2 style="color: var(--primary); margin-bottom: 8px; font-size: 1.1rem;"><i class="fa-solid fa-server"></i> Hạ Tầng & Công Nghệ Cloud</h2>
-        <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
-          Tôi đã tự làm chủ toàn bộ mã nguồn giao diện để chuyển đổi hoàn toàn khỏi Google Sites, triển khai ứng dụng trên hạ tầng Vercel Edge Network nhằm tối ưu hóa tốc độ toàn cầu. Tự tay cấu hình định tuyến DNS chuyên sâu (Bản ghi A & CNAME) vận hành mượt mà tên miền chính chủ <strong>pminh83.name.vn</strong>, hoàn tất xác thực danh tính điện tử (CCCD) đạt tiêu chuẩn an ninh mạng VNNIC trên hệ thống Nhân Hòa.
-        </p>
-      </div>
-
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
-          <i class="fa-solid fa-graduation-cap" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
-          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Trường Học</h3>
-          <p style="font-weight: 600;">Lớp 10A2 - THPT Sóc Sơn</p>
-        </div>
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
-          <i class="fa-solid fa-laptop-code" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
-          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Kỹ Thuật Lập Trình</h3>
-          <p style="font-weight: 600;">Lập trình C++ & Game Web 3D</p>
-        </div>
-        <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 18px; border-radius: 16px;">
-          <i class="fa-solid fa-guitar" style="font-size: 1.5rem; color: var(--primary); margin-bottom: 8px;"></i>
-          <h3 style="font-size: 0.85rem; color: var(--text-sub);">Hoạt Động</h3>
-          <p style="font-weight: 600;">Sóc Sơn Music Club</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Music Tab (ĐÃ THAY LINK SHORTS YOUTUBE "v2ieGWme-0Q") -->
-    <section id="music" class="section">
-      <h2 style="text-align: center;"><i class="fa-solid fa-headphones"></i> Sóc Sơn Music Club</h2>
-      <p style="color: var(--text-sub); margin-top: 4px; margin-bottom: 20px; text-align: center;">Mất Kết Nối - Piano Cover by Phạm Nhật Minh</p>
-
-      <!-- Khung hiển thị dọc chuẩn YouTube Shorts -->
-      <div style="display: flex; justify-content: center; align-items: center;">
-        <div style="width: 100%; max-width: 340px; background: rgba(0,0,0,0.4); border-radius: 20px; overflow: hidden; border: 1px solid var(--glass-border); box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
-          <div style="position: relative; padding-bottom: 177.78%; height: 0;">
-            <iframe id="yt-player" src="https://www.youtube.com/embed/v2ieGWme-0Q?enablejsapi=1" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none;" allow="autoplay" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- 3D FPS GAME TAB -->
-    <section id="game" class="section">
-      <h2><i class="fa-solid fa-crosshairs"></i> 3D Desert Base FPS Survival</h2>
-      <p style="color: var(--text-sub); margin-top: 4px;">Dùng <b>W,A,S,D</b> để di chuyển. Nhấn phím <b>L</b> để Khóa/Mở Khóa Con Trỏ Chuột!</p>
-
-      <div class="game-3d-wrapper">
-        <div class="crosshair"></div>
-
-        <div class="hud-top-left">
-          <div class="kill-tracker-box">
-            <div class="kill-avatar"><i class="fa-solid fa-user-ninja"></i></div>
-            <div class="kill-num"><span id="kills-num">0</span> / <span id="total-wave-zombies">10</span></div>
-          </div>
-          <canvas id="minimap-canvas" width="110" height="110"></canvas>
-        </div>
-
-        <div class="hud-wave-title" id="wave-title">WAVE 1</div>
-
-        <div class="hud-top-right">
-          <button class="btn-icon-hud" title="Mute/Unmute"><i class="fa-solid fa-volume-high"></i></button>
-          <button class="btn-icon-hud" title="Pause"><i class="fa-solid fa-pause"></i></button>
-        </div>
-
-        <div class="hud-lock-text">Press L to Lock and Unlock Cursor</div>
-
-        <div class="hud-bottom-left">
-          <div class="hp-text"><span id="hp-value">100</span> %</div>
-          <div class="hp-bar-bg">
-            <div class="hp-bar-fill" id="hp-bar-fill"></div>
-          </div>
-        </div>
-
-        <div class="hud-bottom-right">
-          <i class="fa-solid fa-fire ammo-icon"></i>
-          <div class="ammo-count"><span id="ammo-clip">30</span> / <span id="ammo-reserve">970</span></div>
-        </div>
-
-        <div id="day-shop-bar" class="day-shop-bar">
-          <button class="btn-shop-act" onclick="doMission()">
-            <i class="fa-solid fa-coins" style="color: var(--gold);"></i>
-            <span>NHIỆM VỤ</span>
-            <small style="color: var(--gold);">+50 $</small>
-          </button>
-          <button class="btn-shop-act" onclick="upgradeMinigun()">
-            <i class="fa-solid fa-gun" style="color: var(--primary);"></i>
-            <span>NÂNG SÚNG</span>
-            <small id="gun-cost" style="color: var(--gold);">100 $</small>
-          </button>
-          <button class="btn-shop-act" onclick="repairBase()">
-            <i class="fa-solid fa-wrench" style="color: var(--health);"></i>
-            <span>SỬA CĂN CỨ</span>
-            <small style="color: var(--gold);">40 $</small>
-          </button>
-          <button class="btn-shop-act" onclick="startNightWave()" style="background: linear-gradient(135deg, #ef4444, #b91c1c); border: none;">
-            <i class="fa-solid fa-moon"></i>
-            <span>SANG ĐÊM</span>
-            <small>ĐẤU ZOMBIE</small>
-          </button>
-        </div>
-
-        <div id="fps-container"></div>
-
-        <div id="fps-overlay" class="fps-overlay">
-          <i class="fa-solid fa-shield-cat" style="font-size: 3.5rem; color: var(--primary); margin-bottom: 12px;"></i>
-          <h3 style="font-size: 1.8rem; color: #fff;">DESERT BASE SURVIVAL 3D</h3>
-          <p style="color: var(--text-sub); max-width: 420px; margin-top: 6px; font-size: 0.9rem;">
-            Bảo vệ Căn Cứ sa mạc. Dùng phím <b>L</b> để khóa/mở khóa chuột tự do!
-          </p>
-          <button class="btn-play" onclick="initAndStartGame()">VÀO TRẬN ĐẤU</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- Contact Tab -->
-    <section id="contact" class="section">
-      <h2><i class="fa-solid fa-satellite-dish"></i> Liên Hệ Trực Tiếp</h2>
-      <p style="color: var(--text-sub); margin-top: 4px;">Kết nối với mình qua các kênh chính thức:</p>
-
-      <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" class="contact-btn">
-        <i class="fa-brands fa-facebook" style="font-size: 1.8rem; color: #1877f2;"></i>
-        <div>
-          <div>Facebook Cá Nhân</div>
-          <div style="font-size: 0.85rem; color: var(--text-sub);">Phạm Nhật Minh</div>
-        </div>
-      </a>
-
-      <a href="https://github.com/mwiadsdaw" target="_blank" class="contact-btn">
-        <i class="fa-brands fa-github" style="font-size: 1.8rem; color: #fff;"></i>
-        <div>
-          <div>GitHub Repository</div>
-          <div style="font-size: 0.85rem; color: var(--text-sub);">@mwiadsdaw</div>
-        </div>
-      </a>
-
-      <a href="mailto:contact@pminh83.name.vn" class="contact-btn">
-        <i class="fa-solid fa-envelope" style="font-size: 1.8rem; color: var(--primary);"></i>
-        <div>
-          <div>Email Chính Thức</div>
-          <div style="font-size: 0.85rem; color: var(--text-sub);">contact@pminh83.name.vn</div>
-        </div>
-      </a>
-    </section>
-  </main>
-
-  <footer>
-    &copy; 2026 Phạm Nhật Minh • pminh83.name.vn • Powered by Three.js 3D Engine
-  </footer>
-
-  <script>
-    // 1. NEURAL BACKGROUND
-    const bgCanvas = document.getElementById('bg-canvas');
-    const bgCtx = bgCanvas.getContext('2d');
-    let bgParticles = [];
-
-    function resizeBg() { bgCanvas.width = window.innerWidth; bgCanvas.height = window.innerHeight; }
-    window.addEventListener('resize', resizeBg); resizeBg();
-
-    for (let i = 0; i < 40; i++) {
-      bgParticles.push({
-        x: Math.random() * window.innerWidth, y: Math.random() * window.innerHeight,
-        vx: (Math.random() - 0.5) * 0.8, vy: (Math.random() - 0.5) * 0.8
-      });
-    }
-
-    function renderBg() {
-      bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
-      bgParticles.forEach(p => {
-        p.x += p.vx; p.y += p.vy;
-        if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
-        bgCtx.beginPath(); bgCtx.arc(p.x, p.y, 2, 0, Math.PI * 2);
-        bgCtx.fillStyle = 'rgba(56, 189, 248, 0.4)'; bgCtx.fill();
-      });
-      requestAnimationFrame(renderBg);
-    }
-    renderBg();
-
-    // 2. NAV TAB ROUTING (TỰ ĐỘNG PHÁT/TẠM DỪNG VIDEO YOUTUBE SHORTS)
-    function showTab(tabId) {
-      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-      document.getElementById(tabId).classList.add('active');
-      document.getElementById('tab-' + tabId).classList.add('active');
-
-      // Tự động phát Video khi nhấn vào tab Âm Nhạc
-      const iframe = document.getElementById('yt-player');
-      if (tabId === 'music' && iframe) {
-        iframe.contentWindow.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
-      } else if (iframe) {
-        // Tự động tạm dừng video khi chuyển sang tab khác
-        iframe.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*');
-      }
-    }
-
-    // 3. THREE.JS 3D SURVIVAL GAME ENGINE (FPS)
-    let scene, camera, renderer, weaponMesh, muzzleFlash;
-    let isDayTime = true, waveNum = 1;
-    let money = 100, baseHP = 100, kills = 0, totalWaveZombies = 10;
-    let ammoClip = 30, ammoReserve = 970, gunLevel = 1, gunCost = 100;
-    let isGameRunning = false;
-
-    let zombies = [], bullets = [];
-    let keys = {}, moveSpeed = 0.16;
-    let yaw = 0, pitch = 0;
-
-    const container = document.getElementById('fps-container');
-    const minimapCanvas = document.getElementById('minimap-canvas');
-    const miniCtx = minimapCanvas.getContext('2d');
-
-    // Audio API
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    function playSound(freq, type, duration) {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-      osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-      gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-      osc.connect(gain); gain.connect(audioCtx.destination);
-      osc.start(); osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function updateHUD() {
-      document.getElementById('kills-num').innerText = kills;
-      document.getElementById('total-wave-zombies').innerText = totalWaveZombies;
-      document.getElementById('wave-title').innerText = 'WAVE ' + waveNum;
-      
-      const hp = Math.max(0, Math.floor(baseHP));
-      document.getElementById('hp-value').innerText = hp;
-      document.getElementById('hp-bar-fill').style.width = hp + '%';
-
-      document.getElementById('ammo-clip').innerText = ammoClip;
-      document.getElementById('ammo-reserve').innerText = ammoReserve;
-      document.getElementById('gun-cost').innerText = gunCost + ' $';
-    }
-
-    function init3DWorld() {
-      scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xd6c0b0, 0.012);
-
-      camera = new THREE.PerspectiveCamera(75, container.offsetWidth / container.offsetHeight, 0.1, 1000);
-      camera.position.set(0, 2, 8);
-
-      renderer = new THREE.WebGLRenderer({ antialias: true });
-      renderer.setSize(container.offsetWidth, container.offsetHeight);
-      renderer.setPixelRatio(window.devicePixelRatio);
-      container.appendChild(renderer.domElement);
-
-      const ambientLight = new THREE.AmbientLight(0xffedd5, 1.2);
-      scene.add(ambientLight);
-      const sunLight = new THREE.DirectionalLight(0xfff7ed, 1.5);
-      sunLight.position.set(30, 50, 20);
-      scene.add(sunLight);
-
-      const groundGeo = new THREE.PlaneGeometry(160, 160);
-      const groundMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 });
-      const ground = new THREE.Mesh(groundGeo, groundMat);
-      ground.rotation.x = -Math.PI / 2;
-      scene.add(ground);
-
-      const wallGeo = new THREE.BoxGeometry(32, 4, 2);
-      const wallMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.3 });
-      const baseWall = new THREE.Mesh(wallGeo, wallMat);
-      baseWall.position.set(0, 2, -5);
-      scene.add(baseWall);
-
-      const gunGroup = new THREE.Group();
-      const bodyGeo = new THREE.BoxGeometry(0.3, 0.35, 1.2);
-      const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8 });
-      const gunBody = new THREE.Mesh(bodyGeo, bodyMat);
-
-      const barrelGeo = new THREE.CylinderGeometry(0.06, 0.06, 0.8, 12);
-      barrelGeo.rotateX(Math.PI / 2);
-      const barrelMat = new THREE.MeshStandardMaterial({ color: 0xf59e0b, metalness: 0.9 });
-      const gunBarrel = new THREE.Mesh(barrelGeo, barrelMat);
-      gunBarrel.position.set(0, 0.05, -0.8);
-
-      gunGroup.add(gunBody);
-      gunGroup.add(gunBarrel);
-
-      const flashGeo = new THREE.SphereGeometry(0.15, 8, 8);
-      const flashMat = new THREE.MeshBasicMaterial({ color: 0xfffb26, visible: false });
-      muzzleFlash = new THREE.Mesh(flashGeo, flashMat);
-      muzzleFlash.position.set(0, 0.05, -1.2);
-      gunGroup.add(muzzleFlash);
-
-      gunGroup.position.set(0.45, -0.35, -0.8);
-      camera.add(gunGroup);
-      scene.add(camera);
-
-      window.addEventListener('keydown', (e) => {
-        keys[e.code] = true;
+    <main class="flex-grow max-w-5xl w-full mx-auto p-4 md:p-6">
         
-        if (e.code === 'KeyL' && isGameRunning) {
-          if (document.pointerLockElement === container) {
-            document.exitPointerLock();
-          } else {
-            container.requestPointerLock();
-          }
-        }
-      });
-      window.addEventListener('keyup', (e) => keys[e.code] = false);
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="bg-white rounded-2xl shadow-md p-6 md:p-10 border border-slate-100 max-w-2xl mx-auto my-8 text-center">
+            <div class="w-20 h-20 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                </svg>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-bold text-slate-800 mb-3">A1 License Practice Exam</h2>
+            <p class="text-slate-600 mb-6 leading-relaxed">
+                Test your knowledge of Vietnamese traffic rules, road signs, and right-of-way concepts in English.
+            </p>
+            
+            <div class="bg-slate-50 rounded-xl p-4 text-left border border-slate-200 mb-8 space-y-2 text-sm text-slate-700">
+                <div class="flex items-center space-x-2">
+                    <span class="text-indigo-600 font-bold">•</span>
+                    <span><strong>Total Questions:</strong> 10 questions</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-indigo-600 font-bold">•</span>
+                    <span><strong>Time Limit:</strong> 10 minutes</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-indigo-600 font-bold">•</span>
+                    <span><strong>Passing Score:</strong> 8/10 correct answers</span>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <span class="text-indigo-600 font-bold">•</span>
+                    <span><strong>Critical Warning:</strong> Contains critical safety questions (Must not get wrong!)</span>
+                </div>
+            </div>
 
-      container.addEventListener('click', () => {
-        if (isGameRunning) container.requestPointerLock();
-      });
+            <button id="startBtn" onclick="startQuiz()" class="w-full sm:w-auto px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition-all transform active:scale-95">
+                Start Exam Now
+            </button>
+        </div>
 
-      document.addEventListener('mousemove', (e) => {
-        if (document.pointerLockElement === container) {
-          yaw -= e.movementX * 0.0024;
-          pitch -= e.movementY * 0.0024;
-          pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, pitch));
+        <!-- Quiz Container -->
+        <div id="quizScreen" class="hidden grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left Side: Main Question Display -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-md p-6 border border-slate-100 flex flex-col justify-between min-h-[450px]">
+                <div>
+                    <div class="flex justify-between items-center border-b border-slate-100 pb-4 mb-4">
+                        <span id="questionCategory" class="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold">General Knowledge</span>
+                        <span id="questionCounter" class="text-sm font-semibold text-slate-500">Question 1 of 10</span>
+                    </div>
 
-          camera.rotation.order = 'YXZ';
-          camera.rotation.y = yaw;
-          camera.rotation.x = pitch;
-        }
-      });
+                    <h3 id="questionText" class="text-lg md:text-xl font-bold text-slate-800 mb-6 leading-snug">
+                        Loading question...
+                    </h3>
 
-      container.addEventListener('mousedown', (e) => {
-        if (isGameRunning && e.button === 0 && document.pointerLockElement === container) {
-          shootGun();
-        }
-      });
-    }
+                    <!-- SVG / Image Banner placeholder for Sign/Traffic scenarios -->
+                    <div id="illustrationContainer" class="hidden mb-6 flex justify-center bg-slate-50 p-4 rounded-xl border border-slate-200">
+                        <div id="illustrationSvg" class="max-w-xs max-h-48"></div>
+                    </div>
 
-    function shootGun() {
-      if (ammoClip <= 0) return;
-      ammoClip--;
-      updateHUD();
-      playSound(400 + Math.random() * 200, 'sawtooth', 0.08);
+                    <div id="optionsContainer" class="space-y-3">
+                        <!-- Options dynamically injected -->
+                    </div>
+                </div>
 
-      muzzleFlash.material.visible = true;
-      setTimeout(() => muzzleFlash.material.visible = false, 50);
+                <!-- Bottom Navigation Buttons -->
+                <div class="flex justify-between items-center pt-6 mt-6 border-t border-slate-100">
+                    <button id="prevBtn" onclick="navigateQuestion(-1)" class="px-4 py-2 text-slate-600 hover:bg-slate-100 rounded-lg text-sm font-semibold transition-colors disabled:opacity-30 disabled:pointer-events-none">
+                        ← Previous
+                    </button>
+                    <button id="nextBtn" onclick="navigateQuestion(1)" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-sm font-semibold shadow transition-colors">
+                        Next →
+                    </button>
+                </div>
+            </div>
 
-      const bulletGeo = new THREE.SphereGeometry(0.1, 8, 8);
-      const bulletMat = new THREE.MeshBasicMaterial({ color: 0xfffb26 });
-      const bullet = new THREE.Mesh(bulletGeo, bulletMat);
+            <!-- Right Side: Question Map & Submit -->
+            <div class="bg-white rounded-2xl shadow-md p-6 border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <h4 class="text-base font-bold text-slate-800 mb-4">Question Overview</h4>
+                    <div id="questionGrid" class="grid grid-cols-5 gap-2 mb-6">
+                        <!-- Grid buttons injected via JS -->
+                    </div>
+                </div>
 
-      bullet.position.copy(camera.position);
-      const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
-      bullet.userData = { dir: dir, damage: 30 * gunLevel };
+                <div class="pt-4 border-t border-slate-100">
+                    <button onclick="confirmSubmit()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-all">
+                        Submit Test
+                    </button>
+                </div>
+            </div>
+        </div>
 
-      scene.add(bullet);
-      bullets.push(bullet);
-    }
+        <!-- Result Screen -->
+        <div id="resultScreen" class="hidden bg-white rounded-2xl shadow-md p-6 md:p-8 border border-slate-100 max-w-4xl mx-auto my-4">
+            <div id="resultSummary" class="text-center pb-8 border-b border-slate-100 mb-8">
+                <!-- Result text filled by JS -->
+            </div>
 
-    function renderMinimap() {
-      miniCtx.clearRect(0, 0, 110, 110);
-      
-      miniCtx.fillStyle = '#38bdf8';
-      miniCtx.fillRect(35, 50, 40, 6);
+            <h3 class="text-xl font-bold text-slate-800 mb-6">Detailed Answer Review</h3>
+            <div id="explanationList" class="space-y-6">
+                <!-- Review list injected via JS -->
+            </div>
 
-      const px = 55 + camera.position.x * 1.5;
-      const pz = 55 + camera.position.z * 1.5;
-      miniCtx.beginPath();
-      miniCtx.arc(px, pz, 4, 0, Math.PI * 2);
-      miniCtx.fillStyle = '#22c55e';
-      miniCtx.fill();
+            <div class="mt-8 text-center pt-6 border-t border-slate-100">
+                <button onclick="resetQuiz()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl shadow-lg transition-all">
+                    Try Again
+                </button>
+            </div>
+        </div>
 
-      zombies.forEach(z => {
-        const zx = 55 + z.position.x * 1.5;
-        const zz = 55 + z.position.z * 1.5;
-        miniCtx.beginPath();
-        miniCtx.arc(zx, zz, 3, 0, Math.PI * 2);
-        miniCtx.fillStyle = '#ef4444';
-        miniCtx.fill();
-      });
-    }
+    </main>
 
-    function doMission() { if (!isDayTime) return; money += 50; updateHUD(); }
-    function upgradeMinigun() {
-      if (!isDayTime || money < gunCost) return;
-      money -= gunCost; gunLevel++; gunCost += 80; updateHUD();
-    }
-    function repairBase() {
-      if (!isDayTime || money < 40) return;
-      money -= 40; baseHP = Math.min(100, baseHP + 35); updateHUD();
-    }
+    <!-- Modal for Confirmation -->
+    <div id="confirmModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Submit Your Test?</h3>
+            <p id="unansweredWarning" class="text-sm text-slate-600 mb-6">Are you sure you want to finish and submit your test now?</p>
+            <div class="flex space-x-3">
+                <button onclick="closeModal()" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors">
+                    Continue Test
+                </button>
+                <button onclick="submitQuiz()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow transition-colors">
+                    Yes, Submit
+                </button>
+            </div>
+        </div>
+    </div>
 
-    function startNightWave() {
-      isDayTime = false;
-      document.getElementById('day-shop-bar').style.display = 'none';
-      scene.fog.color.setHex(0x030712);
-      spawnZombieWave(totalWaveZombies);
-    }
-
-    function startDayTime() {
-      isDayTime = true;
-      document.getElementById('day-shop-bar').style.display = 'flex';
-      scene.fog.color.setHex(0xd6c0b0);
-    }
-
-    function spawnZombieWave(count) {
-      for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-          if (!isDayTime && isGameRunning) {
-            const geo = new THREE.BoxGeometry(1.2, 2.2, 1.2);
-            const mat = new THREE.MeshStandardMaterial({ color: 0xef4444 });
-            const zombie = new THREE.Mesh(geo, mat);
-
-            zombie.position.set((Math.random() - 0.5) * 28, 1.1, -45 - Math.random() * 20);
-            zombie.userData = { hp: 50 + waveNum * 10, speed: 0.05 + Math.random() * 0.03 };
-
-            scene.add(zombie);
-            zombies.push(zombie);
-          }
-        }, i * 700);
-      }
-    }
-
-    function initAndStartGame() {
-      document.getElementById('fps-overlay').style.display = 'none';
-      if (!scene) init3DWorld();
-
-      money = 100; baseHP = 100; kills = 0; waveNum = 1; ammoClip = 30; ammoReserve = 970;
-      updateHUD();
-      startDayTime();
-
-      isGameRunning = true;
-      animate3D();
-    }
-
-    function animate3D() {
-      if (!isGameRunning) return;
-      requestAnimationFrame(animate3D);
-
-      const forward = new THREE.Vector3(0, 0, -1).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-      const side = new THREE.Vector3(1, 0, 0).applyAxisAngle(new THREE.Vector3(0, 1, 0), yaw);
-
-      if (keys['KeyW']) camera.position.addScaledVector(forward, moveSpeed);
-      if (keys['KeyS']) camera.position.addScaledVector(forward, -moveSpeed);
-      if (keys['KeyA']) camera.position.addScaledVector(side, -moveSpeed);
-      if (keys['KeyD']) camera.position.addScaledVector(side, moveSpeed);
-
-      camera.position.y = 2;
-      camera.position.z = Math.max(-4, Math.min(25, camera.position.z));
-      camera.position.x = Math.max(-14, Math.min(14, camera.position.x));
-
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        let b = bullets[i];
-        b.position.addScaledVector(b.userData.dir, 1.3);
-
-        if (b.position.distanceTo(camera.position) > 60) {
-          scene.remove(b); bullets.splice(i, 1);
-        }
-      }
-
-      for (let i = zombies.length - 1; i >= 0; i--) {
-        let z = zombies[i];
-        z.position.z += z.userData.speed;
-
-        for (let j = bullets.length - 1; j >= 0; j--) {
-          let b = bullets[j];
-          if (b.position.distanceTo(z.position) < 1.3) {
-            z.userData.hp -= b.userData.damage;
-            scene.remove(b); bullets.splice(j, 1);
-
-            if (z.userData.hp <= 0) {
-              scene.remove(z); zombies.splice(i, 1);
-              kills++; money += 20;
-              updateHUD();
-
-              if (kills >= totalWaveZombies && !isDayTime) {
-                waveNum++; totalWaveZombies += 5; kills = 0;
-                startDayTime(); updateHUD();
-              }
-              break;
+    <script>
+        // Quiz Data - 10 Standard A1 Traffic Questions in English with SVG Graphic Assets
+        const questions = [
+            {
+                id: 1,
+                category: "Traffic Rules",
+                isCritical: true,
+                text: "Are motorcycle riders permitted to use mobile phones, umbrellas, or audio devices (except hearing aids) while riding?",
+                options: [
+                    "Allowed when riding slowly",
+                    "Allowed in emergency situations",
+                    "Strictly prohibited under all circumstances",
+                    "Allowed if using one hand only"
+                ],
+                correct: 2,
+                explanation: "Under Vietnamese traffic laws, operating a two-wheeled motorcycle while holding or using umbrellas, mobile devices, or audio gear (other than hearing aids) is strictly prohibited as it causes major distractions and hazards."
+            },
+            {
+                id: 2,
+                category: "Traffic Rules",
+                isCritical: false,
+                text: "What is the maximum allowed blood alcohol concentration (BAC) for motorcycle drivers in Vietnam?",
+                options: [
+                    "Below 0.25 mg per liter of breath",
+                    "Zero alcohol allowed (Zero Tolerance)",
+                    "Below 50 mg per 100 ml of blood",
+                    "Allowed as long as you do not feel intoxicated"
+                ],
+                correct: 1,
+                explanation: "Vietnam enforces a strict Zero Tolerance policy regarding alcohol consumption while driving any vehicle (including motorbikes and bicycles)."
+            },
+            {
+                id: 3,
+                category: "Traffic Signs",
+                isCritical: false,
+                text: "What does this triangular yellow traffic sign indicate?",
+                svg: `<svg viewBox="0 0 100 90" class="w-32 h-32">
+                        <polygon points="50,5 95,85 5,85" fill="#facc15" stroke="#dc2626" stroke-width="8" stroke-linejoin="round"/>
+                        <path d="M 50 25 L 50 60 M 50 72 L 50 78" stroke="#1e293b" stroke-width="8" stroke-linecap="round"/>
+                      </svg>`,
+                options: [
+                    "Prohibition sign",
+                    "Priority sign",
+                    "Warning / Danger sign",
+                    "Mandatory instruction sign"
+                ],
+                correct: 2,
+                explanation: "Triangular signs with a yellow background and red border are Warning/Danger signs that alert drivers to upcoming hazards on the road."
+            },
+            {
+                id: 4,
+                category: "Traffic Signs",
+                isCritical: false,
+                text: "Which sign means 'No Motorcycles Allowed'?",
+                svg: `<svg viewBox="0 0 100 100" class="w-32 h-32">
+                        <circle cx="50" cy="50" r="42" fill="white" stroke="#dc2626" stroke-width="10"/>
+                        <line x1="20" y1="20" x2="80" y2="80" stroke="#dc2626" stroke-width="8"/>
+                        <path d="M30 60 A10 10 0 1 0 30 80 A10 10 0 1 0 30 60 Z M70 60 A10 10 0 1 0 70 80 A10 10 0 1 0 70 60 Z M40 65 L60 65 L50 45 Z" fill="#1e293b"/>
+                      </svg>`,
+                options: [
+                    "Red circle with a motorcycle symbol crossed out",
+                    "Blue circle with a motorcycle symbol",
+                    "Yellow triangle with a motorcycle symbol",
+                    "Square green sign with a cross"
+                ],
+                correct: 0,
+                explanation: "Prohibition signs are circular with a red border. A cross line through a motorcycle icon explicitly prohibits two-wheeled motorcycles."
+            },
+            {
+                id: 5,
+                category: "Traffic Rules",
+                isCritical: true,
+                text: "When approaching an uncontrolled intersection (no traffic lights or traffic marshal), who has right-of-way?",
+                options: [
+                    "Vehicles approaching from the left",
+                    "Vehicles approaching from the right",
+                    "The largest vehicle",
+                    "The vehicle traveling at the highest speed"
+                ],
+                correct: 1,
+                explanation: "At an intersection without a roundabout and without priority indicators or traffic signals, drivers must give way to vehicles coming from their RIGHT."
+            },
+            {
+                id: 6,
+                category: "Road Markings",
+                isCritical: false,
+                text: "What does a solid yellow line in the center of a two-way road signify?",
+                svg: `<svg viewBox="0 0 100 60" class="w-36 h-24">
+                        <rect width="100" height="60" fill="#475569"/>
+                        <line x1="0" y1="30" x2="100" y2="30" stroke="#eab308" stroke-width="6"/>
+                      </svg>`,
+                options: [
+                    "Lanes may be crossed freely for overtaking",
+                    "Vehicles are strictly forbidden from crossing or straddling the line",
+                    "It indicates a pedestrian crossing area",
+                    "Parking is allowed along this line"
+                ],
+                correct: 1,
+                explanation: "A solid yellow line separates traffic moving in opposite directions and strictly forbids vehicles from crossing or straddling the line to overtake."
+            },
+            {
+                id: 7,
+                category: "Intersection Right-of-Way",
+                isCritical: false,
+                text: "When entering a roundabout with a 'Give Way' sign, which side must you yield to?",
+                options: [
+                    "Yield to vehicles coming from your right",
+                    "Yield to vehicles already inside the roundabout from your left",
+                    "No need to yield to anyone",
+                    "Honk and proceed immediately"
+                ],
+                correct: 1,
+                explanation: "When entering a roundabout with directional/priority signage, drivers must yield right-of-way to vehicles coming from the LEFT (already inside the circle)."
+            },
+            {
+                id: 8,
+                category: "Traffic Rules",
+                isCritical: true,
+                text: "Are you allowed to overtake on a narrow single-lane bridge or near a sharp curve with restricted vision?",
+                options: [
+                    "Yes, if no other vehicles are visible",
+                    "Yes, if you sound your horn continuously",
+                    "No, overtaking is strictly forbidden here",
+                    "Allowed only during daytime"
+                ],
+                correct: 2,
+                explanation: "Overtaking is strictly prohibited on single-lane bridges, blind curves, crests of hills, or locations with severely obstructed sightlines due to extreme danger."
+            },
+            {
+                id: 9,
+                category: "Safety Gear",
+                isCritical: false,
+                text: "Which statement regarding safety helmets for motorcycle riders and passengers is correct?",
+                options: [
+                    "Helmets are optional within city limits",
+                    "Helmets are mandatory only on highways",
+                    "Both rider and passenger must wear properly fastened quality standard helmets",
+                    "Only the driver is required to wear a helmet"
+                ],
+                correct: 2,
+                explanation: "Both the driver and passengers on motorcycles/mopeds are legally required to wear certified safety helmets properly buckled at all times."
+            },
+            {
+                id: 10,
+                category: "Traffic Rules",
+                isCritical: false,
+                text: "What is the maximum legal speed limit for motorcycles in densely populated urban areas (unless otherwise posted)?",
+                options: [
+                    "50 km/h (on dual-carriageway/divided roads)",
+                    "70 km/h",
+                    "30 km/h",
+                    "80 km/h"
+                ],
+                correct: 0,
+                explanation: "In urban areas, the maximum speed limit for motorcycles is 50 km/h on roads with a physical median separator (dual carriageway) and 40 km/h on two-way undivided roads."
             }
-          }
+        ];
+
+        let currentQuestion = 0;
+        let userAnswers = new Array(questions.length).fill(null);
+        let timeRemaining = 600; // 10 minutes in seconds
+        let timerInterval = null;
+
+        // UI Handlers
+        function startQuiz() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('quizScreen').classList.remove('hidden');
+            document.getElementById('timerContainer').classList.remove('hidden');
+            
+            renderQuestionGrid();
+            loadQuestion(0);
+            startTimer();
         }
 
-        if (z && z.position.z >= -6) {
-          baseHP -= 0.15; updateHUD();
-          if (baseHP <= 0) {
-            isGameRunning = false;
-            document.exitPointerLock();
-            document.getElementById('fps-overlay').style.display = 'flex';
-            break;
-          }
-        }
-      }
+        function startTimer() {
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                let mins = Math.floor(timeRemaining / 60);
+                let secs = timeRemaining % 60;
+                document.getElementById('timeDisplay').innerText = 
+                    `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
 
-      renderMinimap();
-      renderer.render(scene, camera);
-    }
-  </script>
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitQuiz();
+                }
+            }, 1000);
+        }
+
+        function loadQuestion(index) {
+            currentQuestion = index;
+            const q = questions[index];
+
+            document.getElementById('questionCategory').innerText = q.category + (q.isCritical ? " • [CRITICAL]" : "");
+            document.getElementById('questionCategory').className = q.isCritical 
+                ? "px-3 py-1 bg-amber-100 text-amber-800 font-bold rounded-full text-xs" 
+                : "px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-semibold";
+
+            document.getElementById('questionCounter').innerText = `Question ${index + 1} of ${questions.length}`;
+            document.getElementById('questionText').innerText = q.text;
+
+            // Illustration handling
+            const illustrationContainer = document.getElementById('illustrationContainer');
+            const illustrationSvg = document.getElementById('illustrationSvg');
+            if (q.svg) {
+                illustrationSvg.innerHTML = q.svg;
+                illustrationContainer.classList.remove('hidden');
+            } else {
+                illustrationContainer.classList.add('hidden');
+            }
+
+            // Options rendering
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const isSelected = userAnswers[index] === idx;
+                const btn = document.createElement('button');
+                btn.onclick = () => selectOption(idx);
+                btn.className = `w-full text-left p-4 rounded-xl border text-sm md:text-base font-medium transition-all flex items-center justify-between ${
+                    isSelected 
+                    ? 'border-indigo-600 bg-indigo-50/80 text-indigo-900 shadow-sm ring-2 ring-indigo-500/20' 
+                    : 'border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700'
+                }`;
+
+                btn.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold ${
+                            isSelected ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'
+                        }">
+                            ${String.fromCharCode(65 + idx)}
+                        </span>
+                        <span>${opt}</span>
+                    </div>
+                `;
+                optionsContainer.appendChild(btn);
+            });
+
+            // Update Navigation state
+            document.getElementById('prevBtn').disabled = index === 0;
+            document.getElementById('nextBtn').innerText = index === questions.length - 1 ? 'Finish →' : 'Next →';
+            updateGridState();
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            loadQuestion(currentQuestion);
+        }
+
+        function navigateQuestion(direction) {
+            const newIndex = currentQuestion + direction;
+            if (newIndex >= 0 && newIndex < questions.length) {
+                loadQuestion(newIndex);
+            } else if (newIndex >= questions.length) {
+                confirmSubmit();
+            }
+        }
+
+        function renderQuestionGrid() {
+            const grid = document.getElementById('questionGrid');
+            grid.innerHTML = '';
+            questions.forEach((_, i) => {
+                const btn = document.createElement('button');
+                btn.id = `grid-btn-${i}`;
+                btn.onclick = () => loadQuestion(i);
+                btn.className = `h-10 rounded-lg text-xs font-bold transition-all border ${getGridBtnStyle(i)}`;
+                btn.innerText = i + 1;
+                grid.appendChild(btn);
+            });
+        }
+
+        function getGridBtnStyle(index) {
+            if (index === currentQuestion) {
+                return 'border-indigo-600 bg-indigo-600 text-white shadow-md';
+            }
+            if (userAnswers[index] !== null) {
+                return 'border-indigo-200 bg-indigo-100 text-indigo-800';
+            }
+            return 'border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100';
+        }
+
+        function updateGridState() {
+            questions.forEach((_, i) => {
+                const btn = document.getElementById(`grid-btn-${i}`);
+                if (btn) btn.className = `h-10 rounded-lg text-xs font-bold transition-all border ${getGridBtnStyle(i)}`;
+            });
+        }
+
+        function confirmSubmit() {
+            const unanswered = userAnswers.filter(a => a === null).length;
+            const warningText = unanswered > 0 
+                ? `You still have ${unanswered} unanswered question(s). Are you sure you want to submit?`
+                : `Are you sure you want to finish and submit your test now?`;
+            
+            document.getElementById('unansweredWarning').innerText = warningText;
+            document.getElementById('confirmModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('confirmModal').classList.add('hidden');
+        }
+
+        function submitQuiz() {
+            clearInterval(timerInterval);
+            closeModal();
+
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('timerContainer').classList.add('hidden');
+            document.getElementById('resultScreen').classList.remove('hidden');
+
+            let score = 0;
+            let failedCritical = false;
+
+            questions.forEach((q, idx) => {
+                const isCorrect = userAnswers[idx] === q.correct;
+                if (isCorrect) {
+                    score++;
+                } else if (q.isCritical) {
+                    failedCritical = true;
+                }
+            });
+
+            const passed = score >= 8 && !failedCritical;
+
+            // Render Result Summary
+            const resultSummary = document.getElementById('resultSummary');
+            resultSummary.innerHTML = `
+                <div class="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 ${passed ? 'bg-emerald-100 text-emerald-600' : 'bg-rose-100 text-rose-600'}">
+                    <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        ${passed 
+                            ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'
+                            : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>'}
+                    </svg>
+                </div>
+                <h2 class="text-3xl font-extrabold ${passed ? 'text-emerald-600' : 'text-rose-600'} mb-1">
+                    ${passed ? 'PASSED!' : 'FAILED'}
+                </h2>
+                <p class="text-slate-600 font-medium text-lg mb-4">
+                    Score: <span class="font-bold text-slate-800">${score}</span> / ${questions.length}
+                </p>
+                ${failedCritical ? '<p class="text-xs font-semibold text-rose-600 bg-rose-50 inline-block px-3 py-1 rounded-full border border-rose-200">Failed due to an incorrect answer on a Critical Safety Question!</p>' : ''}
+            `;
+
+            const explanationList = document.getElementById('explanationList');
+            explanationList.innerHTML = '';
+
+            questions.forEach((q, idx) => {
+                const userAns = userAnswers[idx];
+                const isCorrect = userAns === q.correct;
+
+                const card = document.createElement('div');
+                card.className = `p-5 rounded-xl border ${isCorrect ? 'border-emerald-200 bg-emerald-50/30' : 'border-rose-200 bg-rose-50/30'}`;
+
+                card.innerHTML = `
+                    <div class="flex items-start justify-between mb-2">
+                        <span class="font-bold text-sm text-slate-700">Question ${idx + 1}: ${q.text}</span>
+                        <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${isCorrect ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                            ${isCorrect ? 'Correct' : 'Incorrect'}
+                        </span>
+                    </div>
+                    ${q.svg ? `<div class="my-2">${q.svg}</div>` : ''}
+                    <div class="text-sm space-y-1 my-3">
+                        <p class="text-slate-600">Your Answer: <span class="font-semibold ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}">${userAns !== null ? q.options[userAns] : 'Not answered'}</span></p>
+                        ${!isCorrect ? `<p class="text-slate-600">Correct Answer: <span class="font-semibold text-emerald-700">${q.options[q.correct]}</span></p>` : ''}
+                    </div>
+                    <div class="bg-white p-3 rounded-lg border border-slate-200 text-xs text-slate-600 leading-relaxed">
+                        <strong>Explanation:</strong> ${q.explanation}
+                    </div>
+                `;
+                explanationList.appendChild(card);
+            });
+        }
+
+        function resetQuiz() {
+            currentQuestion = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            timeRemaining = 600;
+            
+            document.getElementById('resultScreen').classList.add('hidden');
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
