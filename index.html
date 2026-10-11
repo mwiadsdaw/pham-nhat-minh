@@ -11,15 +11,17 @@
             theme: {
                 extend: {
                     colors: {
-                        darkBg: '#0f172a',
-                        cardBg: '#1e293b',
+                        darkBg: '#0b0f19',
+                        cardBg: '#111827',
                         accentCyan: '#06b6d4',
                         accentPurple: '#8b5cf6',
                         accentEmerald: '#10b981',
+                        accentPink: '#ec4899',
                     },
                     animation: {
                         'float': 'float 4s ease-in-out infinite',
                         'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'bounce-slow': 'bounce 3s infinite',
                     },
                     keyframes: {
                         float: {
@@ -42,26 +44,28 @@
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #0f172a;
+            background-color: #0b0f19;
             color: #f8fafc;
             overflow-x: hidden;
         }
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(17, 24, 39, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
         .glass-panel-hover:hover {
-            background: rgba(30, 41, 59, 0.85);
+            background: rgba(17, 24, 39, 0.9);
             border-color: rgba(6, 182, 212, 0.4);
-            box-shadow: 0 0 25px rgba(6, 182, 212, 0.15);
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
+            transform: translateY(-4px);
+            transition: all 0.3s ease;
         }
         ::-webkit-scrollbar {
             width: 8px;
         }
         ::-webkit-scrollbar-track {
-            background: #0f172a;
+            background: #0b0f19;
         }
         ::-webkit-scrollbar-thumb {
             background: #334155;
@@ -72,14 +76,14 @@
 <body class="bg-darkBg text-slate-100 selection:bg-cyan-500 selection:text-white relative">
 
     <!-- Background Glow Blobs -->
-    <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow"></div>
-    <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-cyan-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-glow" style="animation-delay: 1.5s;"></div>
+    <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-purple-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse-glow"></div>
+    <div class="absolute top-1/3 right-1/4 w-[500px] h-[500px] bg-cyan-600/15 rounded-full blur-[120px] pointer-events-none animate-pulse-glow" style="animation-delay: 1.5s;"></div>
 
     <!-- ==================== HEADER / NAVIGATION BAR ==================== -->
-    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-slate-800/60 transition-all duration-300" id="navbar">
+    <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-slate-800/80 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
             <!-- Logo / Name -->
-            <a href="#hero" class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent flex items-center gap-2">
+            <a href="#hero" class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent flex items-center gap-2.5">
                 <i class="fa-solid fa-code text-cyan-400"></i> Phạm Nhật Minh
             </a>
 
@@ -95,9 +99,12 @@
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">Liên hệ</a>
             </nav>
 
-            <!-- CTA Button -->
-            <div class="hidden md:block">
-                <a href="https://pminh83.name.vn/gocamnhac.html" class="px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-pink-500 to-purple-600 text-white shadow-lg shadow-pink-500/20 hover:shadow-pink-500/40 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+            <!-- CTA Button Header -->
+            <div class="hidden md:flex items-center gap-3">
+                <a href="/hoctap/" class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 border border-slate-700 text-cyan-300 hover:bg-slate-700 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-graduation-cap"></i> Học tập
+                </a>
+                <a href="https://pminh83.name.vn/gocamnhac.html" class="px-4 py-2 rounded-xl text-xs font-semibold bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-lg shadow-pink-600/25 hover:scale-105 transition-all flex items-center gap-1.5">
                     <i class="fa-solid fa-compact-disc"></i> Phòng Nhạc
                 </a>
             </div>
@@ -126,41 +133,43 @@
         <div class="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             
             <div class="lg:col-span-7 space-y-6 text-center lg:text-left">
-                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-cyan-500/30 text-xs font-medium text-cyan-300 animate-float">
-                    <span class="w-2 h-2 rounded-full bg-cyan-400 animate-ping"></span>
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full glass-panel border border-cyan-500/30 text-xs font-semibold text-cyan-300 animate-float shadow-lg">
+                    <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
                     Học sinh THPT Sóc Sơn & Creator
                 </div>
 
                 <h1 class="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight">
                     Xin chào, mình là <br>
-                    <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">
+                    <span class="bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                         Phạm Nhật Minh
                     </span>
                 </h1>
 
-                <p class="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto lg:mx-0 font-light">
+                <p class="text-slate-300 text-lg sm:text-xl max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
                     Đam mê phát triển Web, nghiên cứu thuật toán Tin học (C++, Python), đồng thời thổi hồn qua những giai điệu Piano và Guitar đầy cảm xúc.
                 </p>
 
                 <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4 pt-4">
-                    <a href="#programming" class="px-8 py-3.5 rounded-xl font-semibold text-sm bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg shadow-cyan-500/25 hover:shadow-cyan-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2">
+                    <a href="#programming" class="px-8 py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-xl shadow-cyan-500/25 hover:shadow-cyan-500/50 hover:scale-105 transition-all duration-300 flex items-center gap-2.5">
                         <span>Khám phá Lập trình</span>
                         <i class="fa-solid fa-arrow-down text-xs"></i>
                     </a>
-                    <a href="https://pminh83.name.vn/gocamnhac.html" class="px-8 py-3.5 rounded-xl font-semibold text-sm glass-panel text-pink-300 border border-pink-500/40 hover:bg-pink-500/10 hover:text-white transition-all duration-300 flex items-center gap-2">
-                        <i class="fa-solid fa-music"></i> Góc Cảm Nhạc
+                    <a href="/trochuyenn/idex.html" class="px-8 py-3.5 rounded-2xl font-bold text-sm glass-panel text-purple-300 border border-purple-500/40 hover:bg-purple-500/15 hover:text-white transition-all duration-300 flex items-center gap-2.5">
+                        <i class="fa-solid fa-comments text-cyan-400"></i> Phòng Trò Chuyện
                     </a>
                 </div>
             </div>
 
             <div class="lg:col-span-5 flex justify-center relative">
                 <div class="relative w-72 h-72 sm:w-80 sm:h-80">
-                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 to-purple-600 blur-xl opacity-40 animate-pulse"></div>
-                    <div class="relative w-full h-full rounded-3xl glass-panel p-3 border border-slate-700/80 shadow-2xl overflow-hidden group">
-                        <div class="w-full h-full rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center relative overflow-hidden">
-                            <div class="text-6xl font-black bg-gradient-to-br from-cyan-400 to-purple-500 bg-clip-text text-transparent group-hover:scale-110 transition-transform duration-500">
-                                PNM
+                    <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 to-purple-600 blur-2xl opacity-40 animate-pulse"></div>
+                    <div class="relative w-full h-full rounded-3xl glass-panel p-4 border border-slate-700/80 shadow-2xl overflow-hidden group">
+                        <div class="w-full h-full rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden text-center p-6 border border-slate-800">
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-3xl mb-4 shadow-inner">
+                                <i class="fa-solid fa-laptop-code"></i>
                             </div>
+                            <h3 class="text-lg font-bold text-white">Phạm Nhật Minh</h3>
+                            <p class="text-xs text-slate-400 mt-1">Class 10A2 - THPT Sóc Sơn</p>
                         </div>
                     </div>
                 </div>
@@ -179,29 +188,29 @@
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div class="lg:col-span-7 glass-panel rounded-3xl p-8 border border-slate-700/60 space-y-6">
-                    <h4 class="text-xl font-bold text-slate-100 flex items-center gap-2">
+                <div class="lg:col-span-7 glass-panel rounded-3xl p-8 sm:p-10 border border-slate-700/60 space-y-6 shadow-xl">
+                    <h4 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
                         <i class="fa-solid fa-user-gear text-cyan-400"></i> Đam mê Công nghệ & Sáng tạo
                     </h4>
-                    <p class="text-slate-300 leading-relaxed font-light">
+                    <p class="text-slate-300 leading-relaxed font-light text-base">
                         Mình là học sinh lớp 10A2 trường THPT Sóc Sơn. Bên cạnh chương trình học trên lớp, mình dành phần lớn thời gian để tự học lập trình Web, nghiên cứu các thuật toán nâng cao bằng C++ và Python, cũng như xây dựng các trang web tương tác cá nhân.
                     </p>
-                    <div class="pt-4 border-t border-slate-700/50 grid grid-cols-2 gap-4 text-sm text-slate-300">
-                        <div class="flex items-center gap-2"><i class="fa-solid fa-location-dot text-cyan-400"></i> Sóc Sơn, Hà Nội</div>
-                        <div class="flex items-center gap-2"><i class="fa-solid fa-school text-purple-400"></i> THPT Sóc Sơn (10A2)</div>
+                    <div class="pt-4 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-300">
+                        <div class="flex items-center gap-2.5 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800"><i class="fa-solid fa-location-dot text-cyan-400"></i> Sóc Sơn, Hà Nội</div>
+                        <div class="flex items-center gap-2.5 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800"><i class="fa-solid fa-school text-purple-400"></i> THPT Sóc Sơn (10A2)</div>
                     </div>
                 </div>
 
-                <div class="lg:col-span-5 glass-panel rounded-3xl p-8 border border-slate-700/60 space-y-6 text-center">
-                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mx-auto">
+                <div class="lg:col-span-5 glass-panel rounded-3xl p-8 sm:p-10 border border-slate-700/60 space-y-6 text-center shadow-xl">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mx-auto shadow-inner">
                         <i class="fa-solid fa-graduation-cap"></i>
                     </div>
-                    <h4 class="text-lg font-bold text-slate-100">Góc Học Tập & Phát Triển</h4>
+                    <h4 class="text-xl font-bold text-slate-100">Góc Học Tập & Phát Triển</h4>
                     <p class="text-xs text-slate-400 leading-relaxed">
                         Khám phá chi tiết tài liệu, kế hoạch ôn tập và các chuyên đề học tập của mình tại trang riêng biệt.
                     </p>
-                    <a href="/hoctap/" class="inline-block w-full py-3 rounded-xl bg-cyan-600 hover:bg-cyan-500 font-semibold text-xs text-white transition shadow-lg">
-                        Truy cập trang Học tập <i class="fa-solid fa-arrow-right ml-1"></i>
+                    <a href="/hoctap/" class="inline-flex items-center justify-center w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-purple-600 font-bold text-xs text-white transition shadow-lg hover:scale-105">
+                        Truy cập trang Học tập <i class="fa-solid fa-arrow-right ml-2"></i>
                     </a>
                 </div>
             </div>
@@ -219,16 +228,16 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- C++ & Python (Thuật toán) -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 border border-slate-700/60 flex flex-col justify-between group">
+                <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-10 border border-slate-700/60 flex flex-col justify-between shadow-xl">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 shadow-inner">
                             <i class="fa-solid fa-terminal"></i>
                         </div>
                         <h4 class="text-2xl font-bold text-slate-100 mb-3">Thuật Toán C++ & Python</h4>
                         <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
                             Nghiên cứu giải thuật thi đấu học sinh giỏi Tin học, tối ưu hóa hiệu suất bộ nhớ và tự động hóa các tác vụ với Python.
                         </p>
-                        <ul class="text-xs text-slate-400 space-y-1.5 mb-6 list-disc list-inside">
+                        <ul class="text-xs text-slate-400 space-y-2 mb-6 list-disc list-inside">
                             <li><b>C++:</b> Sliding Window, Two Pointers, Bitset, STL.</li>
                             <li><b>Python:</b> Scripting, xử lý tập tin và tự động hóa.</li>
                         </ul>
@@ -239,16 +248,16 @@
                 </div>
 
                 <!-- Web Development -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 border border-slate-700/60 flex flex-col justify-between group">
+                <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-10 border border-slate-700/60 flex flex-col justify-between shadow-xl">
                     <div>
-                        <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 transition-transform">
+                        <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl mb-6 shadow-inner">
                             <i class="fa-solid fa-code"></i>
                         </div>
                         <h4 class="text-2xl font-bold text-slate-100 mb-3">Phát Triển Web Portfolio</h4>
                         <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
                             Xây dựng và duy trì các giao diện web cá nhân hiện đại bằng HTML, CSS, Tailwind CSS, JavaScript và tích hợp đồ họa Three.js.
                         </p>
-                        <ul class="text-xs text-slate-400 space-y-1.5 mb-6 list-disc list-inside">
+                        <ul class="text-xs text-slate-400 space-y-2 mb-6 list-disc list-inside">
                             <li>Giao diện Glassmorphism độc đáo</li>
                             <li>Triển khai tự động qua Vercel & Quản trị DNS</li>
                         </ul>
@@ -266,183 +275,4 @@
         <div class="max-w-7xl mx-auto">
             <div class="text-center max-w-2xl mx-auto mb-16">
                 <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">Giai điệu & Cảm xúc</h2>
-                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Góc Âm Nhạc Thật Đẹp</h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-emerald-400 to-cyan-500 mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                <!-- Acoustic Guitar -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 border border-slate-700/60 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400 text-2xl mb-6 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-guitar"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-slate-100 mb-3">Acoustic Guitar</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
-                            Đàn guitar đồng hành cùng mình trong những phút giây thư giãn. Từ việc luyện tập quạt chả, rải phím đến tự tay tinh chỉnh cần đàn, thay dây và bảo dưỡng định kỳ để giữ âm chuẩn xác nhất.
-                        </p>
-                        <ul class="text-xs text-slate-400 space-y-1 mb-6 list-disc list-inside">
-                            <li>Kỹ thuật Fingerstyle & Đệm hát</li>
-                            <li>Bảo dưỡng, căn chỉnh cần đàn định kỳ</li>
-                        </ul>
-                    </div>
-                    <a href="https://pminh83.name.vn/gocamnhac.html" class="inline-flex items-center gap-2 text-xs font-bold text-emerald-400 hover:text-emerald-300">
-                        <span>Trải nghiệm tại Góc Cảm Nhạc</span> <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <!-- Piano Melodies -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 border border-slate-700/60 flex flex-col justify-between group">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl mb-6 group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-music"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-slate-100 mb-3">Piano Melodies</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
-                            Nơi thả hồn vào các phím đen phím trắng. Mình tập trung vào kỹ thuật đệm đàn hai tay, ứng dụng các hợp âm nâng cao, hợp âm đảo (inversions) và giai điệu trữ tình sâu lắng.
-                        </p>
-                        <ul class="text-xs text-slate-400 space-y-1 mb-6 list-disc list-inside">
-                            <li>Đệm đàn hai tay & Hợp âm đảo (Inversions)</li>
-                            <li>Classic & Modern Pop Covers</li>
-                        </ul>
-                    </div>
-                    <a href="https://pminh83.name.vn/gocamnhac.html" class="inline-flex items-center gap-2 text-xs font-bold text-purple-400 hover:text-purple-300">
-                        <span>Ghé thăm Phòng Nhạc Trực Tuyến</span> <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Nút lớn trỏ tới Góc Cảm Nhạc -->
-            <div class="text-center">
-                <a href="https://pminh83.name.vn/gocamnhac.html" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold text-sm shadow-xl shadow-pink-600/20 hover:scale-105 transition-all">
-                    <i class="fa-solid fa-compact-disc animate-spin" style="animation-duration: 6s;"></i> Truy cập ngay Góc Cảm Nhạc (Nghe nhạc & Chat trực tuyến) <i class="fa-solid fa-arrow-right"></i>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== MỤC 3: TRÒ CHUYỆN & KẾT NỐI ==================== -->
-    <section id="chatting" class="py-24 px-6 relative bg-slate-900/30">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-pink-400 mb-3">Cộng đồng & Giao lưu</h2>
-                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Phòng Trò Chuyện Trực Tuyến</h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-pink-400 to-purple-500 mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div class="max-w-3xl mx-auto glass-panel glass-panel-hover rounded-3xl p-8 sm:p-10 border border-slate-700/60 text-center space-y-6">
-                <div class="w-16 h-16 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl mx-auto">
-                    <i class="fa-solid fa-comments"></i>
-                </div>
-                <h4 class="text-2xl font-bold text-slate-100">Kết Nối, Gửi Lời Mời & Nhắn Tin 1-1</h4>
-                <p class="text-slate-300 text-sm leading-relaxed font-light">
-                    Trải nghiệm không gian mạng xã hội thu nhỏ được phát triển riêng. Cho phép bạn tạo tài khoản, gửi lời mời kết bạn, quản lý danh sách bạn bè và nhắn tin thời gian thực với độ mượt mà cao.
-                </p>
-                <div class="pt-4">
-                    <a href="/trochuyenn/idex.html" class="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold text-sm shadow-lg hover:scale-105 transition-all">
-                        <i class="fa-solid fa-comments"></i> Mở Phòng Trò Chuyện <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== LIÊN HỆ ==================== -->
-    <section id="contact" class="py-24 px-6 relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-3">Liên hệ với tôi</h2>
-                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Hãy Kết Nối Cùng Nhau</h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start max-w-4xl mx-auto">
-                <div class="lg:col-span-5 space-y-6">
-                    <div class="glass-panel rounded-3xl p-8 border border-slate-700/60 space-y-6">
-                        <h4 class="text-xl font-bold text-slate-100">Thông tin liên lạc</h4>
-                        <div class="space-y-4 pt-2 text-sm text-slate-300">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 border border-cyan-500/20">
-                                    <i class="fa-solid fa-envelope"></i>
-                                </div>
-                                <span>contact@pminh83.name.vn</span>
-                            </div>
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 border border-purple-500/20">
-                                    <i class="fa-solid fa-globe"></i>
-                                </div>
-                                <span>pminh83.name.vn</span>
-                            </div>
-                        </div>
-
-                        <div class="pt-4 border-t border-slate-700/50 flex gap-3">
-                            <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" title="Facebook" class="w-10 h-10 rounded-xl glass-panel hover:bg-cyan-500/20 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition">
-                                <i class="fa-brands fa-facebook"></i>
-                            </a>
-                            <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" title="Instagram" class="w-10 h-10 rounded-xl glass-panel hover:bg-cyan-500/20 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition">
-                                <i class="fa-brands fa-instagram"></i>
-                            </a>
-                            <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" title="GitHub" class="w-10 h-10 rounded-xl glass-panel hover:bg-cyan-500/20 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition">
-                                <i class="fa-brands fa-github"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-7">
-                    <form class="glass-panel rounded-3xl p-8 border border-slate-700/60 space-y-4">
-                        <h4 class="text-xl font-bold text-slate-100">Gửi lời nhắn</h4>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-300">Họ và tên</label>
-                            <input type="text" required class="w-full mt-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="Tên của bạn...">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-300">Email</label>
-                            <input type="email" required class="w-full mt-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400" placeholder="Email của bạn...">
-                        </div>
-                        <div>
-                            <label class="text-xs font-semibold text-slate-300">Nội dung</label>
-                            <textarea rows="3" required class="w-full mt-1 px-4 py-3 rounded-xl bg-slate-900 border border-slate-700 text-xs text-white focus:outline-none focus:border-cyan-400 resize-none" placeholder="Nội dung..."></textarea>
-                        </div>
-                        <button type="submit" class="w-full py-3.5 rounded-xl text-xs font-bold bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg transition hover:scale-[1.01]">Gửi Tin Nhắn</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="py-8 px-6 border-t border-slate-800 text-center text-xs text-slate-500">
-        <p>&copy; 2026 Phạm Nhật Minh. All rights reserved.</p>
-    </footer>
-
-    <!-- Script Mobile Menu & Đồng bộ tài khoản -->
-    <script>
-        const menuBtn = document.getElementById('menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileLinks = document.querySelectorAll('.mobile-link');
-
-        menuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        mobileLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                mobileMenu.classList.add('hidden');
-            });
-        });
-
-        // Đồng bộ tài khoản hiển thị trên nút CTA trang chủ nếu đã đăng nhập
-        document.addEventListener('DOMContentLoaded', () => {
-            const loggedUser = localStorage.getItem("chat_user");
-            if (loggedUser) {
-                const ctaBtn = document.querySelector('header .hidden.md\\:block a');
-                if (ctaBtn && !ctaBtn.href.includes('goccamnhac')) {
-                    ctaBtn.href = `/trochuyenn/idex.html?user=${loggedUser}`;
-                    ctaBtn.innerHTML = `<i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1.5"></i> Chào, ${loggedUser}`;
-                }
-            }
-        });
-    </script>
-</body>
-</html>
+                <h3 class="text-3xl
