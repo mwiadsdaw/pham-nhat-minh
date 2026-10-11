@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
     
-    <!-- HỆ THỐNG STYLE NỘI BỘ LIÊN ĐỚI ĐỒNG BỘ CHỐNG VỠ KHUNG -->
+    <!-- CSS NỘI BỘ CHỐNG VỠ GIAO DIỆN TUYỆT ĐỐI -->
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -73,6 +73,7 @@
             height: 24px;
             border-radius: 50%;
             border: 2px solid #8b5cf6;
+            object-fit: cover;
             background: #1e293b;
             color: #06b6d4;
             display: flex;
@@ -162,7 +163,7 @@
             cursor: pointer;
         }
         .card-title { font-size: 16px; font-weight: 700; color: white; margin: 0; }
-        .card-summary { font-family: monospace; font-size: 12px; color: #64748b; margin: 4px 0 0 0; }
+        .card-summary { font-family: monospace; font-size: 12px; color: #64748b; margin: 4px 0 0 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 550px; }
         .btn-delete-card {
             position: absolute;
             top: 24px;
@@ -177,6 +178,7 @@
             padding: 4px 10px;
             border-radius: 8px;
         }
+        .btn-delete-card:hover { background-color: #dc2626; }
         .arrow-icon { color: #64748b; font-size: 12px; transition: transform 0.2s; margin-left: 12px; }
         .detail-block { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #1e293b; }
         .desc-text { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
@@ -196,8 +198,10 @@
         .comment-user { font-weight: 700; color: #06b6d4; margin-right: 4px; }
         .comment-input-group { display: flex; gap: 8px; margin-top: 12px; }
         .input-comment { flex: 1; background: #020617; border: 1px solid #1e293b; border-radius: 10px; padding: 8px 12px; color: white; font-size: 12px; }
+        .input-comment:focus { outline: none; border-color: #8b5cf6; }
         .btn-comment-send { background: #8b5cf6; color: white; border: none; padding: 0 16px; border-radius: 10px; font-size: 11px; font-weight: 700; cursor: pointer; }
         
+        /* Modal Form Style */
         .modal-mask {
             display: none;
             position: fixed;
@@ -261,14 +265,3 @@
         <!-- Tab Switcher -->
         <div class="tab-container">
             <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active">Ngôn ngữ C++</button>
-            <button onclick="switchLang('python')" id="tab-python" class="tab-btn">Ngôn ngữ Python</button>
-        </div>
-
-        <div id="lessons-container"></div>
-    </div>
-
-    <!-- Modal Form -->
-    <div id="post-modal" class="modal-mask">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 class="modal-title">Tạo Bài Giảng Mới</h3>
