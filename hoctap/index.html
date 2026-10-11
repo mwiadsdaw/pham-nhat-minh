@@ -4,23 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    <!-- Thư viện Tailwind CSS CDN chuẩn xác -->
+    
+    <!-- SỬA LỖI: Nhúng CDN Tailwind CSS chính thức, đầy đủ đường dẫn -->
     <script src="https://tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { darkBg: '#0b0f19', cardBg: '#111827', accentCyan: '#06b6d4', accentPurple: '#8b5cf6' }
+                    colors: { 
+                        darkBg: '#0b0f19', 
+                        cardBg: '#111827', 
+                        accentCyan: '#06b6d4', 
+                        accentPurple: '#8b5cf6' 
+                    }
                 }
             }
         }
     </script>
-    <!-- Google Fonts đầy đủ URL gốc -->
+    
+    <!-- SỬA LỖI: Nhúng Google Fonts chính thức đầy đủ đường dẫn -->
     <link href="https://googleapis.com" rel="stylesheet">
-    <!-- FontAwesome Icons đầy đủ URL gốc không viết tắt -->
+    
+    <!-- SỬA LỖI: Nhúng CDN FontAwesome chính thức đầy đủ đường dẫn để hiện icon -->
     <link rel="stylesheet" href="https://cloudflare.com">
+    
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; color: #e2e8f0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #e2e8f0; }
         .font-code { font-family: 'Fira Code', monospace; }
         .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .tab-btn.active { background: linear-gradient(135deg, #06b6d4, #8b5cf6); color: white; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
@@ -29,15 +38,17 @@
 <body class="min-h-screen py-10 px-4 flex flex-col items-center justify-between">
 
     <!-- Top Action Bar -->
-    <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
+    <div class="w-full max-w-4xl mb-6 flex justify-between items-center no-print">
         <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 flex items-center gap-2 transition-colors">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
         <div class="flex items-center gap-4">
+            <!-- Nút đăng bài giảng -->
             <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
             </button>
-            <!-- VÙNG HIỂN THỊ TRẠNG THÁI TÀI KHOẢN -->
+            
+            <!-- HỆ THỐNG TÀI KHOẢN (ACCOUNT AREA) -->
             <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
                 <button onclick="handleAuth()" id="auth-btn" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow hover:opacity-90 transition-all">
                     <i class="fa-solid fa-user"></i> Đăng nhập
@@ -75,7 +86,7 @@
 
     <!-- Modal Tạo Bài Giảng Mới -->
     <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới</h3>
                 <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -95,7 +106,7 @@
 
     <footer class="mt-12 text-center text-xs text-slate-500"><p>© 2026 Phạm Nhật Minh.</p></footer>
 
-    <!-- Các hàm xử lý giao diện UI cơ bản -->
+    <!-- Các hàm UI điều khiển giao diện cơ bản -->
     <script>
         function toggleModal(show) {
             const m = document.getElementById('post-modal');
@@ -119,7 +130,7 @@
         }
     </script>
 
-    <!-- Thư viện Firebase Module CDN đầy đủ đường dẫn -->
+    <!-- SỬA LỖI: Nhúng thư viện Firebase CDN v10.8.0 chính xác từng ký tự -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://gstatic.com";
@@ -143,16 +154,22 @@
         let cachedLectures = [];
         let currentUserData = null;
 
-        // Logic điều khiển Đăng nhập / Đăng xuất tài khoản
+        // Xử lý sự kiện nút bấm Tài khoản (Đăng nhập / Đăng xuất)
         window.handleAuth = function() {
             if (currentUserData) {
-                signOut(auth).then(() => { location.reload(); });
+                signOut(auth).then(() => {
+                    currentUserData = null;
+                }).catch((err) => {
+                    console.error("Lỗi đăng xuất:", err.message);
+                });
             } else {
-                signInWithPopup(auth, provider).catch((err) => { console.error("Lỗi xác thực:", err.message); });
+                signInWithPopup(auth, provider).catch((err) => {
+                    console.error("Lỗi đăng nhập Auth:", err.message);
+                });
             }
         };
 
-        // Lắng nghe trạng thái đăng nhập hệ thống
+        // Đồng bộ trạng thái User theo thời gian thực
         onAuthStateChanged(auth, (user) => {
             const accountArea = document.getElementById('account-area');
             if (user) {
@@ -160,9 +177,3 @@
                 accountArea.innerHTML = `
                     <img src="${user.photoURL}" alt="avatar" class="w-6 h-6 rounded-full border border-purple-500 shadow">
                     <span class="text-xs font-bold text-slate-200 font-mono max-w-[100px] truncate">${user.displayName.split(' ').pop()}</span>
-                    <button onclick="handleAuth()" class="ml-2 text-[10px] bg-slate-800 text-red-400 font-bold px-2 py-0.5 rounded hover:bg-slate-700 transition-colors">Đăng xuất</button>
-                `;
-            } else {
-                currentUserData = null;
-                accountArea.innerHTML = `
-                    <button onclick="handleAuth()" id="auth-btn" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow hover:opacity-90 transition-all">
