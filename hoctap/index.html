@@ -1,90 +1,254 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    <script src="https://tailwindcss.com"></script>
-    <link href="https://googleapis.com" rel="stylesheet">
-    <link rel="stylesheet" href="https://cloudflare.com">
+    <title>Tài liệu Lập trình C++ & Python | Phạm Nhật Minh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#111827',
+                        accentCyan: '#06b6d4',
+                        accentPurple: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #e2e8f0; }
-        .font-code { font-family: 'Fira Code', monospace; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .tab-btn.active {
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            color: white;
+            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
+        }
     </style>
 </head>
-<body class="min-h-screen py-10 px-4 flex flex-col items-center">
+<body class="min-h-screen py-10 px-4 sm:px-6 flex flex-col items-center">
 
-    <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
-        <a href="/" class="text-sm text-slate-400 hover:text-cyan-400 flex items-center gap-2">
+    <!-- Top Action Bar -->
+    <div class="no-print w-full max-w-4xl mb-6 flex justify-between items-center">
+        <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
-        <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
-            <a href="/chat" class="text-xs font-bold text-cyan-400">Đăng nhập từ phòng Chat</a>
+        <div class="flex items-center gap-3">
+            <div id="user-badge-container" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl"></div>
+
+            <button onclick="openModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg">
+                <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
+            </button>
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf"></i> In / Xuất PDF
+            </button>
         </div>
     </div>
 
-    <main class="w-full max-w-4xl bg-slate-900/85 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
-        <div class="border-b border-slate-800 pb-6">
-            <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase">Hệ thống tài liệu</span>
-            <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">Thư Viện Bài Giảng Lập Trình</h1>
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+        
+        <!-- Header -->
+        <div class="border-b border-slate-800 pb-6 mb-4 flex justify-between items-start">
+            <div>
+                <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
+                <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Phạm Nhật Minh | THPT Sóc Sơn</p>
+            </div>
+            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">
+                Code Hub<br>v2.0.2026
+            </div>
         </div>
 
-        <div class="flex gap-3 bg-slate-950 p-2 rounded-2xl border border-slate-800">
-            <button onclick="switchTab('cpp')" id="tab-cpp" class="flex-1 py-3 rounded-xl font-bold text-xs bg-gradient-to-r from-cyan-500 to-purple-600 text-white">C++</button>
-            <button onclick="switchTab('python')" id="tab-python" class="flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white">Python</button>
+        <!-- Tab Switcher (C++ vs Python) -->
+        <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
+            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-code"></i> Ngôn ngữ C++
+            </button>
+            <button onclick="switchLang('python')" id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+                <i class="fa-brands fa-python"></i> Ngôn ngữ Python
+            </button>
         </div>
 
-        <div id="lessons-container" class="space-y-4"></div>
+        <!-- Content Area -->
+        <div id="lessons-container" class="space-y-3">
+            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
+        </div>
+
     </main>
 
+    <!-- Modal Tạo Bài Giảng Mới -->
+    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-slate-700 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Chọn chuyên mục:</label>
+                    <select id="new-category" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
+                        <option value="cpp">C++ (Thuật toán & Cơ bản)</option>
+                        <option value="python">Python (Scripting & Tự động hóa)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Tiêu đề bài giảng:</label>
+                    <input type="text" id="new-title" placeholder="Ví dụ: Bài 4: Vòng lặp For trong C++..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Nội dung lý thuyết:</label>
+                    <textarea id="new-content" rows="4" placeholder="Nhập nội dung bài giảng..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
+                    <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                </div>
+                <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-500">
+        <p>© 2026 Phạm Nhật Minh. All rights reserved.</p>
+    </footer>
+
+    <!-- Firebase & Script Xử lý -->
     <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, onSnapshot, query, orderBy } from "https://gstatic.com";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
-            authDomain: "://firebaseapp.com",
+            authDomain: "minh-s-website.firebaseapp.com",
             projectId: "minh-s-website",
-            storageBucket: "://appspot.com",
+            storageBucket: "minh-s-website.appspot.com",
             messagingSenderId: "453574408938",
             appId: "1:453574408938:web:8e15469ca906fce7f3b"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        let activeTab = 'cpp', cachedLectures =;
 
-        // Tải danh sách realtime từ Firestore
-        onSnapshot(query(collection(db, "lectures"), orderBy("createdAt", "desc")), (snap) => {
-            cachedLectures =;
-            snap.forEach(doc => cachedLectures.push({ id: doc.id, ...doc.data() }));
-            render();
-        });
+        let activeLanguageTab = 'cpp';
+        let cachedAllLectures = [];
 
-        function render() {
-            const container = document.getElementById('lessons-container');
-            container.innerHTML = '';
-            const filtered = cachedLectures.filter(item => item.category === activeTab);
+        const currentAccount = localStorage.getItem("chat_user");
 
-            filtered.forEach(item => {
-                container.innerHTML += `
-                    <div class="p-5 bg-slate-950/40 border border-slate-800 rounded-xl flex justify-between items-center hover:border-cyan-500 transition-all">
-                        <div>
-                            <h3 class="font-bold text-white text-base">${item.title}</h3>
-                            <p class="text-xs text-slate-500 mt-1">Người đăng: ${item.author || 'Ẩn danh'}</p>
-                        </div>
-                        <!-- BẮC CẦU: Chuyển hướng sang file chi tiết kèm ID bài viết -->
-                        <a href="chitiet.html?id=${item.id}" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-cyan-500 hover:text-slate-950 text-xs font-bold transition-all">Xem bài học →</a>
-                    </div>`;
+        function renderUserBadge() {
+            const container = document.getElementById("user-badge-container");
+            if (!container) return;
+            if (currentAccount) {
+                container.innerHTML = `
+                    <a href="/trochuyenn/idex.html?user=${currentAccount}" class="text-cyan-400 font-semibold flex items-center gap-1.5 hover:underline">
+                        <i class="fa-solid fa-circle text-[8px] text-emerald-400"></i> ${currentAccount}
+                    </a>
+                `;
+            } else {
+                container.innerHTML = `
+                    <a href="/trochuyenn/idex.html" class="text-yellow-400 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập từ phòng Chat
+                    </a>
+                `;
+            }
+        }
+
+        window.switchLang = (lang) => {
+            activeLanguageTab = lang;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-${lang}`);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-400');
+            renderLecturesList();
+        };
+
+        window.openModal = () => document.getElementById('post-modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('post-modal').classList.add('hidden');
+
+        function loadLecturesRealtime() {
+            const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                cachedAllLectures = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLecturesList();
             });
         }
 
-        window.switchTab = function(lang) {
-            activeTab = lang;
-            document.querySelectorAll('button').forEach(b => b.classList.remove('bg-gradient-to-r', 'from-cyan-500', 'to-purple-600', 'text-white'));
-            document.getElementById('tab-' + lang).classList.add('bg-gradient-to-r', 'from-cyan-500', 'to-purple-600', 'text-white');
-            render();
+        function renderLecturesList() {
+            const container = document.getElementById('lessons-container');
+            const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này. Hãy bấm "Đăng bài giảng mới" để thêm!</div>`;
+                return;
+            }
+
+            container.innerHTML = filteredData.map(item => `
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 flex items-center justify-between hover:border-cyan-500/50 transition group">
+                    <a href="/hoctap/baigiang.html?id=${item.id}" class="text-sm sm:text-base font-bold text-slate-200 group-hover:text-cyan-400 transition flex items-center gap-3">
+                        <i class="fa-solid fa-book-open text-cyan-400"></i> ${item.title}
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg hidden sm:inline-block">Đăng bởi: 
+                            <a href="/trochuyenn/idex.html?user=${item.author || 'Phạm Nhật Minh'}" class="text-cyan-400 hover:underline font-semibold">
+                                ${item.author || 'Phạm Nhật Minh'}
+                            </a>
+                        </span>
+                        <a href="/hoctap/baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 bg-purple-500/10 px-3 py-1.5 rounded-xl border border-purple-500/20 transition">
+                            Xem <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join("");
         }
-    </script>
-</body>
-</html>
+
+        window.createNewPost = async () => {
+            if (!currentAccount) {
+                alert("Bạn chưa đăng nhập! Vui lòng chuyển sang trang Trò chuyện để đăng nhập tài khoản trước khi đăng bài.");
+                window.location.href = "/trochuyenn/idex.html";
+                return;
+            }
+
+            const category = document.getElementById('new-category').value;
+            const title = document.getElementById('new-title').value.trim();
+            const content = document.getElementById('new-content').value.trim();
+            const codeSnippet = document.getElementById('new-code').value.trim();
+
+            if(!title || !content) return alert("Vui lòng điền đầy đủ tiêu đề và nội dung bài giảng!");
+
+            try {
+                await addDoc(collection(db, "lessons"), {
+                    category,
+                    title,
+                    content,
+                    codeSnippet,
+                    author: currentAccount,
+                    createdAt
