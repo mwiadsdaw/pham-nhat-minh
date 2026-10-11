@@ -90,7 +90,10 @@
                 <a href="#about" class="hover:text-cyan-400 transition-colors">Giới thiệu</a>
                 <a href="gocamnhac.html" class="hover:text-cyan-400 transition-colors">Góc Âm Nhạc</a>
                 <a href="#projects" class="hover:text-cyan-400 transition-colors">Dự án</a>
-                <a href="#chat-section" class="hover:text-cyan-400 transition-colors text-cyan-300 font-semibold">Trò chuyện</a>
+                <a href="#chat-section" class="hover:text-cyan-400 transition-colors text-cyan-300 font-semibold relative">
+                    Trò chuyện
+                    <span id="nav-chat-badge" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold animate-bounce">!</span>
+                </a>
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">Liên hệ</a>
             </nav>
 
@@ -262,7 +265,7 @@
             <!-- Giao diện Khung Chat -->
             <div class="max-w-5xl mx-auto">
                 
-                <!-- 1. Form Đăng Nhập / Đăng Ký (Hiện ra khi chưa đăng nhập) -->
+                <!-- 1. Form Đăng Nhập / Đăng Ký -->
                 <div id="auth-box-container" class="glass-panel p-8 rounded-3xl max-w-md mx-auto border border-slate-700/80 space-y-4">
                     <h4 class="text-xl font-bold text-center text-cyan-400"><i class="fa-solid fa-user-lock mr-2"></i>Đăng nhập tài khoản chat</h4>
                     <p class="text-xs text-slate-400 text-center">Chỉ cần nhập tên tài khoản và mật khẩu để bắt đầu kết bạn và nhắn tin!</p>
@@ -276,21 +279,43 @@
                     </div>
                 </div>
 
-                <!-- 2. Giao diện Chat chính (Ẩn cho đến khi đăng nhập) -->
+                <!-- 2. Giao diện Chat chính -->
                 <div id="main-chat-app" class="hidden grid grid-cols-1 md:grid-cols-12 gap-6 h-[650px]">
                     
-                    <!-- Cột trái: Thông tin cá nhân, Tìm kiếm & Danh sách bạn bè -->
-                    <div class="md:col-span-4 glass-panel rounded-3xl p-5 flex flex-col space-y-4 border border-slate-700/60 overflow-hidden">
+                    <!-- Cột trái: Thông tin cá nhân, Nút thông báo, Tìm kiếm & Danh sách bạn bè -->
+                    <div class="md:col-span-4 glass-panel rounded-3xl p-5 flex flex-col space-y-4 border border-slate-700/60 overflow-hidden relative">
                         <div class="flex justify-between items-center pb-3 border-b border-slate-800">
-                            <span class="text-xs font-bold text-cyan-400 truncate max-w-[180px]">
-                                <i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1"></i> <span id="my-username">---</span>
-                            </span>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-cyan-400 truncate max-w-[130px]">
+                                    <i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1"></i> <span id="my-username">---</span>
+                                </span>
+
+                                <!-- Nút Quả Chuông Thông Báo -->
+                                <div class="relative">
+                                    <button id="btn-notif" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-cyan-400 flex items-center justify-center text-xs transition relative">
+                                        <i class="fa-solid fa-bell"></i>
+                                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
+                                    </button>
+
+                                    <!-- Popover Bảng Thông Báo -->
+                                    <div id="notif-dropdown" class="hidden absolute left-0 mt-2 w-64 glass-panel bg-slate-900/95 border border-slate-700 rounded-2xl p-3 shadow-2xl z-30 text-xs space-y-2">
+                                        <div class="font-bold text-cyan-400 pb-1 border-b border-slate-800 flex justify-between items-center">
+                                            <span>Thông báo mới</span>
+                                            <i class="fa-solid fa-bell text-[10px]"></i>
+                                        </div>
+                                        <div id="notif-content-list" class="max-h-48 overflow-y-auto space-y-1.5 pr-1">
+                                            <p class="text-slate-500 text-[11px] italic text-center py-2">Không có thông báo mới</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <button id="btn-logout" class="text-[11px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1.5 rounded-xl border border-red-500/30 transition">Đăng xuất</button>
                         </div>
 
                         <!-- Ô tìm kiếm người dùng khác -->
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-semibold text-slate-400">Tìm kiếm bạn bè</label>
+                            <label class="text-[11px] font-semibold text-slate-400">Tìm kiếm người dùng</label>
                             <div class="flex gap-2">
                                 <input type="text" id="search-input" placeholder="Nhập username..." class="flex-1 bg-slate-900/90 border border-slate-700 rounded-xl px-3.5 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
                                 <button id="btn-search" class="bg-cyan-600 hover:bg-cyan-500 px-3.5 py-2 rounded-xl text-xs font-bold"><i class="fa-solid fa-search"></i></button>
@@ -300,7 +325,10 @@
 
                         <!-- Lời mời kết bạn đang chờ -->
                         <div class="space-y-1.5">
-                            <label class="text-[11px] font-semibold text-yellow-400">Lời mời kết bạn</label>
+                            <label class="text-[11px] font-semibold text-yellow-400 flex items-center justify-between">
+                                <span>Lời mời kết bạn</span>
+                                <span id="req-count" class="text-[10px] bg-yellow-500/20 text-yellow-300 px-1.5 py-0.5 rounded-md">0</span>
+                            </label>
                             <div id="requests-list" class="space-y-1 max-h-28 overflow-y-auto pr-1"></div>
                         </div>
 
@@ -358,7 +386,7 @@
                             </div>
                         </div>
 
-                        <!-- CÁC NÚT MẠNG XÃ HỘI TRỎ VỀ FACEBOOK CÁ NHÂN -->
+                        <!-- CÁC NÚT MẠNG XÃ HỘI -->
                         <div class="pt-6 border-t border-slate-700/50 flex flex-wrap items-center gap-3">
                             <a href="https://www.facebook.com/profile.php?id=100095349503723" target="_blank" title="Facebook" class="w-10 h-10 rounded-xl glass-panel hover:bg-cyan-500/20 hover:border-cyan-400 flex items-center justify-center text-slate-300 hover:text-cyan-400 transition-all">
                                 <i class="fa-brands fa-facebook"></i>
@@ -407,7 +435,7 @@
         <p>&copy; 2026 Phạm Nhật Minh. All rights reserved.</p>
     </footer>
 
-    <!-- Script xử lý menu mobile & Hệ thống chat độc lập -->
+    <!-- Script menu mobile -->
     <script>
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
@@ -422,9 +450,22 @@
                 mobileMenu.classList.add('hidden');
             });
         });
+
+        // Bật / Tắt Dropdown Thông báo
+        const btnNotif = document.getElementById('btn-notif');
+        const dropdownNotif = document.getElementById('notif-dropdown');
+        if(btnNotif && dropdownNotif) {
+            btnNotif.addEventListener('click', (e) => {
+                e.stopPropagation();
+                dropdownNotif.classList.toggle('hidden');
+            });
+            document.addEventListener('click', () => {
+                dropdownNotif.classList.add('hidden');
+            });
+        }
     </script>
 
-    <!-- Firebase Script cho hệ thống Username/Password & Chat 1-1 -->
+    <!-- Firebase Script Đã Đóng Gói Và Sửa Tối Ưu Tốc Độ Realtime -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -485,7 +526,8 @@
             document.getElementById("auth-box-container").classList.add("hidden");
             document.getElementById("main-chat-app").classList.remove("hidden");
             document.getElementById("my-username").innerText = myUser;
-            loadFriendRequests();
+            
+            listenToNotificationsAndRequests();
             loadFriendsList();
         }
 
@@ -515,29 +557,66 @@
             alert("Đã gửi lời mời kết bạn đến " + target + "!");
         };
 
-        // Lời mời kết bạn
-        function loadFriendRequests() {
-            const q = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "pending"));
-            onSnapshot(q, (snap) => {
-                const box = document.getElementById("requests-list");
+        // Lắng nghe Lời mời kết bạn & Lắng nghe Tin nhắn mới để hiển thị Chuông Thông Báo
+        function listenToNotificationsAndRequests() {
+            // Lắng nghe lời mời kết bạn
+            const qReq = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "pending"));
+            
+            onSnapshot(qReq, (snap) => {
+                const reqBox = document.getElementById("requests-list");
+                const countBadge = document.getElementById("req-count");
+                const notifList = document.getElementById("notif-content-list");
+                const notifBadge = document.getElementById("notif-badge");
+                const navBadge = document.getElementById("nav-chat-badge");
+
+                const totalReqs = snap.docs.length;
+                countBadge.innerText = totalReqs;
+
+                if(totalReqs > 0) {
+                    notifBadge.innerText = totalReqs;
+                    notifBadge.classList.remove("hidden");
+                    navBadge.classList.remove("hidden");
+                } else {
+                    notifBadge.classList.add("hidden");
+                    navBadge.classList.add("hidden");
+                }
+
                 if(snap.empty) {
-                    box.innerHTML = `<p class="text-[11px] text-slate-500 italic">Không có lời mời kết bạn</p>`;
+                    reqBox.innerHTML = `<p class="text-[11px] text-slate-500 italic">Không có lời mời kết bạn</p>`;
+                    notifList.innerHTML = `<p class="text-slate-500 text-[11px] italic text-center py-2">Không có thông báo mới</p>`;
                     return;
                 }
-                box.innerHTML = snap.docs.map(d => `
-                    <div class="flex justify-between items-center bg-slate-900 p-2 rounded-xl border border-slate-800 text-xs">
-                        <span>${d.data().from}</span>
-                        <button onclick="acceptFriend('${d.id}')" class="bg-green-600 hover:bg-green-500 px-2.5 py-1 rounded-lg text-[11px] font-bold">Đồng ý</button>
-                    </div>
-                `).join("");
+
+                let reqHTML = "";
+                let notifHTML = "";
+
+                snap.docs.forEach(d => {
+                    const data = d.data();
+                    reqHTML += `
+                        <div class="flex justify-between items-center bg-slate-900 p-2 rounded-xl border border-slate-800 text-xs">
+                            <span class="font-medium text-slate-200">${data.from}</span>
+                            <button onclick="acceptFriend('${d.id}')" class="bg-green-600 hover:bg-green-500 px-2.5 py-1 rounded-lg text-[11px] font-bold">Đồng ý</button>
+                        </div>
+                    `;
+                    notifHTML += `
+                        <div class="bg-slate-800/80 p-2 rounded-xl border border-slate-700/80 text-[11px] flex items-center justify-between">
+                            <span><b>${data.from}</b> đã gửi lời mời kết bạn</span>
+                            <button onclick="acceptFriend('${d.id}')" class="text-emerald-400 font-bold ml-2">Đồng ý</button>
+                        </div>
+                    `;
+                });
+
+                reqBox.innerHTML = reqHTML;
+                notifList.innerHTML = notifHTML;
             });
         }
 
         window.acceptFriend = async (reqId) => {
             await setDoc(doc(db, "friends", reqId), { status: "accepted" }, { merge: true });
+            alert("Đã chấp nhận lời mời kết bạn!");
         };
 
-        // Danh sách bạn bè
+        // Lấy danh sách bạn bè
         function loadFriendsList() {
             const q1 = query(collection(db, "friends"), where("from", "==", myUser), where("status", "==", "accepted"));
             const q2 = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "accepted"));
@@ -554,6 +633,7 @@
                     box.innerHTML = `<p class="text-[11px] text-slate-500 italic">Chưa có bạn bè nào</p>`;
                     return;
                 }
+
                 box.innerHTML = list.map(f => `
                     <button onclick="openPrivateChat('${f}')" class="w-full text-left p-2.5 rounded-xl bg-slate-900/90 hover:bg-slate-800 transition border border-slate-800 text-xs flex items-center justify-between group">
                         <span class="font-medium text-slate-200 group-hover:text-cyan-400"><i class="fa-solid fa-user-circle mr-2 text-cyan-400"></i>${f}</span>
@@ -566,7 +646,7 @@
             onSnapshot(q2, renderFriends);
         }
 
-        // Chat riêng 1-1
+        // Lắng nghe đoạn chat riêng giữa 2 tài khoản (Sửa triệt để lỗi không nhận tin nhắn)
         let unsubscribeChat = null;
 
         window.openPrivateChat = (friendUsername) => {
@@ -574,16 +654,21 @@
             document.getElementById("chat-header").innerHTML = `<i class="fa-solid fa-circle text-[8px] text-emerald-400 mr-1"></i> Đang chat riêng với: <span class="text-cyan-400 ml-1 font-bold">${friendUsername}</span>`;
 
             const roomId = [myUser, friendUsername].sort().join("_");
-            const qMsg = query(collection(db, "private_messages"), where("roomId", "==", roomId), query(orderBy("createdAt", "asc")));
 
             if(unsubscribeChat) unsubscribeChat();
 
-            // Lắng nghe tin nhắn real-time
+            // Truy vấn lấy dữ liệu theo roomId
             const qRealtime = query(collection(db, "private_messages"), where("roomId", "==", roomId));
+            
             unsubscribeChat = onSnapshot(qRealtime, (snap) => {
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                // Sắp xếp theo thời gian thủ công tránh lỗi Index Firebase
-                docs.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                
+                // Sắp xếp các tin nhắn theo thứ tự thời gian tăng dần
+                docs.sort((a, b) => {
+                    const timeA = a.createdAt ? (a.createdAt.seconds || 0) : Date.now()/1000;
+                    const timeB = b.createdAt ? (b.createdAt.seconds || 0) : Date.now()/1000;
+                    return timeA - timeB;
+                });
 
                 const box = document.getElementById("messages-box");
                 if(docs.length === 0) {
@@ -606,21 +691,27 @@
             });
         };
 
+        // Hàm Gửi Tin Nhắn
         document.getElementById("btn-send-msg").onclick = async () => {
-            if(!activeChatFriend) return alert("Vui lòng chọn một người bạn từ danh sách để nhắn tin!");
+            if(!activeChatFriend) return alert("Vui lòng chọn một người bạn từ danh sách bên trái để bắt đầu chat!");
             const input = document.getElementById("msg-input");
             const text = input.value.trim();
             if(!text) return;
 
             const roomId = [myUser, activeChatFriend].sort().join("_");
-            await addDoc(collection(db, "private_messages"), {
-                roomId: roomId,
-                sender: myUser,
-                receiver: activeChatFriend,
-                text: text,
-                createdAt: serverTimestamp()
-            });
-            input.value = "";
+            
+            try {
+                await addDoc(collection(db, "private_messages"), {
+                    roomId: roomId,
+                    sender: myUser,
+                    receiver: activeChatFriend,
+                    text: text,
+                    createdAt: serverTimestamp()
+                });
+                input.value = "";
+            } catch(e) {
+                alert("Lỗi khi gửi tin nhắn: " + e.message);
+            }
         };
 
         // Gửi tin nhắn bằng phím Enter
