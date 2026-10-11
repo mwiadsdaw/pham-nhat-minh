@@ -49,13 +49,13 @@
             overflow-x: hidden;
         }
         .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
+            background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
         .glass-panel-hover:hover {
-            background: rgba(17, 24, 39, 0.9);
+            background: rgba(17, 24, 39, 0.95);
             border-color: rgba(6, 182, 212, 0.4);
             box-shadow: 0 0 30px rgba(6, 182, 212, 0.15);
             transform: translateY(-4px);
@@ -165,114 +165,4 @@
                     <div class="absolute inset-0 rounded-3xl bg-gradient-to-tr from-cyan-500 to-purple-600 blur-2xl opacity-40 animate-pulse"></div>
                     <div class="relative w-full h-full rounded-3xl glass-panel p-4 border border-slate-700/80 shadow-2xl overflow-hidden group">
                         <div class="w-full h-full rounded-2xl bg-gradient-to-br from-slate-900 to-slate-950 flex flex-col items-center justify-center relative overflow-hidden text-center p-6 border border-slate-800">
-                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 border border-cyan-500/40 flex items-center justify-center text-cyan-400 text-3xl mb-4 shadow-inner">
-                                <i class="fa-solid fa-laptop-code"></i>
-                            </div>
-                            <h3 class="text-lg font-bold text-white">Phạm Nhật Minh</h3>
-                            <p class="text-xs text-slate-400 mt-1">Class 10A2 - THPT Sóc Sơn</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ==================== GIỚI THIỆU BẢN THÂN ==================== -->
-    <section id="about" class="py-24 px-6 relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-3">Hồ sơ cá nhân</h2>
-                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Về Bản Thân Mình</h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                <div class="lg:col-span-7 glass-panel rounded-3xl p-8 sm:p-10 border border-slate-700/60 space-y-6 shadow-xl">
-                    <h4 class="text-2xl font-bold text-slate-100 flex items-center gap-3">
-                        <i class="fa-solid fa-user-gear text-cyan-400"></i> Đam mê Công nghệ & Sáng tạo
-                    </h4>
-                    <p class="text-slate-300 leading-relaxed font-light text-base">
-                        Mình là học sinh lớp 10A2 trường THPT Sóc Sơn. Bên cạnh chương trình học trên lớp, mình dành phần lớn thời gian để tự học lập trình Web, nghiên cứu các thuật toán nâng cao bằng C++ và Python, cũng như xây dựng các trang web tương tác cá nhân.
-                    </p>
-                    <div class="pt-4 border-t border-slate-700/50 grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-slate-300">
-                        <div class="flex items-center gap-2.5 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800"><i class="fa-solid fa-location-dot text-cyan-400"></i> Sóc Sơn, Hà Nội</div>
-                        <div class="flex items-center gap-2.5 bg-slate-900/60 px-4 py-3 rounded-2xl border border-slate-800"><i class="fa-solid fa-school text-purple-400"></i> THPT Sóc Sơn (10A2)</div>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-5 glass-panel rounded-3xl p-8 sm:p-10 border border-slate-700/60 space-y-6 text-center shadow-xl">
-                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mx-auto shadow-inner">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <h4 class="text-xl font-bold text-slate-100">Góc Học Tập & Phát Triển</h4>
-                    <p class="text-xs text-slate-400 leading-relaxed">
-                        Khám phá chi tiết tài liệu, kế hoạch ôn tập và các chuyên đề học tập của mình tại trang riêng biệt.
-                    </p>
-                    <a href="/hoctap/" class="inline-flex items-center justify-center w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-600 to-purple-600 font-bold text-xs text-white transition shadow-lg hover:scale-105">
-                        Truy cập trang Học tập <i class="fa-solid fa-arrow-right ml-2"></i>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== MỤC 1: LẬP TRÌNH (C++, PYTHON, WEB) ==================== -->
-    <section id="programming" class="py-24 px-6 relative bg-slate-900/30">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-400 mb-3">Tư duy & Mã nguồn</h2>
-                <h3 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Lĩnh Vực Lập Trình</h3>
-                <div class="w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mt-4 rounded-full"></div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- C++ & Python (Thuật toán) -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-10 border border-slate-700/60 flex flex-col justify-between shadow-xl">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-2xl mb-6 shadow-inner">
-                            <i class="fa-solid fa-terminal"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-slate-100 mb-3">Thuật Toán C++ & Python</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
-                            Nghiên cứu giải thuật thi đấu học sinh giỏi Tin học, tối ưu hóa hiệu suất bộ nhớ và tự động hóa các tác vụ với Python.
-                        </p>
-                        <ul class="text-xs text-slate-400 space-y-2 mb-6 list-disc list-inside">
-                            <li><b>C++:</b> Sliding Window, Two Pointers, Bitset, STL.</li>
-                            <li><b>Python:</b> Scripting, xử lý tập tin và tự động hóa.</li>
-                        </ul>
-                    </div>
-                    <a href="/hoctap/" class="inline-flex items-center gap-2 text-xs font-bold text-cyan-400 hover:text-cyan-300">
-                        <span>Truy cập Thư Viện Bài Giảng Lập Trình</span> <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                </div>
-
-                <!-- Web Development -->
-                <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-10 border border-slate-700/60 flex flex-col justify-between shadow-xl">
-                    <div>
-                        <div class="w-14 h-14 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-2xl mb-6 shadow-inner">
-                            <i class="fa-solid fa-code"></i>
-                        </div>
-                        <h4 class="text-2xl font-bold text-slate-100 mb-3">Phát Triển Web Portfolio</h4>
-                        <p class="text-slate-300 text-sm leading-relaxed font-light mb-4">
-                            Xây dựng và duy trì các giao diện web cá nhân hiện đại bằng HTML, CSS, Tailwind CSS, JavaScript và tích hợp đồ họa Three.js.
-                        </p>
-                        <ul class="text-xs text-slate-400 space-y-2 mb-6 list-disc list-inside">
-                            <li>Giao diện Glassmorphism độc đáo</li>
-                            <li>Triển khai tự động qua Vercel & Quản trị DNS</li>
-                        </ul>
-                    </div>
-                    <span class="inline-flex items-center gap-2 text-xs font-bold text-purple-400">
-                        <span>Dự án cốt lõi cá nhân</span>
-                    </span>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ==================== MỤC 2: ÂM NHẠC (GUITAR & PIANO) ==================== -->
-    <section id="music-section" class="py-24 px-6 relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-16">
-                <h2 class="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-3">Giai điệu & Cảm xúc</h2>
-                <h3 class="text-3xl
+                            <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-50
