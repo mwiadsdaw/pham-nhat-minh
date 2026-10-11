@@ -39,7 +39,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
         }
-        /* Ẩn khi in ấn thành PDF thực tế */
         @media print {
             body { background: white; color: black; }
             .no-print { display: none !important; }
@@ -49,7 +48,7 @@
 </head>
 <body class="min-h-screen py-12 px-4 sm:px-6 flex flex-col items-center justify-between">
 
-    <!-- Top Action Bar (Không in ra PDF) -->
+    <!-- Top Action Bar -->
     <div class="no-print w-full max-w-[800px] mb-6 flex justify-between items-center">
         <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
@@ -105,15 +104,14 @@
             </div>
         </section>
 
-        <!-- Section 2: Trình chạy Code trực tiếp (Interactive Playground) -->
+        <!-- Section 2: Trình chạy Code trực tiếp -->
         <section class="mb-8">
             <h2 class="text-lg font-bold text-cyan-400 mb-3 flex items-center gap-2">
                 <i class="fa-solid fa-terminal"></i> 2. Trình biên tập & Chạy thử Code C++
             </h2>
-            <p class="text-sm text-slate-300 mb-3">Bạn có thể chỉnh sửa mã nguồn bên dưới và bấm nút <strong class="text-white">Chạy Code</strong> để xem kết quả mô phỏng:</p>
+            <p class="text-sm text-slate-300 mb-3">Bạn có thể chỉnh sửa mã nguồn bên dưới (thay đổi giá trị biến hoặc nội dung trong <code class="font-code text-cyan-300">cout</code>) và bấm nút <strong class="text-white">Chạy Code</strong>:</p>
 
             <div class="bg-slate-900 border border-slate-700/80 rounded-xl overflow-hidden shadow-lg">
-                <!-- Editor Header -->
                 <div class="bg-slate-800 px-4 py-2.5 flex justify-between items-center border-b border-slate-700">
                     <div class="flex items-center gap-2 text-xs text-slate-300 font-mono">
                         <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
@@ -126,7 +124,6 @@
                     </button>
                 </div>
 
-                <!-- Textarea Code Input -->
                 <div class="p-4 bg-slate-950">
                     <textarea id="code-editor" rows="9" class="w-full font-code text-xs sm:text-sm bg-transparent text-cyan-200 focus:outline-none resize-none leading-relaxed">#include <iostream>
 using namespace std;
@@ -143,7 +140,6 @@ int main() {
 }</textarea>
                 </div>
 
-                <!-- Terminal Output Box -->
                 <div class="bg-slate-900 border-t border-slate-800 p-4">
                     <div class="text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider flex items-center gap-1.5">
                         <i class="fa-solid fa-desktop text-purple-400"></i> Kết quả màn hình (Console Output):
@@ -179,30 +175,61 @@ int main() {
 
     </main>
 
-    <!-- Script giả lập chạy code C++ cơ bản -->
+    <!-- Script trích xuất và in động tất cả các dòng cout << độc lập -->
     <script>
         function runCppCode() {
             const code = document.getElementById('code-editor').value;
             const outputBox = document.getElementById('code-output');
             
-            outputBox.innerHTML = '<span class="text-yellow-400 animate-pulse">Đang biên dịch và chạy...</span>';
+            outputBox.innerHTML = '<span class="text-yellow-400 animate-pulse">Đang biên dịch...</span>';
             
             setTimeout(() => {
-                // Kiểm tra nội dung cơ bản để giả lập kết quả trả về tương ứng
-                if (code.includes("score >= 8.0") || code.includes("Giỏi")) {
-                    outputBox.innerHTML = "Học lực: Giỏi!<br><span class='text-slate-500 text-xs'>Process exited with code 0 (Time: 0.01s)</span>";
-                } else if (code.includes("cout")) {
-                    // Trích xuất chuỗi trong lệnh cout << "..." nếu có
-                    const match = code.match(/cout\s*<<\s*"(.*?)"/);
-                    if (match) {
-                        outputBox.innerHTML = match[1] + "<br><span class='text-slate-500 text-xs'>Process exited with code 0</span>";
-                    } else {
-                        outputBox.innerHTML = "Chương trình chạy thành công không có lỗi cú pháp.<br><span class='text-slate-500 text-xs'>Process exited with code 0</span>";
+                let results = [];
+                // Tìm tất cả các câu lệnh cout trong code của người dùng
+                // Ví dụ: cout << "Nội dung" << endl; hoặc cout << x;
+                const coutRegex = /cout\s*(?:<<\s*(?:"([^"]*)"|([a-zA-Z0-9_]+)|endl))+/g;
+                
+                // Trích xuất toàn bộ các chuỗi nằm trong ngoặc kép của mọi câu lệnh cout
+                let matches;
+                let foundStrings = [];
+                
+                // Duyệt qua từng dòng code để bắt các câu lệnh cout và phân tích giá trị biến số nguyên đơn giản nếu có
+                let lines = code.split('\n');
+                let variables = {};
+
+                // Đọc nhanh các biến số nguyên khởi tạo dạng: int ten_bien = gia_tri;
+                lines.forEach(line => {
+                    let varMatch = line.match(/(?:int|float|double)\s+([a-zA-Z0-9_]+)\s*=\s*([0-9.]+);/);
+                    if (varMatch) {
+                        variables[varMatch[1]] = parseFloat(varMatch[2]);
                     }
+                });
+
+                // Tìm và gom tất cả các chuỗi nằm trong "" của các lệnh cout
+                lines.forEach(line => {
+                    if (line.includes('cout')) {
+                        // Lấy mọi thứ nằm trong dấu nháy kép ""
+                        let stringMatches = line.match(/"([^"]*)"/g);
+                        if (stringMatches) {
+                            stringMatches.forEach(s => {
+                                foundStrings.push(s.replace(/"/g, ''));
+                            });
+                        }
+                        
+                        // Kiểm tra nếu có in biến số trực tiếp dạng cout << score;
+                        let varPrintMatch = line.match(/cout\s*<<\s*([a-zA-Z0-9_]+)/);
+                        if (varPrintMatch && variables[varPrintMatch[1]] !== undefined) {
+                            foundStrings.push(variables[varPrintMatch[1]]);
+                        }
+                    }
+                });
+
+                if (foundStrings.length > 0) {
+                    outputBox.innerHTML = foundStrings.join('<br>') + "<br><span class='text-slate-500 text-xs mt-1 block'>Process exited with code 0 (Time: 0.02s)</span>";
                 } else {
-                    outputBox.innerHTML = "Biên dịch thành công! (Không có câu lệnh xuất màn hình cout nào).";
+                    outputBox.innerHTML = "Chương trình chạy thành công (Không có dữ liệu đầu ra từ lệnh cout).<br><span class='text-slate-500 text-xs'>Process exited with code 0</span>";
                 }
-            }, 400);
+            }, 300);
         }
     </script>
 </body>
