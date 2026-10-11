@@ -22,7 +22,7 @@
     </script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-   <!-- FontAwesome Icons chuẩn hóa toàn diện -->
+    <!-- FontAwesome Icons chuẩn hóa toàn diện -->
     <link rel="stylesheet" href="https://cloudflare.com">
 
     <style>
@@ -43,6 +43,13 @@
             background: linear-gradient(135deg, #06b6d4, #8b5cf6);
             color: white;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fadeIn {
+            animation: fadeIn 0.25s ease-out forwards;
         }
         @media print {
             .no-print { display: none !important; }
@@ -71,7 +78,7 @@
     <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
         
         <!-- Header -->
-        <div class="border-b border-slate-800 pb-6 flex justify-between items-start">
+        <div class="border-b border-slate-800 pb-6 mb-4 flex justify-between items-start">
             <div>
                 <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
@@ -84,10 +91,10 @@
 
         <!-- Tab Switcher (C++ vs Python) -->
         <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
-            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
+            <button id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-code"></i> Ngôn ngữ C++
             </button>
-            <button onclick="switchLang('python')" id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+            <button id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
                 <i class="fa-brands fa-python"></i> Ngôn ngữ Python
             </button>
         </div>
@@ -95,7 +102,7 @@
         <!-- Content Area -->
         <div id="lessons-container" class="space-y-6">
             <!-- Dữ liệu bài giảng sẽ được load tự động từ Firebase ở đây -->
-            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng...</div>
+            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
         </div>
 
     </main>
@@ -127,9 +134,9 @@
                 </div>
                 <div>
                     <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
-                    <textarea id="new-code" rows="4" placeholder="#include <iostream>..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                    <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
-                <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
+                <button id="submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
             </div>
         </div>
     </div>
@@ -144,161 +151,37 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Cấu hình kết nối Firebase dựa trên tài nguyên của bạn
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
             authDomain: "minh-s-website.firebaseapp.com",
             projectId: "minh-s-website",
             storageBucket: "minh-s-website.appspot.com",
             messagingSenderId: "453574408938",
-            appId: "1:453574408938:web:f5b017647a17deacfc3593"
+            appId: "1:453574408938:web:8e15469ca906fce7f3b"
         };
 
+        // Khởi tạo các thực thể Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let currentLang = 'cpp';
-        let allLessons = [];
+        // Biến toàn cục quản trị trạng thái ngôn ngữ lọc dữ liệu ngoài giao diện (mặc định: cpp)
+        let activeLanguageTab = 'cpp';
+        let cachedAllLectures = [];
 
-        window.switchLang = (lang) => {
-            currentLang = lang;
-            document.querySelectorAll('.tab-btn').forEach(b => {
-                b.classList.remove('active');
-                b.classList.add('text-slate-400');
-            });
-            const activeBtn = document.getElementById(`tab-${lang}`);
-            activeBtn.classList.add('active');
-            activeBtn.classList.remove('text-slate-400');
-            renderLessons();
-        };
-
-        window.openModal = () => document.getElementById('post-modal').classList.remove('hidden');
-        window.closeModal = () => document.getElementById('post-modal').classList.add('hidden');
-
-        // Lắng nghe dữ liệu bài giảng real-time từ Firestore
-        function loadLessons() {
-            const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
-            onSnapshot(q, (snapshot) => {
-                allLessons = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                renderLessons();
-            });
-        }
-
-        function renderLessons() {
+        // Hàm vẽ danh sách bài giảng ra màn hình sau khi lọc chuyên mục
+        function renderLecturesList() {
             const container = document.getElementById('lessons-container');
-            const filtered = allLessons.filter(l => l.category === currentLang);
+            container.innerHTML = '';
 
-            if(filtered.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào trong mục này. Hãy bấm "Đăng bài giảng mới" để thêm!</div>`;
+            // Tiến hành lọc bài viết theo tab ngôn ngữ đang mở
+            const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này.</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map(lesson => `
-                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4">
-                    <div class="flex justify-between items-start">
-                        <h2 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
-                            <i class="fa-solid fa-book-open"></i> ${lesson.title}
-                        </h2>
-                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">Đăng bởi: ${lesson.author || 'Phạm Nhật Minh'}</span>
-                    </div>
-                    <p class="text-sm text-slate-300 leading-relaxed">${lesson.content}</p>
-                    
-                    ${lesson.codeSnippet ? `
-                        <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
-                            <pre class="font-code text-xs text-cyan-300 overflow-x-auto">${lesson.codeSnippet}</pre>
-                        </div>
-                    ` : ''}
-
-                    <!-- Phần bình luận cho mỗi bài giảng -->
-                    <div class="pt-4 border-t border-slate-800/80 space-y-3">
-                        <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wider"><i class="fa-solid fa-comments mr-1"></i> Bình luận bài giảng</h4>
-                        <div id="comments-${lesson.id}" class="space-y-2 max-h-40 overflow-y-auto pr-1">
-                            <!-- Các bình luận load ở đây -->
-                        </div>
-                        <div class="flex gap-2 pt-1">
-                            <input type="text" id="comment-input-${lesson.id}" placeholder="Viết bình luận của bạn..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            <button onclick="addComment('${lesson.id}')" class="bg-cyan-600 hover:bg-cyan-500 px-4 py-2 rounded-xl text-xs font-bold transition">Gửi</button>
-                        </div>
-                    </div>
-                </div>
-            `).join("");
-
-            // Load bình luận cho từng bài giảng
-            filtered.forEach(lesson => loadComments(lesson.id));
-        }
-
-        // Tạo bài giảng mới lên Firestore
-        window.createNewPost = async () => {
-            const category = document.getElementById('new-category').value;
-            const title = document.getElementById('new-title').value.trim();
-            const content = document.getElementById('new-content').value.trim();
-            const codeSnippet = document.getElementById('new-code').value.trim();
-
-            if(!title || !content) return alert("Vui lòng điền tiêu đề và nội dung bài giảng!");
-
-            try {
-                await addDoc(collection(db, "lessons"), {
-                    category,
-                    title,
-                    content,
-                    codeSnippet,
-                    author: "Phạm Nhật Minh",
-                    createdAt: serverTimestamp()
-                });
-                closeModal();
-                document.getElementById('new-title').value = '';
-                document.getElementById('new-content').value = '';
-                document.getElementById('new-code').value = '';
-                alert("Đăng bài giảng thành công!");
-            } catch (e) {
-                alert("Lỗi khi đăng bài: " + e.message);
-            }
-        };
-
-        // Gửi bình luận vào bài giảng
-        window.addComment = async (lessonId) => {
-            const input = document.getElementById(`comment-input-${lessonId}`);
-            const text = input.value.trim();
-            if(!text) return;
-
-            try {
-                await addDoc(collection(db, "lesson_comments"), {
-                    lessonId: lessonId,
-                    author: "Học sinh",
-                    text: text,
-                    createdAt: serverTimestamp()
-                });
-                input.value = '';
-            } catch(e) {
-                alert("Lỗi gửi bình luận: " + e.message);
-            }
-        };
-
-        // Lắng nghe bình luận real-time theo từng bài giảng
-        function loadComments(lessonId) {
-            const q = query(collection(db, "lesson_comments"));
-            onSnapshot(q, (snapshot) => {
-                const box = document.getElementById(`comments-${lessonId}`);
-                if(!box) return;
-
-                const comments = snapshot.docs
-                    .map(d => d.data())
-                    .filter(c => c.lessonId === lessonId);
-
-                if(comments.length === 0) {
-                    box.innerHTML = `<p class="text-[11px] text-slate-500 italic">Chưa có bình luận nào.</p>`;
-                    return;
-                }
-
-                box.innerHTML = comments.map(c => `
-                    <div class="bg-slate-950/60 p-2.5 rounded-xl border border-slate-800 text-xs">
-                        <span class="font-bold text-cyan-300 mr-2">${c.author}:</span>
-                        <span class="text-slate-200">${c.text}</span>
-                    </div>
-                `).join("");
-            });
-        }
-
-        loadLessons();
-    </script>
-</body>
-</html>
+            filteredData.forEach(item => {
+                const accentColor = activeLanguageTab === 'cpp' ? 'border-l-cyan-500' : 'border-l-amber-500';
+                const tagBadge = activeLanguageTab === 'cpp' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
