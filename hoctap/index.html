@@ -93,9 +93,9 @@
                 </div>
                 <div class="bg-slate-900/80 border border-slate-800 p-4 rounded-xl">
                     <h3 class="text-xs font-bold text-purple-400 uppercase mb-2">Cấu trúc Bậc thang (Else If)</h3>
-                    <pre class="font-code text-xs text-slate-300 bg-slate-950 p-3 rounded-lg overflow-x-auto">if (đk_1) {
+                    <pre class="font-code text-xs text-slate-300 bg-slate-950 p-3 rounded-lg overflow-x-auto">if (dk_1) {
     // ...
-} else if (đk_2) {
+} else if (dk_2) {
     // ...
 } else {
     // ...
@@ -104,12 +104,12 @@
             </div>
         </section>
 
-        <!-- Section 2: Trình chạy Code trực tiếp -->
+        <!-- Section 2: Trình biên tập & Bắt lỗi C++ -->
         <section class="mb-8">
             <h2 class="text-lg font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                <i class="fa-solid fa-terminal"></i> 2. Trình biên tập & Chạy thử Code C++
+                <i class="fa-solid fa-terminal"></i> 2. Trình biên tập & Kiểm tra lỗi C++
             </h2>
-            <p class="text-sm text-slate-300 mb-3">Bạn có thể chỉnh sửa mã nguồn bên dưới (thay đổi giá trị biến hoặc nội dung trong <code class="font-code text-cyan-300">cout</code>) và bấm nút <strong class="text-white">Chạy Code</strong>:</p>
+            <p class="text-sm text-slate-300 mb-3">Thử xóa dấu chấm phẩy <code class="font-code text-cyan-300">;</code> hoặc dấu ngoặc nhọn xem trình giả lập có bắt được lỗi không nhé:</p>
 
             <div class="bg-slate-900 border border-slate-700/80 rounded-xl overflow-hidden shadow-lg">
                 <div class="bg-slate-800 px-4 py-2.5 flex justify-between items-center border-b border-slate-700">
@@ -120,7 +120,7 @@
                         <span class="ml-2">main.cpp</span>
                     </div>
                     <button onclick="runCppCode()" class="px-3 py-1.5 rounded-lg bg-cyan-500 hover:bg-cyan-400 text-slate-950 font-bold text-xs transition-all flex items-center gap-1.5 shadow">
-                        <i class="fa-solid fa-play"></i> Chạy Code
+                        <i class="fa-solid fa-play"></i> Biên dịch & Chạy
                     </button>
                 </div>
 
@@ -142,10 +142,10 @@ int main() {
 
                 <div class="bg-slate-900 border-t border-slate-800 p-4">
                     <div class="text-xs font-bold text-slate-400 mb-1 uppercase tracking-wider flex items-center gap-1.5">
-                        <i class="fa-solid fa-desktop text-purple-400"></i> Kết quả màn hình (Console Output):
+                        <i class="fa-solid fa-desktop text-purple-400"></i> Trình biên dịch (Compiler Output):
                     </div>
                     <div id="code-output" class="font-code text-xs sm:text-sm bg-slate-950 text-emerald-400 p-3 rounded-lg border border-slate-800 min-h-[45px] flex items-center">
-                        Nhấn "Chạy Code" để xem kết quả biên dịch...
+                        Nhấn "Biên dịch & Chạy" để kiểm tra lỗi cú pháp...
                     </div>
                 </div>
             </div>
@@ -161,10 +161,6 @@ int main() {
                     <h3 class="text-xs font-bold text-amber-400 uppercase mb-1">Bài tập 1: Kiểm tra số nguyên âm / dương</h3>
                     <p class="text-xs text-slate-300">Viết chương trình nhập vào số <code class="font-code text-cyan-300">n</code> và kiểm tra xem đó là số âm, số dương hay số 0.</p>
                 </div>
-                <div class="bg-slate-900/60 border border-slate-800 p-4 rounded-xl">
-                    <h3 class="text-xs font-bold text-amber-400 uppercase mb-1">Bài tập 2: Kiểm tra năm nhuận</h3>
-                    <p class="text-xs text-slate-300">Nhập vào năm <code class="font-code text-cyan-300">year</code>, kiểm tra năm đó có chia hết cho 4 nhưng không chia hết cho 100, hoặc chia hết cho 400 không.</p>
-                </div>
             </div>
         </section>
 
@@ -175,62 +171,50 @@ int main() {
 
     </main>
 
-    <!-- Script trích xuất và in động tất cả các dòng cout << độc lập -->
+    <!-- Script kiểm tra lỗi cú pháp C++ thực tế -->
     <script>
         function runCppCode() {
             const code = document.getElementById('code-editor').value;
             const outputBox = document.getElementById('code-output');
             
-            outputBox.innerHTML = '<span class="text-yellow-400 animate-pulse">Đang biên dịch...</span>';
+            outputBox.innerHTML = '<span class="text-yellow-400 animate-pulse">g++ -o main main.cpp (Đang biên dịch...)</span>';
             
             setTimeout(() => {
-                let results = [];
-                // Tìm tất cả các câu lệnh cout trong code của người dùng
-                // Ví dụ: cout << "Nội dung" << endl; hoặc cout << x;
-                const coutRegex = /cout\s*(?:<<\s*(?:"([^"]*)"|([a-zA-Z0-9_]+)|endl))+/g;
-                
-                // Trích xuất toàn bộ các chuỗi nằm trong ngoặc kép của mọi câu lệnh cout
-                let matches;
-                let foundStrings = [];
-                
-                // Duyệt qua từng dòng code để bắt các câu lệnh cout và phân tích giá trị biến số nguyên đơn giản nếu có
                 let lines = code.split('\n');
-                let variables = {};
+                let errors = [];
 
-                // Đọc nhanh các biến số nguyên khởi tạo dạng: int ten_bien = gia_tri;
-                lines.forEach(line => {
-                    let varMatch = line.match(/(?:int|float|double)\s+([a-zA-Z0-9_]+)\s*=\s*([0-9.]+);/);
-                    if (varMatch) {
-                        variables[varMatch[1]] = parseFloat(varMatch[2]);
-                    }
-                });
-
-                // Tìm và gom tất cả các chuỗi nằm trong "" của các lệnh cout
-                lines.forEach(line => {
-                    if (line.includes('cout')) {
-                        // Lấy mọi thứ nằm trong dấu nháy kép ""
-                        let stringMatches = line.match(/"([^"]*)"/g);
-                        if (stringMatches) {
-                            stringMatches.forEach(s => {
-                                foundStrings.push(s.replace(/"/g, ''));
-                            });
-                        }
-                        
-                        // Kiểm tra nếu có in biến số trực tiếp dạng cout << score;
-                        let varPrintMatch = line.match(/cout\s*<<\s*([a-zA-Z0-9_]+)/);
-                        if (varPrintMatch && variables[varPrintMatch[1]] !== undefined) {
-                            foundStrings.push(variables[varPrintMatch[1]]);
-                        }
-                    }
-                });
-
-                if (foundStrings.length > 0) {
-                    outputBox.innerHTML = foundStrings.join('<br>') + "<br><span class='text-slate-500 text-xs mt-1 block'>Process exited with code 0 (Time: 0.02s)</span>";
-                } else {
-                    outputBox.innerHTML = "Chương trình chạy thành công (Không có dữ liệu đầu ra từ lệnh cout).<br><span class='text-slate-500 text-xs'>Process exited with code 0</span>";
+                // 1. Kiểm tra thiếu dấu ngoặc nhọn { và }
+                let openBraces = (code.match(/{/g) || []).length;
+                let closeBraces = (code.match(/}/g) || []).length;
+                if (openBraces > closeBraces) {
+                    errors.push("error: expected '}' at end of input (Thiếu dấu ngoặc đóng '}')");
+                } else if (closeBraces > openBraces) {
+                    errors.push("error: unmatched '}' (Thừa dấu ngoặc đóng '}')");
                 }
-            }, 300);
-        }
-    </script>
-</body>
-</html>
+
+                // 2. Kiểm tra lỗi từng dòng
+                lines.forEach((line, index) => {
+                    let trimmed = line.trim();
+                    // Bỏ qua dòng trống, lời bình (comment), hoặc các dòng chứa từ khóa cấu trúc
+                    if (trimmed === "" || trimmed.startsWith("//") || trimmed.startsWith("#") || 
+                        trimmed.includes("{") || trimmed.includes("}") || 
+                        trimmed.startsWith("if") || trimmed.startsWith("else")) {
+                        return;
+                    }
+
+                    // Các câu lệnh bình thường phải kết thúc bằng dấu chấm phẩy ';'
+                    if (!trimmed.endsWith(';') && !trimmed.endsWith(':')) {
+                        errors.push(`error: expected ';' before '...' at line ${index + 1} (Thiếu dấu chấm phẩy ';')`);
+                    }
+                });
+
+                // Nếu phát hiện lỗi -> In ra màu đỏ giống trình biên dịch GCC
+                if (errors.length > 0) {
+                    outputBox.innerHTML = `<div class="text-red-400 space-y-1">` + 
+                        errors.map(err => `<div>❌ main.cpp:${err}</div>`).join('') + 
+                        `<div class="text-slate-500 text-xs mt-2">Compilation failed. 0 errors resolved.</div></div>`;
+                    return;
+                }
+
+                // Nếu không lỗi -> Tiến hành in kết quả cout
+                let found
