@@ -22,9 +22,8 @@
     </script>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons chuẩn hóa toàn diện -->
-    <link rel="stylesheet" href="https://cloudflare.com">
-
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -43,13 +42,6 @@
             background: linear-gradient(135deg, #06b6d4, #8b5cf6);
             color: white;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.25s ease-out forwards;
         }
         @media print {
             .no-print { display: none !important; }
@@ -91,17 +83,16 @@
 
         <!-- Tab Switcher (C++ vs Python) -->
         <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
-            <button id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
+            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-code"></i> Ngôn ngữ C++
             </button>
-            <button id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
+            <button onclick="switchLang('python')" id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
                 <i class="fa-brands fa-python"></i> Ngôn ngữ Python
             </button>
         </div>
 
         <!-- Content Area -->
         <div id="lessons-container" class="space-y-6">
-            <!-- Dữ liệu bài giảng sẽ được load tự động từ Firebase ở đây -->
             <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
         </div>
 
@@ -136,7 +127,7 @@
                     <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
                     <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
-                <button id="submit-btn" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
+                <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
             </div>
         </div>
     </div>
@@ -151,7 +142,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Cấu hình kết nối Firebase dựa trên tài nguyên của bạn
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
             authDomain: "minh-s-website.firebaseapp.com",
@@ -161,27 +151,100 @@
             appId: "1:453574408938:web:8e15469ca906fce7f3b"
         };
 
-        // Khởi tạo các thực thể Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Biến toàn cục quản trị trạng thái ngôn ngữ lọc dữ liệu ngoài giao diện (mặc định: cpp)
         let activeLanguageTab = 'cpp';
         let cachedAllLectures = [];
 
-        // Hàm vẽ danh sách bài giảng ra màn hình sau khi lọc chuyên mục
+        window.switchLang = (lang) => {
+            activeLanguageTab = lang;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-${lang}`);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-400');
+            renderLecturesList();
+        };
+
+        window.openModal = () => document.getElementById('post-modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('post-modal').classList.add('hidden');
+
+        // Lắng nghe dữ liệu bài giảng real-time từ Firestore
+        function loadLecturesRealtime() {
+            const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                cachedAllLectures = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLecturesList();
+            });
+        }
+
+        // Vẽ danh sách bài giảng kèm theo link trỏ sang baigiang.html?id=...
         function renderLecturesList() {
             const container = document.getElementById('lessons-container');
-            container.innerHTML = '';
-
-            // Tiến hành lọc bài viết theo tab ngôn ngữ đang mở
             const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
 
             if (filteredData.length === 0) {
-                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này.</div>`;
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này. Hãy bấm "Đăng bài giảng mới" để thêm!</div>`;
                 return;
             }
 
-            filteredData.forEach(item => {
-                const accentColor = activeLanguageTab === 'cpp' ? 'border-l-cyan-500' : 'border-l-amber-500';
-                const tagBadge = activeLanguageTab === 'cpp' ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-amber-500/10 text-amber-400 border-amber-500/20';
+            container.innerHTML = filteredData.map(item => `
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 hover:border-slate-700 transition">
+                    <div class="flex justify-between items-start">
+                        <a href="baigiang.html?id=${item.id}" class="text-lg font-bold text-cyan-400 hover:text-cyan-300 transition flex items-center gap-2">
+                            <i class="fa-solid fa-book-open"></i> ${item.title}
+                        </a>
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">Đăng bởi: ${item.author || 'Phạm Nhật Minh'}</span>
+                    </div>
+                    <p class="text-sm text-slate-300 leading-relaxed line-clamp-2">${item.content}</p>
+                    
+                    ${item.codeSnippet ? `
+                        <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
+                            <pre class="font-code text-xs text-cyan-300 overflow-x-auto">${item.codeSnippet}</pre>
+                        </div>
+                    ` : ''}
+
+                    <div class="pt-2 flex justify-end">
+                        <a href="baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:underline flex items-center gap-1">
+                            Xem chi tiết & Thảo luận <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        // Tạo bài giảng mới lên Firebase
+        window.createNewPost = async () => {
+            const category = document.getElementById('new-category').value;
+            const title = document.getElementById('new-title').value.trim();
+            const content = document.getElementById('new-content').value.trim();
+            const codeSnippet = document.getElementById('new-code').value.trim();
+
+            if(!title || !content) return alert("Vui lòng điền đầy đủ tiêu đề và nội dung bài giảng!");
+
+            try {
+                await addDoc(collection(db, "lessons"), {
+                    category,
+                    title,
+                    content,
+                    codeSnippet,
+                    author: "Phạm Nhật Minh",
+                    createdAt: serverTimestamp()
+                });
+                closeModal();
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-content').value = '';
+                document.getElementById('new-code').value = '';
+                alert("Đăng bài giảng thành công!");
+            } catch (e) {
+                alert("Lỗi khi đăng bài: " + e.message);
+            }
+        };
+
+        loadLecturesRealtime();
+    </script>
+</body>
+</html>
