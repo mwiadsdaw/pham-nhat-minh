@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    
-    <!-- FIX: Link Tailwind CSS chuẩn chỉnh không viết tắt -->
+    <!-- Thư viện Tailwind CSS chính thức -->
     <script src="https://tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -16,44 +15,46 @@
             }
         }
     </script>
-    
-    <!-- Google Fonts -->
     <link href="https://googleapis.com" rel="stylesheet">
-    
-    <!-- FIX: Link FontAwesome Icons gốc từ CDNJS để hiện nút bấm và icon -->
     <link rel="stylesheet" href="https://cloudflare.com">
-
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; color: #e2e8f0; }
         .font-code { font-family: 'Fira Code', monospace; }
+        .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
         .tab-btn.active { background: linear-gradient(135deg, #06b6d4, #8b5cf6); color: white; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
     </style>
 </head>
 <body class="min-h-screen py-10 px-4 flex flex-col items-center justify-between">
 
-    <!-- Top Action Bar -->
-    <div class="w-full max-w-4xl mb-6 flex justify-between items-center no-print">
-        <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 flex items-center gap-2">
+    <!-- Top Action Bar (Đã xóa nút Xuất/In PDF, Thêm hệ thống Account) -->
+    <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
+        <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 flex items-center gap-2 transition-colors">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
-        <div class="flex gap-3">
-            <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg flex items-center gap-2">
+        <div class="flex items-center gap-4">
+            <!-- Nút đăng bài giảng -->
+            <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
             </button>
-            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-xs shadow-lg flex items-center gap-2">
-                <i class="fa-solid fa-file-pdf"></i> In PDF
-            </button>
+            
+            <!-- VÙNG ACCOUNT (Thay đổi trạng thái động qua JS) -->
+            <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
+                <button onclick="handleAuth()" id="auth-btn" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow hover:opacity-90 transition-all">
+                    <i class="fa-solid fa-user"></i> Đăng nhập
+                </button>
+            </div>
         </div>
     </div>
 
     <!-- Main Container -->
-    <main class="w-full max-w-4xl bg-slate-900/85 backdrop-blur-xl border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+    <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
         <div class="border-b border-slate-800 pb-6 flex justify-between items-start">
             <div>
                 <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
                 <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Phạm Nhật Minh | THPT Sóc Sơn</p>
             </div>
+            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">Code Hub<br>v2.1.2026</div>
         </div>
 
         <!-- Tab Switcher -->
@@ -74,7 +75,7 @@
 
     <!-- Modal Tạo Bài Giảng Mới -->
     <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl">
+        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới</h3>
                 <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
@@ -94,7 +95,7 @@
 
     <footer class="mt-12 text-center text-xs text-slate-500"><p>© 2026 Phạm Nhật Minh.</p></footer>
 
-    <!-- Thư viện giao diện phụ trợ ẩn/hiện đặt ngoài Module -->
+    <!-- Các hàm UI điều khiển giao diện cơ bản -->
     <script>
         function toggleModal(show) {
             const m = document.getElementById('post-modal');
@@ -104,9 +105,7 @@
             } else {
                 m.classList.remove('flex');
                 m.classList.add('hidden');
-                document.getElementById('new-title').value = '';
-                document.getElementById('new-content').value = '';
-                document.getElementById('new-code').value = '';
+                document.getElementById('new-title').value = document.getElementById('new-content').value = document.getElementById('new-code').value = '';
             }
         }
 
@@ -118,10 +117,11 @@
         }
     </script>
 
-    <!-- FIX: Khai báo toàn vẹn link thư viện Firebase v10.8.0 chính thức -->
+    <!-- Thư viện kết nối Firebase v10.8.0 chính thức -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://gstatic.com";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://gstatic.com";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -134,37 +134,33 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
         let activeTab = 'cpp';
-        let cachedLectures = [];
+        let cachedLectures =;
+        let currentUserData = null;
 
-        function renderLectures() {
-            const container = document.getElementById('lessons-container');
-            container.innerHTML = '';
-            const filtered = cachedLectures.filter(item => item.category === activeTab);
-
-            if (!filtered.length) {
-                container.innerHTML = '<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này.</div>';
-                return;
+        // Quản lý trạng thái đăng nhập tài khoản (Authentication)
+        window.handleAuth = function() {
+            if (currentUserData) {
+                signOut(auth).then(() => { location.reload(); });
+            } else {
+                signInWithPopup(auth, provider).catch((err) => { console.error("Lỗi đăng nhập:", err.message); });
             }
+        };
 
-            filtered.forEach(item => {
-                const color = activeTab === 'cpp' ? 'cyan' : 'amber';
-                const firstLine = item.code ? item.code.split('\n')[0] : '';
-                
-                container.innerHTML += `
-                    <div class="bg-slate-900/50 border border-slate-800 rounded-2xl p-6 border-l-4 border-l-${color}-500 shadow-lg">
-                        <div onclick="toggleDetail('${item.id}')" class="flex justify-between items-start cursor-pointer select-none">
-                            <div>
-                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border border-${color}-500/20 bg-${color}-500/10 text-${color}-400 uppercase">${activeTab}</span>
-                                <h2 class="text-base font-bold text-white mt-2">${item.title}</h2>
-                                <p class="font-code text-xs text-slate-500 mt-1">${firstLine}</p>
-                            </div>
-                            <i id="arrow-${item.id}" class="fa-solid fa-chevron-down text-xs text-slate-500 transition-transform duration-200"></i>
-                        </div>
-                        <div id="detail-${item.id}" class="hidden mt-4 pt-4 border-t border-slate-800/60 space-y-4">
-                            <p class="text-xs text-slate-300 leading-relaxed whitespace-pre-line">${item.content}</p>
-                            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800">
-                                <pre class="font-code text-xs text-${color}-300 whitespace-pre">${item.code}</pre>
-                            </div>
-                            <!-- Khung thảo luận bình luận bọc ẩn ở bên trong -->
+        onAuthStateChanged(auth, (user) => {
+            const accountArea = document.getElementById('account-area');
+            if (user) {
+                currentUserData = user;
+                // Thay đổi giao diện thanh bar khi đăng nhập thành công
+                accountArea.innerHTML = `
+                    <img src="${user.photoURL}" alt="avatar" class="w-6 h-6 rounded-full border border-purple-500 shadow">
+                    <span class="text-xs font-bold text-slate-200 font-mono max-w-[100px] truncate">${user.displayName.split(' ').pop()}</span>
+                    <button onclick="handleAuth()" class="ml-2 text-[10px] bg-slate-800 text-red-400 font-bold px-2 py-0.5 rounded hover:bg-slate-700 transition-colors">Đăng xuất</button>
+                `;
+            } else {
+                currentUserData = null;
+                accountArea.innerHTML = `
+                    <button onclick="handleAuth()" id="auth-btn" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow hover:opacity-90 transition-all">
