@@ -1,164 +1,263 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    
-    <!-- Nhúng thư viện Tailwind CSS chính thức -->
-    <script src="https://tailwindcss.com"></script>
+    <title>Chi Tiết Bài Giảng | Phạm Nhật Minh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: { darkBg: '#0b0f19', cardBg: '#111827', accentCyan: '#06b6d4', accentPurple: '#8b5cf6' }
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#111827',
+                        accentCyan: '#06b6d4',
+                        accentPurple: '#8b5cf6',
+                    }
                 }
             }
         }
     </script>
-    
-    <!-- Nhúng Font chữ và Icon thiết kế -->
-    <link href="https://googleapis.com" rel="stylesheet">
-    <link rel="stylesheet" href="https://cloudflare.com">
-    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0b0f19; color: #e2e8f0; }
-        .font-code { font-family: 'Fira Code', monospace; }
-        .glass-panel { background: rgba(17, 24, 39, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .tab-btn.active { background: linear-gradient(135deg, #06b6d4, #8b5cf6); color: white; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3); }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+        }
+        .font-code {
+            font-family: 'Fira Code', monospace;
+        }
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
-<body class="min-h-screen py-10 px-4 flex flex-col items-center justify-between">
+<body class="min-h-screen py-10 px-4 sm:px-6 flex flex-col items-center">
 
     <!-- Top Action Bar -->
-    <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
-        <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 flex items-center gap-2 transition-colors">
-            <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
+    <div class="w-full max-w-3xl mb-6 flex justify-between items-center">
+        <a href="javascript:history.back()" class="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
         </a>
-        <div class="flex items-center gap-4">
-            <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg flex items-center gap-2 transition-all">
-                <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
-            </button>
-            <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
-                <a href="/chat" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow" style="text-decoration: none;">Đăng nhập</a>
-            </div>
-        </div>
+        <div id="user-badge-container" class="text-xs bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-xl"></div>
     </div>
 
-    <!-- Main Panel -->
-    <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
-        <div class="border-b border-slate-800 pb-6 flex justify-between items-start">
-            <div>
-                <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
-                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
-                <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Ban quản trị khóa học | THPT Sóc Sơn</p>
-            </div>
-            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">Code Hub<br>v2.2.2026</div>
-        </div>
-
-        <!-- Tab Switcher -->
-        <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
-            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition">
-                <i class="fa-solid fa-code"></i> Ngôn ngữ C++
-            </button>
-            <button onclick="switchLang('python')" id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white flex items-center justify-center gap-2 transition">
-                <i class="fa-brands fa-python"></i> Ngôn ngữ Python
-            </button>
-        </div>
-
-        <!-- Vùng chứa danh sách render động -->
-        <div id="lessons-container" class="space-y-4">
-            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ Cloud...</div>
-        </div>
+    <!-- Main Container Chi Tiết Bài Giảng -->
+    <main id="lesson-detail-container" class="w-full max-w-3xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-6">
+        <div class="text-center py-20 text-slate-400">Đang tải nội dung bài giảng...</div>
     </main>
 
-    <!-- Modal Form Tạo Bài Mới -->
-    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
-                <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2"><i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới</h3>
-                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white text-xl">×</button>
-            </div>
-            <div class="space-y-3 text-xs">
-                <select id="new-category" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none">
-                    <option value="cpp">C++ (Thuật toán & Cơ bản)</option>
-                    <option value="python">Python (Scripting & Tự động hóa)</option>
-                </select>
-                <input type="text" id="new-title" placeholder="Tiêu đề bài giảng..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none">
-                <textarea id="new-content" rows="3" placeholder="Nội dung lý thuyết chi tiết..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none resize-none"></textarea>
-                <textarea id="new-code" rows="4" placeholder="Nhập đoạn mã code minh họa..." class="font-code w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none resize-none"></textarea>
-                <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg transition hover:opacity-90">Đăng Bài Giảng</button>
-            </div>
-        </div>
-    </div>
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-500">
+        <p>© 2026 Phạm Nhật Minh. All rights reserved.</p>
+    </footer>
 
-    <footer class="mt-12 text-center text-xs text-slate-500"><p>© 2026 Phạm Nhật Minh. THPT Sóc Sơn.</p></footer>
-
-    <script>
-        function toggleModal(show) {
-            const m = document.getElementById('post-modal');
-            if (show) { m.classList.remove('hidden'); m.classList.add('flex'); } 
-            else { m.classList.remove('flex'); m.classList.add('hidden'); }
-        }
-    </script>
-
-    <!-- KHỐI JAVASCRIPT MODULE XỬ LÝ DATABASE FIREBASE REALTIME -->
+    <!-- Firebase & Script Xử lý -->
     <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://gstatic.com";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
-            authDomain: "://firebaseapp.com",
+            authDomain: "minh-s-website.firebaseapp.com",
             projectId: "minh-s-website",
-            storageBucket: "://appspot.com",
+            storageBucket: "minh-s-website.appspot.com",
             messagingSenderId: "453574408938",
-            appId: "1:453574408938:web:8e15469ca906fce7f3b"
+            appId: "1:453574408938:web:f5b017647a17deacfc3593"
         };
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let activeTab = 'cpp';
-        let cachedLectures = [];
-        let currentUser = JSON.parse(localStorage.getItem('shared_user')) || null;
+        // Lấy ID bài giảng từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const lessonId = urlParams.get('id');
 
-        window.syncUserUI = function() {
-            const accountArea = document.getElementById('account-area');
-            if (currentUser) {
-                const name = currentUser.displayName || currentUser.name || "User";
-                const shortName = name.split(' ').pop();
-                accountArea.innerHTML = '<div class="w-6 h-6 rounded-full bg-purple-500/20 border border-purple-400 flex items-center justify-center text-[10px] font-bold text-purple-400">' + shortName.substring(0,2).toUpperCase() + '</div><span class="text-xs font-bold text-slate-200">' + shortName + '</span><button onclick="logOutAction()" class="text-[10px] bg-slate-800 text-red-400 font-bold px-1.5 py-0.5 rounded ml-2">Thoát</button>';
+        // Lấy tên tài khoản đang đăng nhập
+        const currentAccount = localStorage.getItem("chat_user");
+
+        function renderUserBadge() {
+            const container = document.getElementById("user-badge-container");
+            if (!container) return;
+            if (currentAccount) {
+                container.innerHTML = `
+                    <a href="/trochuyenn/idex.html?user=${currentAccount}" class="text-cyan-400 font-semibold flex items-center gap-1.5 hover:underline">
+                        <i class="fa-solid fa-circle text-[8px] text-emerald-400"></i> ${currentAccount}
+                    </a>
+                `;
             } else {
-                accountArea.innerHTML = '<a href="/chat" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow" style="text-decoration:none; color:#0b0f19;">Đăng nhập</a>';
+                container.innerHTML = `
+                    <a href="/trochuyenn/idex.html" class="text-yellow-400 hover:underline flex items-center gap-1">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                    </a>
+                `;
             }
-            renderLectures();
-        };
+        }
+        renderUserBadge();
 
-        window.logOutAction = function() {
-            currentUser = null;
-            localStorage.removeItem('shared_user');
-            syncUserUI();
-        };
+        const container = document.getElementById('lesson-detail-container');
 
-        // Lắng nghe biến động danh sách từ Firestore và kết xuất ra danh sách thẻ lồng liên kết
-        onSnapshot(query(collection(db, "lectures"), orderBy("createdAt", "desc")), (snap) => {
-            cachedLectures = [];
-            snap.forEach(doc => cachedLectures.push({ id: doc.id, ...doc.data() }));
-            renderLectures();
-        });
-
-        window.renderLectures = function() {
-            const container = document.getElementById('lessons-container');
-            container.innerHTML = '';
-            const filtered = cachedLectures.filter(item => item.category === activeTab);
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này.</div>';
+        async function fetchLessonDetail() {
+            if (!lessonId) {
+                container.innerHTML = `<div class="text-center py-20 text-red-400">Không tìm thấy mã bài giảng!</div>`;
                 return;
             }
 
-            filtered.forEach(item => {
-                container.innerHTML += `
-                    <div class="p-5 bg-slate-950/40 border border-slate-800 rounded-2xl flex justify-between items-center hover:border-cyan-500/50 transition-all animate-fadeIn">
+            try {
+                const docRef = doc(db, "lessons", lessonId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const lesson = docSnap.data();
+                    const authorName = lesson.author || 'Phạm Nhật Minh';
+                    
+                    container.innerHTML = `
+                        <div class="border-b border-slate-800 pb-4">
+                            <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Chuyên mục: ${lesson.category.toUpperCase()}</span>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">${lesson.title}</h1>
+                            <p class="text-slate-400 text-xs mt-1">Đăng bởi: 
+                                <a href="/trochuyenn/idex.html?user=${authorName}" class="text-cyan-400 font-semibold hover:underline">
+                                    ${authorName}
+                                </a>
+                            </p>
+                        </div>
+
+                        <div class="text-sm text-slate-300 leading-relaxed whitespace-pre-line py-2">
+                            ${lesson.content}
+                        </div>
+
+                        ${lesson.image ? `
+                            <div class="my-4">
+                                <img src="${lesson.image}" class="max-h-96 rounded-2xl border border-slate-700 mx-auto">
+                            </div>
+                        ` : ''}
+
+                        ${lesson.codeSnippet ? `
+                            <div class="bg-slate-950 border border-slate-800 p-4 rounded-xl">
+                                <pre class="font-code text-xs sm:text-sm text-cyan-300 overflow-x-auto">${lesson.codeSnippet}</pre>
+                            </div>
+                        ` : ''}
+
+                        <!-- Khu vực bình luận -->
+                        <div class="pt-6 border-t border-slate-800 space-y-4">
+                            <h3 class="text-sm font-bold text-purple-400 uppercase tracking-wider"><i class="fa-solid fa-comments mr-1"></i> Thảo luận & Bình luận</h3>
+                            
+                            <div id="comments-box" class="space-y-3 max-h-60 overflow-y-auto pr-2">
+                                <p class="text-xs text-slate-500 italic">Đang tải bình luận...</p>
+                            </div>
+
+                            <!-- Khung xem trước ảnh dán bình luận -->
+                            <div id="comment-preview-box" class="hidden relative inline-block mt-2">
+                                <img id="comment-img-preview" src="" class="max-h-24 rounded-lg border border-slate-700">
+                                <button onclick="removeCommentImage()" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-[10px]">&times;</button>
+                            </div>
+
+                            <div class="flex gap-2 pt-2">
+                                <input type="text" id="comment-input" placeholder="Viết bình luận hoặc Ctrl + V dán ảnh..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400" onpaste="handleCommentPaste(event)">
+                                <button onclick="addComment()" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-95 px-5 py-2.5 rounded-xl text-xs font-bold transition">Gửi</button>
+                            </div>
+                        </div>
+                    `;
+
+                    loadCommentsRealtime(lessonId);
+
+                } else {
+                    container.innerHTML = `<div class="text-center py-20 text-red-400">Bài giảng này không tồn tại hoặc đã bị xóa!</div>`;
+                }
+            } catch (e) {
+                container.innerHTML = `<div class="text-center py-20 text-red-400">Lỗi tải bài giảng: ${e.message}</div>`;
+            }
+        }
+
+        let commentImageBase64 = "";
+        window.handleCommentPaste = (e) => {
+            const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+            for (let item of items) {
+                if (item.type.indexOf('image') === 0) {
+                    const blob = item.getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        commentImageBase64 = event.target.result;
+                        document.getElementById('comment-img-preview').src = commentImageBase64;
+                        document.getElementById('comment-preview-box').classList.remove('hidden');
+                    };
+                    reader.readAsDataURL(blob);
+                    e.preventDefault();
+                }
+            }
+        };
+
+        window.removeCommentImage = () => {
+            commentImageBase64 = "";
+            document.getElementById('comment-preview-box').classList.add('hidden');
+            document.getElementById('comment-img-preview').src = "";
+        };
+
+        // Gửi bình luận
+        window.addComment = async () => {
+            const input = document.getElementById('comment-input');
+            const text = input.value.trim();
+            if(!text && !commentImageBase64) return;
+
+            const authorName = localStorage.getItem("chat_user") || "Ẩn danh";
+
+            try {
+                await addDoc(collection(db, "lesson_comments"), {
+                    lessonId: lessonId,
+                    author: authorName,
+                    text: text,
+                    image: commentImageBase64,
+                    createdAt: serverTimestamp()
+                });
+                input.value = '';
+                removeCommentImage();
+            } catch(e) {
+                alert("Lỗi gửi bình luận: " + e.message);
+            }
+        };
+
+        function loadCommentsRealtime(id) {
+            const q = query(collection(db, "lesson_comments"));
+            onSnapshot(q, (snapshot) => {
+                const box = document.getElementById('comments-box');
+                if(!box) return;
+
+                const comments = snapshot.docs
+                    .map(d => d.data())
+                    .filter(c => c.lessonId === id);
+
+                if(comments.length === 0) {
+                    box.innerHTML = `<p class="text-xs text-slate-500 italic">Chưa có bình luận nào cho bài giảng này.</p>`;
+                    return;
+                }
+
+                box.innerHTML = comments.map(c => `
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                         <div>
+                            <a href="/trochuyenn/idex.html?user=${c.author}" class="font-bold text-cyan-300 mr-2 hover:underline">
+                                ${c.author}:
+                            </a>
+                            <span class="text-slate-200 whitespace-pre-line">${c.text}</span>
+                        </div>
+                        ${c.image ? `
+                            <div>
+                                <img src="${c.image}" class="max-h-36 rounded-lg border border-slate-700">
+                            </div>
+                        ` : ''}
+                    </div>
+                `).join("");
+            });
+        }
+
+        fetchLessonDetail();
+    </script>
+</body>
+</html>
