@@ -82,14 +82,19 @@
     <!-- ==================== HEADER / NAVIGATION BAR ==================== -->
     <header class="fixed top-0 left-0 right-0 z-50 glass-panel border-b border-slate-800/60 transition-all duration-300" id="navbar">
         <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <!-- Logo / Name -->
             <a href="#hero" class="text-xl font-extrabold tracking-tight bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-500 bg-clip-text text-transparent flex items-center gap-2">
                 <i class="fa-solid fa-code text-cyan-400"></i> Phạm Nhật Minh
             </a>
 
+            <!-- Desktop Nav Links -->
             <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-300">
                 <a href="#about" class="hover:text-cyan-400 transition-colors">Giới thiệu</a>
                 <a href="gocamnhac.html" class="hover:text-cyan-400 transition-colors">Góc Âm Nhạc</a>
                 <a href="#projects" class="hover:text-cyan-400 transition-colors">Dự án</a>
+                <a href="/hoctap" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5 text-cyan-300 font-semibold">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i> Học tập
+                </a>
                 <a href="#chat-section" class="hover:text-cyan-400 transition-colors text-cyan-300 font-semibold relative">
                     Trò chuyện
                     <span id="nav-chat-badge" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold animate-bounce">!</span>
@@ -97,21 +102,27 @@
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">Liên hệ</a>
             </nav>
 
+            <!-- CTA Button -->
             <div class="hidden md:block">
                 <a href="#contact" class="px-5 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider bg-gradient-to-r from-cyan-500 to-purple-600 text-white shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/40 hover:scale-105 transition-all duration-300">
                     Kết nối ngay
                 </a>
             </div>
 
+            <!-- Mobile Menu Toggle Button -->
             <button id="menu-btn" class="md:hidden text-slate-300 hover:text-white text-2xl focus:outline-none">
                 <i class="fa-solid fa-bars"></i>
             </button>
         </div>
 
+        <!-- Mobile Menu Dropdown -->
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-slate-800 px-6 py-4 flex flex-col gap-4 text-slate-300">
             <a href="#about" class="mobile-link hover:text-cyan-400 py-1">Giới thiệu</a>
             <a href="gocamnhac.html" class="mobile-link hover:text-cyan-400 py-1">Góc Âm Nhạc</a>
             <a href="#projects" class="mobile-link hover:text-cyan-400 py-1">Dự án</a>
+            <a href="/hoctap" class="mobile-link hover:text-cyan-400 py-1 font-semibold text-cyan-300 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap"></i> Học tập
+            </a>
             <a href="#chat-section" class="mobile-link hover:text-cyan-400 py-1 text-cyan-300 font-semibold">Trò chuyện</a>
             <a href="#contact" class="mobile-link hover:text-cyan-400 py-1">Liên hệ</a>
         </div>
@@ -559,7 +570,6 @@
 
         // Lắng nghe Lời mời kết bạn & Lắng nghe Tin nhắn mới để hiển thị Chuông Thông Báo
         function listenToNotificationsAndRequests() {
-            // Lắng nghe lời mời kết bạn
             const qReq = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "pending"));
             
             onSnapshot(qReq, (snap) => {
@@ -646,7 +656,7 @@
             onSnapshot(q2, renderFriends);
         }
 
-        // Lắng nghe đoạn chat riêng giữa 2 tài khoản (Sửa triệt để lỗi không nhận tin nhắn)
+        // Lắng nghe đoạn chat riêng giữa 2 tài khoản
         let unsubscribeChat = null;
 
         window.openPrivateChat = (friendUsername) => {
@@ -657,13 +667,11 @@
 
             if(unsubscribeChat) unsubscribeChat();
 
-            // Truy vấn lấy dữ liệu theo roomId
             const qRealtime = query(collection(db, "private_messages"), where("roomId", "==", roomId));
             
             unsubscribeChat = onSnapshot(qRealtime, (snap) => {
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 
-                // Sắp xếp các tin nhắn theo thứ tự thời gian tăng dần
                 docs.sort((a, b) => {
                     const timeA = a.createdAt ? (a.createdAt.seconds || 0) : Date.now()/1000;
                     const timeB = b.createdAt ? (b.createdAt.seconds || 0) : Date.now()/1000;
