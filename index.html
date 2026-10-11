@@ -94,6 +94,9 @@
                 <a href="#about" class="hover:text-cyan-400 transition-colors">Giới thiệu</a>
                 <a href="#music" class="hover:text-cyan-400 transition-colors">Góc Âm Nhạc</a>
                 <a href="#projects" class="hover:text-cyan-400 transition-colors">Dự án</a>
+                <a href="/hoctap" class="hover:text-cyan-400 transition-colors flex items-center gap-1.5 text-cyan-300 font-semibold">
+                    <i class="fa-solid fa-graduation-cap text-xs"></i> Học tập
+                </a>
                 <a href="#contact" class="hover:text-cyan-400 transition-colors">Liên hệ</a>
             </nav>
 
@@ -115,6 +118,9 @@
             <a href="#about" class="mobile-link hover:text-cyan-400 py-1">Giới thiệu</a>
             <a href="#music" class="mobile-link hover:text-cyan-400 py-1">Góc Âm Nhạc</a>
             <a href="#projects" class="mobile-link hover:text-cyan-400 py-1">Dự án</a>
+            <a href="/hoctap" class="mobile-link hover:text-cyan-400 py-1 font-semibold text-cyan-300 flex items-center gap-2">
+                <i class="fa-solid fa-graduation-cap"></i> Học tập
+            </a>
             <a href="#contact" class="mobile-link hover:text-cyan-400 py-1">Liên hệ</a>
         </div>
     </header>
@@ -202,8 +208,6 @@
 
         </div>
     </section>
-
-    <a href="/hoctap" class="hover:text-cyan-400 transition-colors">Học tập</a>
 
     <!-- ==================== ABOUT ME SECTION ==================== -->
     <section id="about" class="py-24 px-6 relative">
@@ -578,7 +582,7 @@
         let currentTrackIndex = 0;
         let isPlaying = false;
         let progressInterval = null;
-        let currentProgress = 0; // percentage 0 to 100
+        let currentProgress = 0;
 
         const playBtn = document.getElementById('play-btn');
         const playIcon = document.getElementById('play-icon');
@@ -632,8 +636,7 @@
                     return;
                 }
                 progressBar.style.width = currentProgress + '%';
-                // Calculate simulated current time (approximate based on 3.5 mins)
-                let totalSecs = 225; // 3m45s
+                let totalSecs = 225;
                 let curSecs = Math.floor((currentProgress / 100) * totalSecs);
                 let mins = Math.floor(curSecs / 60);
                 let secs = curSecs % 60;
@@ -665,7 +668,6 @@
         nextBtn.addEventListener('click', nextTrack);
         prevBtn.addEventListener('click', prevTrack);
 
-        // Click on progress bar to seek
         progressContainer.addEventListener('click', (e) => {
             const rect = progressContainer.getBoundingClientRect();
             const clickX = e.clientX - rect.left;
@@ -676,7 +678,6 @@
             progressBar.style.width = currentProgress + '%';
         });
 
-        // Mute / Volume control simulation
         let isMuted = false;
         muteBtn.addEventListener('click', () => {
             isMuted = !isMuted;
@@ -702,7 +703,6 @@
             }
         });
 
-        // 3. Contact Form Submission Simulation
         const contactForm = document.getElementById('contact-form');
         const formMessage = document.getElementById('form-message');
 
@@ -717,7 +717,6 @@
             }, 5000);
         });
 
-        // Initialize player
         loadTrack(currentTrackIndex);
     </script>
 </body>
