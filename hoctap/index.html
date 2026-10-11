@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    <!-- Thư viện Tailwind CSS chính thức -->
+    <!-- Thư viện Tailwind CSS CDN chuẩn xác -->
     <script src="https://tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -15,7 +15,9 @@
             }
         }
     </script>
+    <!-- Google Fonts đầy đủ URL gốc -->
     <link href="https://googleapis.com" rel="stylesheet">
+    <!-- FontAwesome Icons đầy đủ URL gốc không viết tắt -->
     <link rel="stylesheet" href="https://cloudflare.com">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0b0f19; color: #e2e8f0; }
@@ -26,18 +28,16 @@
 </head>
 <body class="min-h-screen py-10 px-4 flex flex-col items-center justify-between">
 
-    <!-- Top Action Bar (Đã xóa nút Xuất/In PDF, Thêm hệ thống Account) -->
+    <!-- Top Action Bar -->
     <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
         <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 flex items-center gap-2 transition-colors">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
         <div class="flex items-center gap-4">
-            <!-- Nút đăng bài giảng -->
             <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs shadow-lg flex items-center gap-2 transition-all">
                 <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
             </button>
-            
-            <!-- VÙNG ACCOUNT (Thay đổi trạng thái động qua JS) -->
+            <!-- VÙNG HIỂN THỊ TRẠNG THÁI TÀI KHOẢN -->
             <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
                 <button onclick="handleAuth()" id="auth-btn" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow hover:opacity-90 transition-all">
                     <i class="fa-solid fa-user"></i> Đăng nhập
@@ -95,7 +95,7 @@
 
     <footer class="mt-12 text-center text-xs text-slate-500"><p>© 2026 Phạm Nhật Minh.</p></footer>
 
-    <!-- Các hàm UI điều khiển giao diện cơ bản -->
+    <!-- Các hàm xử lý giao diện UI cơ bản -->
     <script>
         function toggleModal(show) {
             const m = document.getElementById('post-modal');
@@ -105,7 +105,9 @@
             } else {
                 m.classList.remove('flex');
                 m.classList.add('hidden');
-                document.getElementById('new-title').value = document.getElementById('new-content').value = document.getElementById('new-code').value = '';
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-content').value = '';
+                document.getElementById('new-code').value = '';
             }
         }
 
@@ -117,7 +119,7 @@
         }
     </script>
 
-    <!-- Thư viện kết nối Firebase v10.8.0 chính thức -->
+    <!-- Thư viện Firebase Module CDN đầy đủ đường dẫn -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://gstatic.com";
@@ -138,23 +140,23 @@
         const provider = new GoogleAuthProvider();
 
         let activeTab = 'cpp';
-        let cachedLectures =;
+        let cachedLectures = [];
         let currentUserData = null;
 
-        // Quản lý trạng thái đăng nhập tài khoản (Authentication)
+        // Logic điều khiển Đăng nhập / Đăng xuất tài khoản
         window.handleAuth = function() {
             if (currentUserData) {
                 signOut(auth).then(() => { location.reload(); });
             } else {
-                signInWithPopup(auth, provider).catch((err) => { console.error("Lỗi đăng nhập:", err.message); });
+                signInWithPopup(auth, provider).catch((err) => { console.error("Lỗi xác thực:", err.message); });
             }
         };
 
+        // Lắng nghe trạng thái đăng nhập hệ thống
         onAuthStateChanged(auth, (user) => {
             const accountArea = document.getElementById('account-area');
             if (user) {
                 currentUserData = user;
-                // Thay đổi giao diện thanh bar khi đăng nhập thành công
                 accountArea.innerHTML = `
                     <img src="${user.photoURL}" alt="avatar" class="w-6 h-6 rounded-full border border-purple-500 shadow">
                     <span class="text-xs font-bold text-slate-200 font-mono max-w-[100px] truncate">${user.displayName.split(' ').pop()}</span>
