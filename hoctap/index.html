@@ -30,9 +30,6 @@
             background-color: #0b0f19;
             color: #e2e8f0;
         }
-        .font-code {
-            font-family: 'Fira Code', monospace;
-        }
         .glass-panel {
             background: rgba(17, 24, 39, 0.85);
             backdrop-filter: blur(12px);
@@ -57,10 +54,10 @@
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
         <div class="flex gap-3">
-            <button id="btn-open-modal" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg cursor-pointer">
+            <button onclick="openModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg">
                 <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
             </button>
-            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all flex items-center gap-2 cursor-pointer">
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all flex items-center gap-2">
                 <i class="fa-solid fa-file-pdf"></i> In / Xuất PDF
             </button>
         </div>
@@ -83,16 +80,16 @@
 
         <!-- Tab Switcher (C++ vs Python) -->
         <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
-            <button id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer">
+            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-code"></i> Ngôn ngữ C++
             </button>
-            <button id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
+            <button onclick="switchLang('python')" id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2">
                 <i class="fa-brands fa-python"></i> Ngôn ngữ Python
             </button>
         </div>
 
-        <!-- Content Area -->
-        <div id="lessons-container" class="space-y-4">
+        <!-- Content Area: Chỉ hiện danh sách tiêu đề gọn gàng -->
+        <div id="lessons-container" class="space-y-3">
             <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
         </div>
 
@@ -105,7 +102,7 @@
                 <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
                     <i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới
                 </h3>
-                <button id="btn-close-modal" class="text-slate-400 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-3 text-xs">
                 <div>
@@ -127,7 +124,7 @@
                     <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
                     <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
-                <button id="btn-submit-post" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90 cursor-pointer">Đăng Bài Giảng</button>
+                <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
             </div>
         </div>
     </div>
@@ -137,7 +134,7 @@
         <p>© 2026 Phạm Nhật Minh. All rights reserved.</p>
     </footer>
 
-    <!-- Firebase & Script Xử lý An Toàn -->
+    <!-- Firebase & Script Xử lý -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
@@ -157,34 +154,22 @@
         let activeLanguageTab = 'cpp';
         let cachedAllLectures = [];
 
-        function switchLang(lang) {
+        window.switchLang = (lang) => {
             activeLanguageTab = lang;
             document.querySelectorAll('.tab-btn').forEach(b => {
                 b.classList.remove('active');
                 b.classList.add('text-slate-400');
             });
             const activeBtn = document.getElementById(`tab-${lang}`);
-            if(activeBtn) {
-                activeBtn.classList.add('active');
-                activeBtn.classList.remove('text-slate-400');
-            }
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-400');
             renderLecturesList();
-        }
+        };
 
-        function openModal() {
-            document.getElementById('post-modal').classList.remove('hidden');
-        }
+        window.openModal = () => document.getElementById('post-modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('post-modal').classList.add('hidden');
 
-        function closeModal() {
-            document.getElementById('post-modal').classList.add('hidden');
-        }
-
-        // Gắn sự kiện lắng nghe trực tiếp thay vì phụ thuộc hàm global scope
-        document.getElementById('tab-cpp').addEventListener('click', () => switchLang('cpp'));
-        document.getElementById('tab-python').addEventListener('click', () => switchLang('python'));
-        document.getElementById('btn-open-modal').addEventListener('click', openModal);
-        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
-
+        // Lắng nghe dữ liệu bài giảng real-time từ Firestore
         function loadLecturesRealtime() {
             const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
             onSnapshot(q, (snapshot) => {
@@ -193,6 +178,7 @@
             });
         }
 
+        // Vẽ danh sách bài giảng (Chỉ hiện tiêu đề, bấm vào mới sang trang chi tiết)
         function renderLecturesList() {
             const container = document.getElementById('lessons-container');
             const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
@@ -203,42 +189,22 @@
             }
 
             container.innerHTML = filteredData.map(item => `
-                <details class="group bg-slate-900/80 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
-                    <summary class="flex justify-between items-center cursor-pointer select-none">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-book-open text-cyan-400"></i>
-                            <span class="text-base font-bold text-white group-hover:text-cyan-300 transition">
-                                ${item.title}
-                            </span>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">
-                                Đăng bởi: ${item.author || 'Phạm Nhật Minh'}
-                            </span>
-                            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform duration-200"></i>
-                        </div>
-                    </summary>
-
-                    <div class="mt-4 pt-4 border-t border-slate-800 space-y-4">
-                        <p class="text-sm text-slate-300 leading-relaxed">${item.content}</p>
-                        
-                        ${item.codeSnippet ? `
-                            <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
-                                <pre class="font-code text-xs text-cyan-300 overflow-x-auto">${item.codeSnippet}</pre>
-                            </div>
-                        ` : ''}
-
-                        <div class="pt-2 flex justify-end">
-                            <a href="/hoctap/baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:underline flex items-center gap-1">
-                                Xem chi tiết & Thảo luận <i class="fa-solid fa-arrow-right"></i>
-                            </a>
-                        </div>
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 flex items-center justify-between hover:border-cyan-500/50 transition group">
+                    <a href="/hoctap/baigiang.html?id=${item.id}" class="text-sm sm:text-base font-bold text-slate-200 group-hover:text-cyan-400 transition flex items-center gap-3">
+                        <i class="fa-solid fa-book-open text-cyan-400"></i> ${item.title}
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg hidden sm:inline-block">Đăng bởi: ${item.author || 'Phạm Nhật Minh'}</span>
+                        <a href="/hoctap/baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 bg-purple-500/10 px-3 py-1.5 rounded-xl border border-purple-500/20 transition">
+                            Xem <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
                     </div>
-                </details>
+                </div>
             `).join("");
         }
 
-        async function createNewPost() {
+        // Tạo bài giảng mới lên Firebase
+        window.createNewPost = async () => {
             const category = document.getElementById('new-category').value;
             const title = document.getElementById('new-title').value.trim();
             const content = document.getElementById('new-content').value.trim();
@@ -263,9 +229,7 @@
             } catch (e) {
                 alert("Lỗi khi đăng bài: " + e.message);
             }
-        }
-
-        document.getElementById('btn-submit-post').addEventListener('click', createNewPost);
+        };
 
         loadLecturesRealtime();
     </script>
