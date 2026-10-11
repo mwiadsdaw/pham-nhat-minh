@@ -1,252 +1,273 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    
-    <!-- SỬA LỖI CHI MẠNG: Sử dụng CSS nội bộ để vẽ giao diện, không phụ thuộc vào link Tailwind online -->
+    <title>Tài liệu Lập trình C++ & Python | Phạm Nhật Minh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#0b0f19',
+                        cardBg: '#111827',
+                        accentCyan: '#06b6d4',
+                        accentPurple: '#8b5cf6',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0b0f19;
             color: #e2e8f0;
-            margin: 0;
-            padding: 40px 16px;
-            display: flex;
-            flex-col: column;
-            flex-direction: column;
-            align-items: center;
-            min-height: 90vh;
         }
-        .action-bar {
-            width: 100%;
-            max-width: 850px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
+        .font-code {
+            font-family: 'Fira Code', monospace;
         }
-        .back-link {
-            color: #94a3b8;
-            font-size: 14px;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .back-link:hover { color: #06b6d4; }
-        .btn-add {
-            background-color: #8b5cf6;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 12px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .btn-add:hover { background-color: #7c3aed; }
-        .main-panel {
-            width: 100%;
-            max-width: 850px;
+        .glass-panel {
             background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 24px;
-            padding: 32px;
-            box-sizing: border-box;
         }
-        .header-section {
-            border-b: 1px solid #1e293b;
-            border-bottom: 1px solid #1e293b;
-            padding-bottom: 24px;
-            margin-bottom: 32px;
-        }
-        .badge {
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            color: #06b6d4;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        h1 { font-size: 28px; font-weight: 800; color: white; margin: 12px 0 4px 0; }
-        .sub-txt { color: #94a3b8; font-size: 12px; margin: 0; }
-        .tab-container {
-            display: flex;
-            gap: 12px;
-            background: #0f172a;
-            padding: 8px;
-            border-radius: 16px;
-            border: 1px solid #1e293b;
-            margin-bottom: 32px;
-        }
-        .tab-btn {
-            flex: 1;
-            padding: 12px;
-            border-radius: 12px;
-            font-weight: 700;
-            font-size: 12px;
-            background: transparent;
-            color: #94a3b8;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .tab-btn:hover { color: white; }
         .tab-btn.active {
             background: linear-gradient(135deg, #06b6d4, #8b5cf6);
             color: white;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
-        .lesson-card {
-            background: rgba(30, 41, 59, 0.4);
-            border: 1px solid #1e293b;
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 24px;
-            border-left: 4px solid #06b6d4;
-        }
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            cursor: pointer;
-        }
-        .card-title { font-size: 16px; font-weight: 700; color: white; margin: 0; }
-        .card-summary { font-family: monospace; font-size: 12px; color: #64748b; margin: 4px 0 0 0; }
-        .detail-block { display: none; margin-top: 16px; padding-top: 16px; border-top: 1px solid #1e293b; }
-        .desc-text { font-size: 14px; color: #cbd5e1; line-height: 1.6; }
-        .code-box {
-            background: #020617;
-            padding: 16px;
-            border-radius: 12px;
-            border: 1px solid #1e293b;
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-        pre { font-family: monospace; font-size: 13px; color: #22d3ee; margin: 0; }
-        .comment-section { margin-top: 16px; padding-top: 16px; border-top: 1px solid #1e293b; }
-        .comment-title { font-size: 11px; font-weight: 700; color: #c084fc; text-transform: uppercase; }
-        .comment-box { background: rgba(2, 6, 23, 0.4); pading: 12px; padding: 12px; border-radius: 12px; border: 1px solid #1e293b; font-size: 12px; margin-top: 8px; }
-        
-        /* Modal Style */
-        .modal-mask {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-        }
-        .modal-box {
-            background: #0f172a;
-            border: 1px solid #1e293b;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 24px;
-            padding: 24px;
-            box-sizing: border-box;
-        }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-        .modal-title { font-size: 16px; font-weight: 700; color: #06b6d4; margin: 0; }
-        .close-btn { background: transparent; border: none; color: #64748b; cursor: pointer; font-size: 20px; }
-        .form-group { margin-bottom: 12px; }
-        .form-control {
-            width: 100%;
-            background: #020617;
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            padding: 10px;
-            color: white;
-            box-sizing: border-box;
-            font-size: 13px;
-        }
-        .form-control:focus { outline: none; border-color: #8b5cf6; }
-        .btn-submit {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
-            color: white;
-            font-weight: 700;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            margin-top: 8px;
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
         }
     </style>
 </head>
-<body>
+<body class="min-h-screen py-10 px-4 sm:px-6 flex flex-col items-center">
 
     <!-- Top Action Bar -->
-    <div class="action-bar">
-        <a href="/" class="back-link">← Quay lại Portfolio</a>
-        <button onclick="toggleModal(true)" class="btn-add">+ Đăng bài giảng mới</button>
+    <div class="no-print w-full max-w-4xl mb-6 flex justify-between items-center">
+        <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
+        </a>
+        <div class="flex gap-3">
+            <button id="btn-open-modal" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg cursor-pointer">
+                <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
+            </button>
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-xs shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-file-pdf"></i> In / Xuất PDF
+            </button>
+        </div>
     </div>
 
-    <!-- Main Panel -->
-    <div class="main-panel">
-        <div class="header-section">
-            <span class="badge">Hệ thống tài liệu</span>
-            <h1>Thư Viện Bài Giảng Lập Trình</h1>
-            <p class="sub-txt">Biên soạn bởi: Phạm Nhật Minh | THPT Sóc Sơn</p>
+    <!-- Main Container -->
+    <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
+        
+        <!-- Header -->
+        <div class="border-b border-slate-800 pb-6 mb-4 flex justify-between items-start">
+            <div>
+                <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
+                <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Phạm Nhật Minh | THPT Sóc Sơn</p>
+            </div>
+            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">
+                Code Hub<br>v2.0.2026
+            </div>
         </div>
 
-        <!-- Tab Switcher -->
-        <div class="tab-container">
-            <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active">Ngôn ngữ C++</button>
-            <button onclick="switchLang('python')" id="tab-python" class="tab-btn">Ngôn ngữ Python</button>
+        <!-- Tab Switcher (C++ vs Python) -->
+        <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
+            <button id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-code"></i> Ngôn ngữ C++
+            </button>
+            <button id="tab-python" class="tab-btn flex-1 py-3 rounded-xl font-bold text-xs text-slate-400 hover:text-white transition flex items-center justify-center gap-2 cursor-pointer">
+                <i class="fa-brands fa-python"></i> Ngôn ngữ Python
+            </button>
         </div>
 
         <!-- Content Area -->
-        <div id="lessons-container">
-            <!-- Render bài giảng ảo cục bộ bằng JS để tránh sập link -->
+        <div id="lessons-container" class="space-y-4">
+            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
+        </div>
+
+    </main>
+
+    <!-- Modal Tạo Bài Giảng Mới -->
+    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-slate-700 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+                    <i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới
+                </h3>
+                <button id="btn-close-modal" class="text-slate-400 hover:text-white text-lg cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Chọn chuyên mục:</label>
+                    <select id="new-category" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
+                        <option value="cpp">C++ (Thuật toán & Cơ bản)</option>
+                        <option value="python">Python (Scripting & Tự động hóa)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Tiêu đề bài giảng:</label>
+                    <input type="text" id="new-title" placeholder="Ví dụ: Bài 4: Vòng lặp For trong C++..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Nội dung lý thuyết:</label>
+                    <textarea id="new-content" rows="4" placeholder="Nhập nội dung bài giảng..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                </div>
+                <div>
+                    <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
+                    <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
+                </div>
+                <button id="btn-submit-post" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90 cursor-pointer">Đăng Bài Giảng</button>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Form -->
-    <div id="post-modal" class="modal-mask">
-        <div class="modal-box">
-            <div class="modal-header">
-                <h3 class="modal-title">Tạo Bài Giảng Mới</h3>
-                <button onclick="toggleModal(false)" class="close-btn">×</button>
-            </div>
-            <div class="form-group">
-                <select id="new-category" class="form-control">
-                    <option value="cpp">C++ (Thuật toán & Cơ bản)</option>
-                    <option value="python">Python (Scripting & Tự động hóa)</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <input type="text" id="new-title" placeholder="Tiêu đề bài giảng..." class="form-control">
-            </div>
-            <div class="form-group">
-                <textarea id="new-content" rows="3" placeholder="Nội dung lý thuyết chi tiết..." class="form-control" style="resize:none;"></textarea>
-            </div>
-            <div class="form-group">
-                <textarea id="new-code" rows="4" placeholder="Nhập đoạn mã code minh họa..." class="form-control font-code" style="resize:none; color:#22d3ee;"></textarea>
-            </div>
-            <button onclick="createNewPost()" class="btn-submit">Đăng Bài Giảng</button>
-        </div>
-    </div>
+    <!-- Footer -->
+    <footer class="mt-12 text-center text-xs text-slate-500">
+        <p>© 2026 Phạm Nhật Minh. All rights reserved.</p>
+    </footer>
 
-    <!-- JavaScript thuần xử lý dữ liệu và tương tác lưu trữ bền vững (Local Storage) -->
-    <script>
-        // Cơ sở dữ liệu mặc định ban đầu bảo vệ hệ thống không bị treo
-        const defaultData = [
-            {
-                id: "1",
-                category: "cpp",
-                title: "Bài 3: Câu lệnh điều kiện IF - ELSE trong C++",
-                content: "Trong lập trình C++, câu lệnh điều kiện giúp chương trình đưa ra các quyết định rẽ nhánh dựa trên logic đúng/sai (true hoặc false). C++ sử dụng cặp dấu ngoặc nhọn { } để bao bọc khối lệnh.",
-                code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    int score = 8.5;\n    if (score >= 8.0) {\n        cout << \"Học lực: Giỏi!\";\n    } else {\n        cout << \"Học lực: Khá\";\n    }\n    return 0;\n}"
-            },
-            {
-                id: "2",
-                category: "python",
-                title: "Bài 3: Cấu trúc rẽ nhánh điều kiện trong Python",
-                content: "Khác với C++, Python không sử dụng dấu ngoặc nhọn hay dấu chấm phẩy, thay vào đó ngôn ngữ này sử dụng dấu hai chấm (:) và quy tắc thụt lề (indentation) bắt buộc để phân tách khối lệnh.",
+    <!-- Firebase & Script Xử lý An Toàn -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:8e15469ca906fce7f3b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let activeLanguageTab = 'cpp';
+        let cachedAllLectures = [];
+
+        function switchLang(lang) {
+            activeLanguageTab = lang;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-${lang}`);
+            if(activeBtn) {
+                activeBtn.classList.add('active');
+                activeBtn.classList.remove('text-slate-400');
+            }
+            renderLecturesList();
+        }
+
+        function openModal() {
+            document.getElementById('post-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('post-modal').classList.add('hidden');
+        }
+
+        // Gắn sự kiện lắng nghe trực tiếp thay vì phụ thuộc hàm global scope
+        document.getElementById('tab-cpp').addEventListener('click', () => switchLang('cpp'));
+        document.getElementById('tab-python').addEventListener('click', () => switchLang('python'));
+        document.getElementById('btn-open-modal').addEventListener('click', openModal);
+        document.getElementById('btn-close-modal').addEventListener('click', closeModal);
+
+        function loadLecturesRealtime() {
+            const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                cachedAllLectures = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLecturesList();
+            });
+        }
+
+        function renderLecturesList() {
+            const container = document.getElementById('lessons-container');
+            const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này. Hãy bấm "Đăng bài giảng mới" để thêm!</div>`;
+                return;
+            }
+
+            container.innerHTML = filteredData.map(item => `
+                <details class="group bg-slate-900/80 border border-slate-800 rounded-2xl p-5 hover:border-slate-700 transition">
+                    <summary class="flex justify-between items-center cursor-pointer select-none">
+                        <div class="flex items-center gap-3">
+                            <i class="fa-solid fa-book-open text-cyan-400"></i>
+                            <span class="text-base font-bold text-white group-hover:text-cyan-300 transition">
+                                ${item.title}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg">
+                                Đăng bởi: ${item.author || 'Phạm Nhật Minh'}
+                            </span>
+                            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition-transform duration-200"></i>
+                        </div>
+                    </summary>
+
+                    <div class="mt-4 pt-4 border-t border-slate-800 space-y-4">
+                        <p class="text-sm text-slate-300 leading-relaxed">${item.content}</p>
+                        
+                        ${item.codeSnippet ? `
+                            <div class="bg-slate-950 border border-slate-800 p-3 rounded-xl">
+                                <pre class="font-code text-xs text-cyan-300 overflow-x-auto">${item.codeSnippet}</pre>
+                            </div>
+                        ` : ''}
+
+                        <div class="pt-2 flex justify-end">
+                            <a href="/hoctap/baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:underline flex items-center gap-1">
+                                Xem chi tiết & Thảo luận <i class="fa-solid fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </details>
+            `).join("");
+        }
+
+        async function createNewPost() {
+            const category = document.getElementById('new-category').value;
+            const title = document.getElementById('new-title').value.trim();
+            const content = document.getElementById('new-content').value.trim();
+            const codeSnippet = document.getElementById('new-code').value.trim();
+
+            if(!title || !content) return alert("Vui lòng điền đầy đủ tiêu đề và nội dung bài giảng!");
+
+            try {
+                await addDoc(collection(db, "lessons"), {
+                    category,
+                    title,
+                    content,
+                    codeSnippet,
+                    author: "Phạm Nhật Minh",
+                    createdAt: serverTimestamp()
+                });
+                closeModal();
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-content').value = '';
+                document.getElementById('new-code').value = '';
+                alert("Đăng bài giảng thành công!");
+            } catch (e) {
+                alert("Lỗi khi đăng bài: " + e.message);
+            }
+        }
+
+        document.getElementById('btn-submit-post').addEventListener('click', createNewPost);
+
+        loadLecturesRealtime();
+    </script>
+</body>
+</html>
