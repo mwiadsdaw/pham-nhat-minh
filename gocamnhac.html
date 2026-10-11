@@ -1,253 +1,326 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Góc Cảm Nhạc & Trò Chuyện</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Góc Cảm Nhạc - Cyberpunk Music Lounge</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    @keyframes pulse-slow {
+      0%, 100% { transform: scale(1); opacity: 0.2; }
+      50% { transform: scale(1.1); opacity: 0.35; }
+    }
+    .animate-glow { animation: pulse-slow 8s infinite ease-in-out; }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .equalizer-bar {
+      animation: bounce 1.2s infinite ease-in-out alternate;
+    }
+    @keyframes bounce {
+      0% { height: 4px; }
+      100% { height: 16px; }
+    }
+  </style>
 </head>
-<body class="bg-slate-900 text-white min-h-screen flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 min-h-screen relative overflow-x-hidden font-sans">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <h1 class="text-xl font-bold text-indigo-400 flex items-center gap-2">
-                <i class="fa-solid fa-music"></i> Góc Cảm Nhạc
-            </h1>
-            
-            <!-- Auth Container -->
-            <div id="auth-section">
-                <button id="btn-login" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium transition flex items-center gap-2">
-                    <i class="fa-brands fa-google"></i> Đăng nhập Google
-                </button>
-                
-                <div id="user-profile" class="hidden flex items-center gap-3">
-                    <img id="user-avatar" src="" alt="Avatar" class="w-9 h-9 rounded-full border-2 border-indigo-500">
-                    <span id="user-name" class="font-medium text-sm hidden sm:inline"></span>
-                    <button id="btn-logout" class="text-slate-400 hover:text-red-400 text-sm ml-2 transition" title="Đăng xuất">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                    </button>
-                </div>
-            </div>
+  <!-- Background Music Glow Effects -->
+  <div class="fixed -top-40 -left-40 w-96 h-96 bg-purple-600 rounded-full blur-[140px] animate-glow pointer-events-none"></div>
+  <div class="fixed top-1/2 -right-40 w-96 h-96 bg-cyan-500 rounded-full blur-[140px] animate-glow pointer-events-none"></div>
+
+  <!-- Header -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800/80 px-4 py-3">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      
+      <!-- Left: Home Button + Brand -->
+      <div class="flex items-center space-x-4">
+        <a href="index.html" class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700/60 transition text-sm font-medium hover:text-cyan-400">
+          <i class="fa-solid fa-house text-cyan-400"></i>
+          <span>Trang chủ</span>
+        </a>
+
+        <div class="h-5 w-[1px] bg-slate-800"></div>
+
+        <div class="flex items-center space-x-2">
+          <!-- Equalizer Icon -->
+          <div class="flex items-end space-x-[2px] h-4">
+            <span class="w-1 bg-cyan-400 rounded-t equalizer-bar" style="animation-delay: 0.1s;"></span>
+            <span class="w-1 bg-purple-400 rounded-t equalizer-bar" style="animation-delay: 0.3s;"></span>
+            <span class="w-1 bg-pink-400 rounded-t equalizer-bar" style="animation-delay: 0.2s;"></span>
+          </div>
+          <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400 bg-clip-text text-transparent tracking-wide">
+            Góc Cảm Nhạc
+          </span>
         </div>
-    </header>
+      </div>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto w-full p-4 grid grid-cols-1 lg:grid-cols-3 gap-6 flex-grow">
+      <!-- Right: User Auth Info -->
+      <div id="auth-container">
+        <button id="login-btn" class="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 py-1.5 rounded-xl font-medium shadow-lg shadow-purple-500/20 transition">
+          <i class="fa-brands fa-google"></i>
+          <span>Đăng nhập</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">
+    
+    <!-- Left Column: Share & Song List (2 Cols) -->
+    <section class="lg:col-span-2 space-y-6">
+      
+      <!-- Share Input Card -->
+      <div class="glass-panel p-5 rounded-2xl shadow-2xl border border-slate-800">
+        <h2 class="text-sm font-semibold text-slate-400 mb-3 flex items-center space-x-2">
+          <i class="fa-solid fa-compact-disc text-purple-400 animate-spin" style="animation-duration: 8s;"></i>
+          <span>Chia sẻ bài hát mới</span>
+        </h2>
         
-        <!-- Left Side: Music Sharing Section -->
-        <section class="lg:col-span-2 space-y-6">
-            <!-- Share Music Form -->
-            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-                <h2 class="text-lg font-semibold mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-share-nodes text-indigo-400"></i> Chia sẻ bài hát
-                </h2>
-                <form id="share-form" class="flex gap-2">
-                    <input type="url" id="song-url" placeholder="Dán liên kết video YouTube vào đây..." required
-                        class="flex-grow bg-slate-900 border border-slate-700 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-indigo-500">
-                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg font-medium text-sm transition">
-                        Chia sẻ
-                    </button>
-                </form>
-            </div>
+        <div class="flex gap-2">
+          <input type="text" id="song-url" placeholder="Dán link YouTube tại đây (ví dụ: https://www.youtube.com/watch?v=...)" 
+                 class="flex-1 bg-slate-900/90 border border-slate-700/60 rounded-xl px-4 py-2.5 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition">
+          <button id="share-btn" class="bg-gradient-to-r from-purple-600 to-cyan-600 hover:opacity-90 text-white px-5 py-2.5 rounded-xl font-medium text-sm transition shadow-lg shadow-cyan-500/10 flex items-center space-x-1.5 shrink-0">
+            <i class="fa-solid fa-paper-plane"></i>
+            <span>Chia sẻ</span>
+          </button>
+        </div>
+      </div>
 
-            <!-- Music Feed List -->
-            <div id="music-feed" class="space-y-4">
-                <p class="text-center text-slate-500 py-8">Đang tải danh sách bài hát...</p>
-            </div>
-        </section>
+      <!-- Song List Stream -->
+      <div id="song-list" class="space-y-4">
+        <p class="text-slate-500 text-center py-10 text-sm">Đang tải danh sách bài hát...</p>
+      </div>
 
-        <!-- Right Side: Realtime Chat Section -->
-        <section class="bg-slate-800 rounded-xl border border-slate-700 flex flex-col h-[600px]">
-            <div class="p-4 border-b border-slate-700 flex justify-between items-center">
-                <h2 class="font-semibold flex items-center gap-2">
-                    <i class="fa-solid fa-comments text-indigo-400"></i> Trò chuyện trực tuyến
-                </h2>
-            </div>
+    </section>
 
-            <!-- Messages List -->
-            <div id="chat-box" class="flex-grow p-4 overflow-y-auto space-y-3">
-                <p class="text-center text-slate-500">Hãy đăng nhập để tham gia trò chuyện!</p>
-            </div>
+    <!-- Right Column: Live Chat (1 Col) -->
+    <section class="lg:col-span-1">
+      <div class="glass-panel rounded-2xl p-4 flex flex-col h-[calc(100vh-120px)] sticky top-20 border border-slate-800">
+        
+        <!-- Chat Header -->
+        <div id="chat-header" class="pb-3 mb-3 border-b border-slate-800 flex justify-between items-center">
+          <span class="font-semibold text-sm text-slate-300 flex items-center space-x-2">
+            <i class="fa-solid fa-comments text-cyan-400"></i>
+            <span>Trò chuyện trực tuyến</span>
+          </span>
+        </div>
 
-            <!-- Send Message Form -->
-            <form id="chat-form" class="p-3 border-t border-slate-700 flex gap-2">
-                <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." disabled
-                    class="flex-grow bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 disabled:opacity-50">
-                <button type="submit" id="btn-send" disabled class="bg-indigo-600 hover:bg-indigo-500 px-4 py-2 rounded-lg text-sm transition disabled:opacity-50">
-                    <i class="fa-solid fa-paper-plane"></i>
+        <!-- Messages Box -->
+        <div id="chat-box" class="flex-1 overflow-y-auto space-y-3 pr-1 text-sm scrollbar-thin scrollbar-thumb-slate-800">
+          <p class="text-slate-500 text-center py-10 text-xs">Hãy đăng nhập để tham gia trò chuyện!</p>
+        </div>
+
+        <!-- Chat Input -->
+        <div class="pt-3 mt-2 border-t border-slate-800/80 flex gap-2">
+          <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." 
+                 class="flex-1 bg-slate-900/90 border border-slate-700/60 rounded-xl px-3.5 py-2 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+          <button id="send-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white px-3.5 py-2 rounded-xl text-xs font-medium transition shrink-0">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Cấu hình tài khoản Admin của bạn
+    const ADMIN_EMAIL = "minhnhatminh760@gmail.com"; 
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+      authDomain: "minh-s-website.firebaseapp.com",
+      projectId: "minh-s-website",
+      storageBucket: "minh-s-website.appspot.com",
+      messagingSenderId: "453574408938",
+      appId: "1:453574408938:web:f5b017647a17deacfc3593"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let currentUser = null;
+
+    // Login / Logout logic
+    document.getElementById('login-btn').addEventListener('click', () => {
+      signInWithPopup(auth, new GoogleAuthProvider()).catch(err => alert("Lỗi đăng nhập: " + err.message));
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user;
+      const authContainer = document.getElementById('auth-container');
+      if (user) {
+        authContainer.innerHTML = `
+          <div class="flex items-center space-x-3">
+            <img src="${user.photoURL}" class="w-8 h-8 rounded-full border border-purple-400">
+            <span class="text-xs font-medium text-slate-200 hidden sm:inline">${user.displayName}</span>
+            <button id="logout-btn" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 transition">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        `;
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth));
+      } else {
+        authContainer.innerHTML = `
+          <button id="login-btn" class="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 py-1.5 rounded-xl font-medium shadow-lg shadow-purple-500/20 transition text-sm">
+            <i class="fa-brands fa-google"></i>
+            <span>Đăng nhập</span>
+          </button>
+        `;
+        document.getElementById('login-btn').addEventListener('click', () => signInWithPopup(auth, new GoogleAuthProvider()));
+      }
+      renderAdminControls();
+      // Render lại danh sách để nút xóa xuất hiện nếu đúng là bạn
+      if(window.refreshSongsUI) window.refreshSongsUI();
+    });
+
+    // Helper: Extract YouTube Embed URL
+    function getYoutubeEmbedUrl(url) {
+      const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+      const match = url.match(regExp);
+      return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
+    }
+
+    // Share Song
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      if (!currentUser) return alert("Vui lòng đăng nhập để chia sẻ bài hát!");
+      const urlInput = document.getElementById('song-url');
+      const embedUrl = getYoutubeEmbedUrl(urlInput.value.trim());
+      if (!embedUrl) return alert("Link YouTube không hợp lệ!");
+
+      try {
+        await addDoc(collection(db, "songs"), {
+          url: embedUrl,
+          user: currentUser.displayName,
+          userPhoto: currentUser.photoURL,
+          email: currentUser.email,
+          createdAt: serverTimestamp()
+        });
+        urlInput.value = "";
+      } catch (e) { alert("Lỗi khi đăng bài: " + e.message); }
+    });
+
+    // Render Songs
+    let latestSnapshots = null;
+    const qSongs = query(collection(db, "songs"), orderBy("createdAt", "desc"));
+    
+    onSnapshot(qSongs, (snapshot) => {
+      latestSnapshots = snapshot;
+      window.refreshSongsUI();
+    });
+
+    window.refreshSongsUI = () => {
+      const snapshot = latestSnapshots;
+      const songList = document.getElementById('song-list');
+      if (!snapshot || snapshot.empty) {
+        songList.innerHTML = `<p class="text-slate-500 text-center py-10 text-sm">Chưa có bài hát nào. Hãy là người đầu tiên chia sẻ!</p>`;
+        return;
+      }
+      songList.innerHTML = snapshot.docs.map(docSnap => {
+        const data = docSnap.data();
+        const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+        return `
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800/80 relative group">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2.5">
+                <img src="${data.userPhoto || 'https://via.placeholder.com/32'}" class="w-7 h-7 rounded-full border border-purple-500/50">
+                <span class="text-xs font-semibold text-purple-300">${data.user}</span>
+              </div>
+              ${isAdmin ? `
+                <button onclick="deleteSong('${docSnap.id}')" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
+                  <i class="fa-solid fa-trash"></i>
+                  <span>Xóa</span>
                 </button>
-            </form>
-        </section>
+              ` : ''}
+            </div>
+            <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
+              <iframe src="${data.url}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+            </div>
+          </div>
+        `;
+      }).join('');
+    };
 
-    </main>
+    // Chat Logic
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
 
-    <!-- Firebase App & Services Modular SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    async function sendMessage() {
+      if (!currentUser) return alert("Vui lòng đăng nhập để chat!");
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      await addDoc(collection(db, "messages"), {
+        text: text,
+        user: currentUser.displayName,
+        email: currentUser.email,
+        createdAt: serverTimestamp()
+      });
+      input.value = "";
+    }
 
-        // Cấu hình Firebase thật của bạn
-        const firebaseConfig = {
-            apiKey: "AIzaSyB1O0rlybpLzv5aX2otgGPZdJc1l5pASyo",
-            authDomain: "minh-s-website.firebaseapp.com",
-            projectId: "minh-s-website",
-            storageBucket: "minh-s-website.appfirebasestorage.app",
-            messagingSenderId: "453574408938",
-            appId: "1:453574408938:web:f5b017647a17deacfc3593"
-        };
+    const qMessages = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+    onSnapshot(qMessages, (snapshot) => {
+      const chatBox = document.getElementById('chat-box');
+      chatBox.innerHTML = snapshot.docs.map(docSnap => {
+        const msg = docSnap.data();
+        const isMe = currentUser && currentUser.email === msg.email;
+        return `
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+            <span class="text-[10px] text-slate-500 mb-0.5 px-1">${msg.user}</span>
+            <div class="px-3 py-1.5 rounded-xl max-w-[85%] break-words ${isMe ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700/60'}">
+              ${msg.text}
+            </div>
+          </div>
+        `;
+      }).join('');
+      chatBox.scrollTop = chatBox.scrollHeight;
+    });
 
-        // Khởi tạo Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
+    // Admin Delete Functions
+    function renderAdminControls() {
+      const chatHeader = document.getElementById('chat-header');
+      const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+      chatHeader.innerHTML = `
+        <span class="font-semibold text-sm text-slate-300 flex items-center space-x-2">
+          <i class="fa-solid fa-comments text-cyan-400"></i>
+          <span>Trò chuyện</span>
+        </span>
+        ${isAdmin ? `
+          <button onclick="deleteAllMessages()" class="text-[11px] bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
+            <i class="fa-solid fa-broom"></i>
+            <span>Xóa tất cả</span>
+          </button>
+        ` : ''}
+      `;
+    }
 
-        let currentUser = null;
+    window.deleteSong = async (id) => {
+      if (confirm("Bạn có chắc muốn xóa video này?")) {
+        await deleteDoc(doc(db, "songs", id));
+      }
+    };
 
-        // Elements
-        const btnLogin = document.getElementById('btn-login');
-        const btnLogout = document.getElementById('btn-logout');
-        const userProfile = document.getElementById('user-profile');
-        const userAvatar = document.getElementById('user-avatar');
-        const userName = document.getElementById('user-name');
-        const chatInput = document.getElementById('chat-input');
-        const btnSend = document.getElementById('btn-send');
-        const chatBox = document.getElementById('chat-box');
-        const chatForm = document.getElementById('chat-form');
-        const shareForm = document.getElementById('share-form');
-        const musicFeed = document.getElementById('music-feed');
+    window.deleteAllMessages = async () => {
+      if (confirm("CẢNH BÁO: Xóa tất cả tin nhắn trò chuyện?")) {
+        const snap = await getDocs(collection(db, "messages"));
+        snap.docs.forEach(d => deleteDoc(doc(db, "messages", d.id)));
+      }
+    };
+  </script>
 
-        // Authentication
-        btnLogin.addEventListener('click', async () => {
-            try {
-                await signInWithPopup(auth, provider);
-            } catch (error) {
-                console.error("Lỗi đăng nhập:", error);
-                alert("Đăng nhập thất bại: " + error.message);
-            }
-        });
-
-        btnLogout.addEventListener('click', () => signOut(auth));
-
-        onAuthStateChanged(auth, (user) => {
-            currentUser = user;
-            if (user) {
-                btnLogin.classList.add('hidden');
-                userProfile.classList.remove('hidden');
-                userAvatar.src = user.photoURL || 'https://via.placeholder.com/40';
-                userName.textContent = user.displayName;
-                chatInput.disabled = false;
-                btnSend.disabled = false;
-            } else {
-                btnLogin.classList.remove('hidden');
-                userProfile.classList.add('hidden');
-                chatInput.disabled = true;
-                btnSend.disabled = true;
-            }
-        });
-
-        // Chat Realtime
-        chatForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const text = chatInput.value.trim();
-            if (!text || !currentUser) return;
-
-            chatInput.value = '';
-            try {
-                await addDoc(collection(db, 'messages'), {
-                    uid: currentUser.uid,
-                    name: currentUser.displayName,
-                    avatar: currentUser.photoURL,
-                    text: text,
-                    createdAt: serverTimestamp()
-                });
-            } catch (err) {
-                console.error("Lỗi gửi tin nhắn:", err);
-            }
-        });
-
-        const qChat = query(collection(db, 'messages'), orderBy('createdAt', 'asc'));
-        onSnapshot(qChat, (snapshot) => {
-            chatBox.innerHTML = '';
-            snapshot.forEach((doc) => {
-                const msg = doc.data();
-                const isMe = currentUser && msg.uid === currentUser.uid;
-                const div = document.createElement('div');
-                div.className = `flex items-start gap-2 ${isMe ? 'flex-row-reverse' : ''}`;
-                div.innerHTML = `
-                    <img src="${msg.avatar || 'https://via.placeholder.com/32'}" class="w-8 h-8 rounded-full border border-slate-600">
-                    <div class="${isMe ? 'bg-indigo-600' : 'bg-slate-700'} p-2.5 rounded-xl max-w-[75%] text-sm">
-                        <p class="text-[10px] text-slate-300 font-medium mb-0.5">${msg.name || 'Người dùng'}</p>
-                        <p class="break-words">${msg.text}</p>
-                    </div>
-                `;
-                chatBox.appendChild(div);
-            });
-            chatBox.scrollTop = chatBox.scrollHeight;
-        });
-
-        // YouTube Music Sharing
-        function extractYouTubeID(url) {
-            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-            const match = url.match(regExp);
-            return (match && match[2].length === 11) ? match[2] : null;
-        }
-
-        shareForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const urlInput = document.getElementById('song-url');
-            const videoId = extractYouTubeID(urlInput.value);
-
-            if (!videoId) {
-                alert('Vui lòng nhập liên kết YouTube hợp lệ!');
-                return;
-            }
-
-            if (!currentUser) {
-                alert('Bạn cần đăng nhập để chia sẻ bài hát!');
-                return;
-            }
-
-            try {
-                await addDoc(collection(db, 'songs'), {
-                    videoId: videoId,
-                    sharedBy: currentUser.displayName,
-                    avatar: currentUser.photoURL,
-                    createdAt: serverTimestamp()
-                });
-                urlInput.value = '';
-            } catch (err) {
-                console.error("Lỗi chia sẻ bài hát:", err);
-            }
-        });
-
-        const qSongs = query(collection(db, 'songs'), orderBy('createdAt', 'desc'));
-        onSnapshot(qSongs, (snapshot) => {
-            musicFeed.innerHTML = '';
-            if (snapshot.empty) {
-                musicFeed.innerHTML = '<p class="text-center text-slate-500 py-8">Chưa có bài hát nào được chia sẻ. Hãy là người đầu tiên!</p>';
-                return;
-            }
-            snapshot.forEach((doc) => {
-                const song = doc.data();
-                const div = document.createElement('div');
-                div.className = 'bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3';
-                div.innerHTML = `
-                    <div class="flex items-center gap-2 text-sm text-slate-400">
-                        <img src="${song.avatar || 'https://via.placeholder.com/24'}" class="w-6 h-6 rounded-full">
-                        <span><strong>${song.sharedBy || 'Ẩn danh'}</strong> đã chia sẻ:</span>
-                    </div>
-                    <div class="aspect-video w-full rounded-lg overflow-hidden bg-black">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/${song.videoId}" frameborder="0" allowfullscreen></iframe>
-                    </div>
-                `;
-                musicFeed.appendChild(div);
-            });
-        });
-    </script>
 </body>
 </html>
