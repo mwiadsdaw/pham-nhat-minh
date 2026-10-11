@@ -29,9 +29,10 @@
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0f172a;
             color: #f8fafc;
+            user-select: none; /* Tránh bôi đen văn bản khi click lật thẻ nhanh */
         }
         .glass-panel {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.75);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -42,7 +43,7 @@
         }
         .transform-style-3d {
             transform-style: preserve-3d;
-            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transition: transform 0.5s cubic-bezier(0.4, 0.2, 0.2, 1);
         }
         .backface-hidden {
             backface-visibility: hidden;
@@ -70,38 +71,38 @@
     </header>
 
     <!-- Main Content: Flashcard Section -->
-    <main class="flex-grow pt-32 pb-16 px-6 max-w-4xl mx-auto w-full flex flex-col items-center justify-center">
+    <main class="flex-grow pt-28 pb-16 px-6 max-w-4xl mx-auto w-full flex flex-col items-center justify-center">
         
-        <div class="text-center mb-10">
+        <div class="text-center mb-8">
             <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full glass-panel border border-cyan-500/30 text-xs font-medium text-cyan-300 mb-3">
                 <i class="fa-solid fa-brain"></i> Học tập thông minh
             </div>
             <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Flashcard Ôn Tập</h1>
-            <p class="text-slate-400 text-sm mt-2">Bấm vào thẻ để lật mặt trước và mặt sau xem định nghĩa/đáp án.</p>
+            <p class="text-slate-400 text-sm mt-2">Bấm vào thẻ (hoặc nhấn <kbd class="px-1.5 py-0.5 bg-slate-800 border border-slate-700 rounded text-xs text-cyan-400">Space</kbd>) để lật mặt trước và mặt sau.</p>
         </div>
 
         <!-- Topic Selection Tabs -->
-        <div class="flex flex-wrap justify-center gap-3 mb-8" id="topic-tabs">
-            <button onclick="changeTopic('english')" data-topic="english" class="topic-btn px-5 py-2 rounded-xl text-xs font-semibold bg-cyan-500 text-white shadow-lg shadow-cyan-500/25 transition-all">
-                Tiếng Anh (IELTS/Vocabulary)
-            </button>
-            <button onclick="changeTopic('cpp')" data-topic="cpp" class="topic-btn px-5 py-2 rounded-xl text-xs font-semibold glass-panel text-slate-300 hover:text-white transition-all">
-                Thuật toán C++
-            </button>
+        <div class="flex flex-wrap justify-center gap-3 mb-6" id="topic-tabs">
+            <!-- Tự động render các chủ đề bằng JavaScript -->
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="w-full max-w-xl bg-slate-800/60 h-1.5 rounded-full mb-6 overflow-hidden border border-slate-700/50">
+            <div id="progress-bar" class="bg-gradient-to-r from-cyan-500 to-purple-500 h-full w-0 transition-all duration-300"></div>
         </div>
 
         <!-- Flashcard Container with 3D Flip -->
-        <div class="w-full max-w-xl h-72 sm:h-80 perspective-1000 cursor-pointer mb-8" id="flashcard-container" onclick="flipCard()">
+        <div class="w-full max-w-xl h-80 sm:h-96 perspective-1000 cursor-pointer mb-8" id="flashcard-container" onclick="flipCard()">
             <div id="flashcard-inner" class="relative w-full h-full rounded-3xl transform-style-3d shadow-2xl">
                 
                 <!-- Mặt trước (Front) -->
                 <div class="absolute inset-0 glass-panel rounded-3xl p-8 border border-slate-700/80 flex flex-col justify-between backface-hidden bg-gradient-to-br from-slate-900/90 to-slate-800/90">
                     <div class="flex justify-between items-center text-xs text-slate-400 font-medium">
-                        <span id="card-category">Từ vựng tiếng Anh</span>
-                        <span id="card-counter">1 / 4</span>
+                        <span id="card-category" class="px-2.5 py-1 rounded-md bg-cyan-950/60 text-cyan-400 border border-cyan-800/40">Loading...</span>
+                        <span id="card-counter" class="font-mono bg-slate-800 px-2 py-0.5 rounded">1 / 4</span>
                     </div>
-                    <div class="flex-grow flex items-center justify-center text-center">
-                        <h2 id="card-front-text" class="text-2xl sm:text-3xl font-bold text-slate-100">Loading...</h2>
+                    <div class="flex-grow flex items-center justify-center text-center px-4">
+                        <h2 id="card-front-text" class="text-xl sm:text-2xl font-bold text-slate-100 leading-relaxed">Loading...</h2>
                     </div>
                     <div class="text-center text-xs text-cyan-400 font-semibold tracking-wide">
                         <i class="fa-solid fa-rotate mr-1"></i> Bấm để lật xem đáp án
@@ -111,11 +112,11 @@
                 <!-- Mặt sau (Back) -->
                 <div class="absolute inset-0 glass-panel rounded-3xl p-8 border border-purple-500/40 flex flex-col justify-between backface-hidden rotate-y-180 bg-gradient-to-br from-purple-950/40 to-slate-900/90">
                     <div class="flex justify-between items-center text-xs text-purple-400 font-medium">
-                        <span>Đáp án / Giải thích</span>
-                        <span id="card-counter-back">1 / 4</span>
+                        <span class="px-2.5 py-1 rounded-md bg-purple-950/60 text-purple-300 border border-purple-800/40">Đáp án / Giải thích</span>
+                        <span id="card-counter-back" class="font-mono bg-slate-800 px-2 py-0.5 rounded text-slate-300">1 / 4</span>
                     </div>
-                    <div class="flex-grow flex items-center justify-center text-center">
-                        <p id="card-back-text" class="text-xl sm:text-2xl font-medium text-purple-200">Loading...</p>
+                    <div class="flex-grow flex items-center justify-center text-center px-4 overflow-y-auto">
+                        <div id="card-back-text" class="text-base sm:text-lg font-medium text-purple-100 leading-relaxed space-y-2">Loading...</div>
                     </div>
                     <div class="text-center text-xs text-purple-400 font-semibold tracking-wide">
                         <i class="fa-solid fa-rotate mr-1"></i> Bấm để lật lại câu hỏi
@@ -127,43 +128,78 @@
 
         <!-- Control Buttons (Prev, Shuffle, Next) -->
         <div class="flex items-center gap-4 w-full max-w-xl justify-between">
-            <button onclick="prevCard()" class="px-6 py-3 rounded-xl glass-panel hover:border-cyan-400/50 text-slate-300 hover:text-white font-semibold text-sm transition-all flex items-center gap-2">
-                <i class="fa-solid fa-arrow-left"></i> Trước
+            <button onclick="prevCard()" class="px-5 py-3 rounded-xl glass-panel hover:border-cyan-400/50 text-slate-300 hover:text-white font-semibold text-sm transition-all flex items-center gap-2 active:scale-95">
+                <i class="fa-solid fa-arrow-left"></i> <span class="hidden sm:inline">Trước</span>
             </button>
-            <button onclick="shuffleCards()" class="px-5 py-3 rounded-xl glass-panel hover:border-purple-400/50 text-purple-300 hover:text-white font-semibold text-sm transition-all flex items-center gap-2">
-                <i class="fa-solid fa-shuffle"></i> Xáo trộn
+            <button onclick="shuffleCards()" class="px-5 py-3 rounded-xl glass-panel hover:border-purple-400/50 text-purple-300 hover:text-white font-semibold text-sm transition-all flex items-center gap-2 active:scale-95">
+                <i class="fa-solid fa-shuffle"></i> <span class="hidden sm:inline">Xáo trộn</span>
             </button>
-            <button onclick="nextCard()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 hover:scale-105 transition-all flex items-center gap-2">
-                Tiếp <i class="fa-solid fa-arrow-right"></i>
+            <button onclick="nextCard()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 text-white font-semibold text-sm shadow-lg shadow-cyan-500/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-2">
+                <span class="hidden sm:inline">Tiếp</span> <i class="fa-solid fa-arrow-right"></i>
             </button>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="py-8 px-6 border-t border-slate-800 text-center text-xs text-slate-500">
-        <p>© 2026 Phạm Nhật Minh. Hoc tap & Flashcard System.</p>
+    <footer class="py-6 px-6 border-t border-slate-800/80 text-center text-xs text-slate-500">
+        <p>© 2026 Phạm Nhật Minh. Học tập & Flashcard System.</p>
     </footer>
 
     <!-- JavaScript Logic -->
     <script>
-        // Dữ liệu Flashcard mẫu (Bạn có thể tự do thêm bớt nội dung ở đây)
+        // Dữ liệu Flashcard phong phú
         const flashcardData = {
-            english: [
-                { front: "Ambiguous", back: "Mơ hồ, có thể hiểu theo nhiều nghĩa khác nhau." },
-                { front: "Meticulous", back: "Tỉ mỉ, kỹ càng, cực kỳ cẩn thận đến từng chi tiết." },
-                { front: "Pragmatic", back: "Thực tế, thực dụng (giải quyết vấn đề dựa trên hoàn cảnh thực tế thay vì lý thuyết suông)." },
-                { front: "Resilient", back: "Kiên cường, có khả năng phục hồi nhanh chóng sau khó khăn." }
-            ],
-            cpp: [
-                { front: "Sliding Window Technique", back: "Kỹ thuật cửa sổ trượt: Dùng để giải các bài toán tìm subarray có độ dài/điều kiện tối ưu với độ phức tạp O(N)." },
-                { front: "Two Pointers", back: "Kỹ thuật hai con trỏ: Thường dùng trên mảng đã sắp xếp để tìm kiếm cặp phần tử thỏa mãn điều kiện với O(N)." },
-                { front: "std::bitset trong C++", back: "Cấu trúc tối ưu không gian bộ nhớ cho mảng các bit, giúp tăng tốc độ tính toán logic bitwise cực nhanh." },
-                { front: "Lower_bound / Upper_bound", back: "Hàm tìm kiếm nhị phân trong STL, trả về iterator trỏ đến phần tử lớn hơn hoặc bằng / lớn hơn giá trị cho trước." }
-            ]
+            cpp_if: {
+                title: "C++: Câu lệnh IF",
+                data: [
+                    { 
+                        front: "Cú pháp cơ bản của câu lệnh IF trong C++ là gì?", 
+                        back: "<code class='bg-slate-800 text-cyan-300 px-2 py-1 rounded font-mono'>if (đáp_ứng_điều_kiện) { <br>&nbsp;&nbsp;// Khối lệnh thực thi <br>}</code><br><br>Nếu điều kiện trả về true (khác 0), khối lệnh sẽ được thực thi." 
+                    },
+                    { 
+                        front: "Cấu trúc IF - ELSE IF - ELSE dùng khi nào?", 
+                        back: "Dùng để kiểm tra **nhiều điều kiện kế tiếp nhau**. Khi một điều kiện đúng, các điều kiện còn lại phía sau sẽ bị bỏ qua." 
+                    },
+                    { 
+                        front: "Toán tử ba ngôi (Ternary Operator) thay thế IF-ELSE như thế nào?", 
+                        back: "<code class='bg-slate-800 text-cyan-300 px-2 py-1 rounded font-mono'>biến = (điều_kiện) ? giá_trị_1 : giá_trị_2;</code><br><br>Ví dụ: <code class='bg-slate-800 text-cyan-300 px-2 py-1 rounded font-mono'>int max = (a > b) ? a : b;</code>" 
+                    },
+                    { 
+                        front: "Bài tập 1: Kiểm tra số chẵn hay số lẻ?", 
+                        back: "<code class='bg-slate-800 text-cyan-300 px-2 py-1 rounded font-mono block text-left text-xs p-2'>if (n % 2 == 0) {<br>&nbsp;&nbsp;cout << 'Chẵn';<br>} else {<br>&nbsp;&nbsp;cout << 'Lẻ';<br>}</code>" 
+                    },
+                    { 
+                        front: "Bài tập 2: Tìm số lớn nhất trong 3 số a, b, c?", 
+                        back: "<code class='bg-slate-800 text-cyan-300 px-2 py-1 rounded font-mono block text-left text-xs p-2'>int max = a;<br>if (b > max) max = b;<br>if (c > max) max = c;<br>cout << max;</code>" 
+                    },
+                    { 
+                        front: "Lỗi thường gặp: Phân biệt '=' và '==' trong điều kiện IF?", 
+                        back: "• <code class='text-cyan-300 font-mono'>==</code> là toán tử SO SÁNH (ví dụ: <code class='font-mono'>if (x == 5)</code>).<br>• <code class='text-cyan-300 font-mono'>=</code> là toán tử GÁN. Nếu viết <code class='font-mono'>if (x = 5)</code>, điều kiện luôn trả về TRUE!" 
+                    }
+                ]
+            },
+            cpp_algo: {
+                title: "Thuật toán C++",
+                data: [
+                    { front: "Sliding Window Technique", back: "Kỹ thuật cửa sổ trượt: Dùng để giải các bài toán tìm subarray có độ dài/điều kiện tối ưu với độ phức tạp O(N)." },
+                    { front: "Two Pointers", back: "Kỹ thuật hai con trỏ: Thường dùng trên mảng đã sắp xếp để tìm kiếm cặp phần tử thỏa mãn điều kiện với O(N)." },
+                    { front: "std::bitset trong C++", back: "Cấu trúc tối ưu không gian bộ nhớ cho mảng các bit, giúp tăng tốc độ tính toán logic bitwise cực nhanh." },
+                    { front: "Lower_bound / Upper_bound", back: "Hàm tìm kiếm nhị phân trong STL, trả về iterator trỏ đến phần tử lớn hơn hoặc bằng / lớn hơn giá trị cho trước." }
+                ]
+            },
+            english: {
+                title: "Tiếng Anh (IELTS)",
+                data: [
+                    { front: "Ambiguous", back: "Mơ hồ, có thể hiểu theo nhiều nghĩa khác nhau." },
+                    { front: "Meticulous", back: "Tỉ mỉ, kỹ càng, cực kỳ cẩn thận đến từng chi tiết." },
+                    { front: "Pragmatic", back: "Thực tế, thực dụng (giải quyết vấn đề dựa trên hoàn cảnh thực tế thay vì lý thuyết suông)." },
+                    { front: "Resilient", back: "Kiên cường, có khả năng phục hồi nhanh chóng sau khó khăn." }
+                ]
+            }
         };
 
-        let currentTopic = 'english';
+        let currentTopic = 'cpp_if';
         let currentIndex = 0;
         let isFlipped = false;
 
@@ -173,18 +209,42 @@
         const cardCounter = document.getElementById('card-counter');
         const cardCounterBack = document.getElementById('card-counter-back');
         const cardCategory = document.getElementById('card-category');
+        const progressBar = document.getElementById('progress-bar');
+        const topicTabsContainer = document.getElementById('topic-tabs');
+
+        // Tự động tạo các nút Tab chọn chủ đề
+        function renderTopicTabs() {
+            topicTabsContainer.innerHTML = '';
+            Object.keys(flashcardData).forEach(key => {
+                const btn = document.createElement('button');
+                btn.onclick = () => changeTopic(key);
+                btn.setAttribute('data-topic', key);
+                btn.className = `topic-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 ${
+                    key === currentTopic 
+                    ? 'bg-cyan-500 text-white shadow-lg shadow-cyan-500/25' 
+                    : 'glass-panel text-slate-300 hover:text-white'
+                }`;
+                btn.textContent = flashcardData[key].title;
+                topicTabsContainer.appendChild(btn);
+            });
+        }
 
         function updateCard() {
-            const currentList = flashcardData[currentTopic];
+            const currentObj = flashcardData[currentTopic];
+            const currentList = currentObj.data;
             const item = currentList[currentIndex];
             
-            cardFrontText.textContent = item.front;
-            cardBackText.textContent = item.back;
+            cardFrontText.innerHTML = item.front;
+            cardBackText.innerHTML = item.back;
             
             const counterStr = `${currentIndex + 1} / ${currentList.length}`;
             cardCounter.textContent = counterStr;
             cardCounterBack.textContent = counterStr;
-            cardCategory.textContent = currentTopic === 'english' ? 'Từ vựng tiếng Anh' : 'Thuật toán C++';
+            cardCategory.textContent = currentObj.title;
+
+            // Cập nhật thanh tiến trình
+            const progressPercent = ((currentIndex + 1) / currentList.length) * 100;
+            progressBar.style.width = `${progressPercent}%`;
 
             // Reset lật về mặt trước khi đổi thẻ
             if (isFlipped) {
@@ -203,19 +263,19 @@
         }
 
         function nextCard() {
-            const currentList = flashcardData[currentTopic];
+            const currentList = flashcardData[currentTopic].data;
             currentIndex = (currentIndex + 1) % currentList.length;
             updateCard();
         }
 
         function prevCard() {
-            const currentList = flashcardData[currentTopic];
+            const currentList = flashcardData[currentTopic].data;
             currentIndex = (currentIndex - 1 + currentList.length) % currentList.length;
             updateCard();
         }
 
         function shuffleCards() {
-            const currentList = flashcardData[currentTopic];
+            const currentList = flashcardData[currentTopic].data;
             for (let i = currentList.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [currentList[i], currentList[j]] = [currentList[j], currentList[i]];
@@ -231,18 +291,31 @@
             // Cập nhật trạng thái nút bấm tab
             document.querySelectorAll('.topic-btn').forEach(btn => {
                 if (btn.getAttribute('data-topic') === topic) {
-                    btn.classList.remove('glass-panel', 'text-slate-300');
-                    btn.classList.add('bg-cyan-500', 'text-white', 'shadow-lg', 'shadow-cyan-500/25');
+                    btn.className = 'topic-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 bg-cyan-500 text-white shadow-lg shadow-cyan-500/25';
                 } else {
-                    btn.classList.add('glass-panel', 'text-slate-300');
-                    btn.classList.remove('bg-cyan-500', 'text-white', 'shadow-lg', 'shadow-cyan-500/25');
+                    btn.className = 'topic-btn px-4 py-2 rounded-xl text-xs font-semibold transition-all duration-200 glass-panel text-slate-300 hover:text-white';
                 }
             });
 
             updateCard();
         }
 
-        // Khởi chạy lần đầu
+        // Hỗ trợ phím tắt bàn phím
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'ArrowDown') {
+                e.preventDefault();
+                flipCard();
+            } else if (e.code === 'ArrowRight') {
+                nextCard();
+            } else if (e.code === 'ArrowLeft') {
+                prevCard();
+            } else if (e.code === 'KeyR') {
+                shuffleCards();
+            }
+        });
+
+        // Khởi chạy ứng dụng
+        renderTopicTabs();
         updateCard();
     </script>
 </body>
