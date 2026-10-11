@@ -60,7 +60,7 @@
 
       <!-- Right: User Auth Info -->
       <div id="auth-container">
-        <button id="login-btn" class="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 py-1.5 rounded-xl font-medium shadow-lg shadow-purple-500/20 transition">
+        <button id="login-btn" class="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white px-4 py-1.5 rounded-xl font-medium shadow-lg shadow-purple-500/20 transition text-sm">
           <i class="fa-brands fa-google"></i>
           <span>Đăng nhập</span>
         </button>
@@ -113,7 +113,7 @@
 
         <!-- Messages Box -->
         <div id="chat-box" class="flex-1 overflow-y-auto space-y-3 pr-1 text-sm scrollbar-thin scrollbar-thumb-slate-800">
-          <p class="text-slate-500 text-center py-10 text-xs">Hãy đăng nhập để tham gia trò chuyện!</p>
+          <p class="text-slate-500 text-center py-10 text-xs">Đang tải đoạn chat...</p>
         </div>
 
         <!-- Chat Input -->
@@ -133,39 +133,37 @@
   <!-- Firebase Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { getAuth, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Cấu hình tài khoản Admin của bạn
     const ADMIN_EMAIL = "minhnhatminh760@gmail.com"; 
 
     const firebaseConfig = {
-  apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
-  authDomain: "minh-s-website.firebaseapp.com",
-  projectId: "minh-s-website",
-  storageBucket: "minh-s-website.appspot.com",
-  messagingSenderId: "453574408938",
-  appId: "1:453574408938:web:f5b017647a17deacfc3593"
-};
+      apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+      authDomain: "minh-s-website.firebaseapp.com",
+      projectId: "minh-s-website",
+      storageBucket: "minh-s-website.appspot.com",
+      messagingSenderId: "453574408938",
+      appId: "1:453574408938:web:f5b017647a17deacfc3593"
+    };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
     let currentUser = null;
 
-    // Login / Logout logic
-    document.getElementById('login-btn').addEventListener('click', () => {
-      signInWithPopup(auth, new GoogleAuthProvider()).catch(err => alert("Lỗi đăng nhập: " + err.message));
-    });
+    // Kiểm tra kết quả sau khi đăng nhập bằng Redirect
+    getRedirectResult(auth).catch(err => console.error("Redirect Login Error:", err));
 
+    // Lắng nghe trạng thái đăng nhập
     onAuthStateChanged(auth, (user) => {
       currentUser = user;
       const authContainer = document.getElementById('auth-container');
       if (user) {
         authContainer.innerHTML = `
           <div class="flex items-center space-x-3">
-            <img src="${user.photoURL}" class="w-8 h-8 rounded-full border border-purple-400">
-            <span class="text-xs font-medium text-slate-200 hidden sm:inline">${user.displayName}</span>
+            <img src="${user.photoURL || 'https://via.placeholder.com/32'}" class="w-8 h-8 rounded-full border border-purple-400">
+            <span class="text-xs font-medium text-slate-200 hidden sm:inline">${user.displayName || 'User'}</span>
             <button id="logout-btn" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-2.5 py-1.5 rounded-lg border border-slate-700 transition">
               <i class="fa-solid fa-right-from-bracket"></i>
             </button>
@@ -179,15 +177,19 @@
             <span>Đăng nhập</span>
           </button>
         `;
-        document.getElementById('login-btn').addEventListener('click', () => signInWithPopup(auth, new GoogleAuthProvider()));
+        document.getElementById('login-btn').onclick = () => {
+          const provider = new GoogleAuthProvider();
+          signInWithRedirect(auth, provider);
+        };
       }
       renderAdminControls();
-      // Render lại danh sách để nút xóa xuất hiện nếu đúng là bạn
       if(window.refreshSongsUI) window.refreshSongsUI();
     });
 
-    // Helper: Extract YouTube Embed URL
+    // Helper convert YouTube URL
     function getYoutubeEmbedUrl(url) {
+      if (!url || typeof url !== 'string') return null;
+      if (url.includes('youtube.com/embed/')) return url;
       const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
       const match = url.match(regExp);
       return (match && match[2].length === 11) ? `https://www.youtube.com/embed/${match[2]}` : null;
@@ -203,8 +205,8 @@
       try {
         await addDoc(collection(db, "songs"), {
           url: embedUrl,
-          user: currentUser.displayName,
-          userPhoto: currentUser.photoURL,
+          user: currentUser.displayName || 'Ẩn danh',
+          userPhoto: currentUser.photoURL || '',
           email: currentUser.email,
           createdAt: serverTimestamp()
         });
@@ -212,7 +214,7 @@
       } catch (e) { alert("Lỗi khi đăng bài: " + e.message); }
     });
 
-    // Render Songs
+    // Render Songs List
     let latestSnapshots = null;
     const qSongs = query(collection(db, "songs"), orderBy("createdAt", "desc"));
     
@@ -230,23 +232,30 @@
       }
       songList.innerHTML = snapshot.docs.map(docSnap => {
         const data = docSnap.data();
+        const embedUrl = getYoutubeEmbedUrl(data.url);
         const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+        
         return `
           <div class="glass-panel p-4 rounded-2xl border border-slate-800/80 relative group">
             <div class="flex items-center justify-between mb-3">
               <div class="flex items-center space-x-2.5">
                 <img src="${data.userPhoto || 'https://via.placeholder.com/32'}" class="w-7 h-7 rounded-full border border-purple-500/50">
-                <span class="text-xs font-semibold text-purple-300">${data.user}</span>
+                <span class="text-xs font-semibold text-purple-300">${data.user || 'Ẩn danh'}</span>
               </div>
               ${isAdmin ? `
                 <button onclick="deleteSong('${docSnap.id}')" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
                   <i class="fa-solid fa-trash"></i>
-                  <span>Xóa</span>
+                  <span>Xóa video này</span>
                 </button>
               ` : ''}
             </div>
             <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
-              <iframe src="${data.url}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+              ${embedUrl ? `<iframe src="${embedUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>` : `
+                <div class="flex flex-col items-center justify-center h-full p-4 text-center">
+                  <p class="text-xs text-red-400 mb-2">Bài viết bị lỗi đường dẫn link cũ</p>
+                  ${isAdmin ? `<button onclick="deleteSong('${docSnap.id}')" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg">Xóa bài lỗi này</button>` : ''}
+                </div>
+              `}
             </div>
           </div>
         `;
@@ -254,8 +263,8 @@
     };
 
     // Chat Logic
-    document.getElementById('send-btn').addEventListener('click', sendMessage);
-    document.getElementById('chat-input').addEventListener('keypress', (e) => { if(e.key === 'Enter') sendMessage(); });
+    document.getElementById('send-btn').onclick = sendMessage;
+    document.getElementById('chat-input').onkeypress = (e) => { if(e.key === 'Enter') sendMessage(); };
 
     async function sendMessage() {
       if (!currentUser) return alert("Vui lòng đăng nhập để chat!");
@@ -265,7 +274,7 @@
       
       await addDoc(collection(db, "messages"), {
         text: text,
-        user: currentUser.displayName,
+        user: currentUser.displayName || 'Ẩn danh',
         email: currentUser.email,
         createdAt: serverTimestamp()
       });
@@ -279,8 +288,8 @@
         const msg = docSnap.data();
         const isMe = currentUser && currentUser.email === msg.email;
         return `
-          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
-            <span class="text-[10px] text-slate-500 mb-0.5 px-1">${msg.user}</span>
+          <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'} mb-2">
+            <span class="text-[10px] text-slate-500 mb-0.5 px-1">${msg.user || 'Ẩn danh'}</span>
             <div class="px-3 py-1.5 rounded-xl max-w-[85%] break-words ${isMe ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white' : 'bg-slate-800 text-slate-200 border border-slate-700/60'}">
               ${msg.text}
             </div>
@@ -290,7 +299,7 @@
       chatBox.scrollTop = chatBox.scrollHeight;
     });
 
-    // Admin Delete Functions
+    // Admin Controls
     function renderAdminControls() {
       const chatHeader = document.getElementById('chat-header');
       const isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
@@ -302,20 +311,20 @@
         ${isAdmin ? `
           <button onclick="deleteAllMessages()" class="text-[11px] bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
             <i class="fa-solid fa-broom"></i>
-            <span>Xóa tất cả</span>
+            <span>Xóa tất cả tin nhắn</span>
           </button>
         ` : ''}
       `;
     }
 
     window.deleteSong = async (id) => {
-      if (confirm("Bạn có chắc muốn xóa video này?")) {
+      if (confirm("Bạn có chắc muốn xóa bài hát này?")) {
         await deleteDoc(doc(db, "songs", id));
       }
     };
 
     window.deleteAllMessages = async () => {
-      if (confirm("CẢNH BÁO: Xóa tất cả tin nhắn trò chuyện?")) {
+      if (confirm("Xóa toàn bộ tin nhắn trong khung trò chuyện?")) {
         const snap = await getDocs(collection(db, "messages"));
         snap.docs.forEach(d => deleteDoc(doc(db, "messages", d.id)));
       }
