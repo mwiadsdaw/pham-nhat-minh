@@ -3,10 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
-    
-    <!-- Nhúng thư viện Tailwind CSS chính thức đầy đủ đường dẫn -->
-    <script src="https://tailwindcss.com"></script>
+    <title>Tài liệu Lập trình C++ & Python | Phạm Nhật Minh</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -21,19 +20,15 @@
             }
         }
     </script>
-    
-    <!-- Nhúng Google Fonts và FontAwesome Icons gốc -->
-    <link href="https://googleapis.com" rel="stylesheet">
-    <link rel="stylesheet" href="https://cloudflare.com">
-
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: #0b0f19;
             color: #e2e8f0;
-        }
-        .font-code {
-            font-family: 'Fira Code', monospace;
         }
         .glass-panel {
             background: rgba(17, 24, 39, 0.85);
@@ -45,30 +40,23 @@
             color: white;
             box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .animate-fadeIn {
-            animation: fadeIn 0.25s ease-out forwards;
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white; color: black; }
         }
     </style>
 </head>
 <body class="min-h-screen py-10 px-4 sm:px-6 flex flex-col items-center">
 
-    <!-- Top Action Bar (Đã gỡ bỏ vĩnh viễn nút In / Xuất PDF) -->
-    <div class="w-full max-w-4xl mb-6 flex justify-between items-center">
+    <!-- Top Action Bar -->
+    <div class="no-print w-full max-w-4xl mb-6 flex justify-between items-center">
         <a href="/" class="text-sm font-medium text-slate-400 hover:text-cyan-400 transition-colors flex items-center gap-2">
             <i class="fa-solid fa-arrow-left"></i> Quay lại Portfolio
         </a>
-        <div class="flex items-center gap-4">
-            <button onclick="toggleModal(true)" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg">
+        <div class="flex gap-3">
+            <button onclick="openModal()" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs transition flex items-center gap-2 shadow-lg">
                 <i class="fa-solid fa-plus"></i> Đăng bài giảng mới
             </button>
-            <!-- Khối cầu nối tài khoản dùng chung kết nối với phòng Chat -->
-            <div id="account-area" class="flex items-center gap-2 border border-slate-800 bg-slate-950/60 p-1.5 pr-3 rounded-xl">
-                <a href="/chat" class="px-3 py-1 rounded-lg bg-gradient-to-r from-cyan-500 to-blue-500 text-slate-950 font-bold text-xs shadow" style="text-decoration: none;">Đăng nhập</a>
-            </div>
         </div>
     </div>
 
@@ -76,16 +64,18 @@
     <main class="w-full max-w-4xl glass-panel rounded-3xl p-6 sm:p-10 shadow-2xl space-y-8">
         
         <!-- Header -->
-        <div class="border-b border-slate-800 pb-6 flex justify-between items-start">
+        <div class="border-b border-slate-800 pb-6 mb-4 flex justify-between items-start">
             <div>
                 <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Hệ thống tài liệu</span>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">Thư Viện Bài Giảng Lập Trình</h1>
-                <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Ban quản trị khóa học | THPT Sóc Sơn</p>
+                <p class="text-slate-400 text-xs mt-1">Biên soạn bởi: Phạm Nhật Minh | THPT Sóc Sơn</p>
             </div>
-            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">Code Hub<br>v2.2.2026</div>
+            <div class="hidden sm:block text-right text-xs text-slate-500 font-mono">
+                Code Hub<br>v2.0.2026
+            </div>
         </div>
 
-        <!-- Tab Switcher (C++ vs Python hoạt động mượt mà) -->
+        <!-- Tab Switcher (C++ vs Python) -->
         <div class="flex gap-3 bg-slate-900/80 p-2 rounded-2xl border border-slate-800">
             <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active flex-1 py-3 rounded-xl font-bold text-xs transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-code"></i> Ngôn ngữ C++
@@ -95,39 +85,41 @@
             </button>
         </div>
 
-        <!-- Content Area -->
-        <div id="lessons-container" class="space-y-6"></div>
+        <!-- Content Area: Chỉ hiện danh sách tiêu đề gọn gàng -->
+        <div id="lessons-container" class="space-y-3">
+            <div class="text-center py-12 text-slate-500 italic text-xs">Đang tải danh sách bài giảng từ máy chủ...</div>
+        </div>
 
     </main>
 
     <!-- Modal Tạo Bài Giảng Mới -->
-    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-4 shadow-2xl">
+    <div id="post-modal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 border border-slate-700 space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
                     <i class="fa-solid fa-pen-nib"></i> Tạo Bài Giảng Mới
                 </h3>
-                <button onclick="toggleModal(false)" class="text-slate-400 hover:text-white text-xl bg-transparent border-none cursor-pointer">×</button>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white text-lg"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="space-y-3 text-xs">
                 <div>
                     <label class="font-semibold text-slate-300 uppercase">Chọn chuyên mục:</label>
-                    <select id="new-category" class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none">
+                    <select id="new-category" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
                         <option value="cpp">C++ (Thuật toán & Cơ bản)</option>
                         <option value="python">Python (Scripting & Tự động hóa)</option>
                     </select>
                 </div>
                 <div>
                     <label class="font-semibold text-slate-300 uppercase">Tiêu đề bài giảng:</label>
-                    <input type="text" id="new-title" placeholder="Ví dụ: Bài 4: Vòng lặp For trong C++..." class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none">
+                    <input type="text" id="new-title" placeholder="Ví dụ: Bài 4: Vòng lặp For trong C++..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400">
                 </div>
                 <div>
                     <label class="font-semibold text-slate-300 uppercase">Nội dung lý thuyết:</label>
-                    <textarea id="new-content" rows="3" placeholder="Nhập nội dung lý thuyết chi tiết..." class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-white focus:outline-none resize-none"></textarea>
+                    <textarea id="new-content" rows="4" placeholder="Nhập nội dung bài giảng..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
                 <div>
                     <label class="font-semibold text-slate-300 uppercase">Đoạn mã mẫu (Code snippet):</label>
-                    <textarea id="new-code" rows="4" placeholder="Nhập đoạn mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2.5 text-cyan-300 focus:outline-none resize-none"></textarea>
+                    <textarea id="new-code" rows="4" placeholder="Nhập mã code minh họa..." class="font-code w-full mt-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-cyan-300 focus:outline-none focus:border-cyan-400 resize-none"></textarea>
                 </div>
                 <button onclick="createNewPost()" class="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-purple-600 font-bold text-white shadow-lg mt-2 transition hover:opacity-90">Đăng Bài Giảng</button>
             </div>
@@ -136,41 +128,107 @@
 
     <!-- Footer -->
     <footer class="mt-12 text-center text-xs text-slate-500">
-        <p>© 2026 Phạm Nhật Minh. THPT Sóc Sơn.</p>
+        <p>© 2026 Phạm Nhật Minh. All rights reserved.</p>
     </footer>
 
-    <!-- Hệ thống tập lệnh điều phối đồng bộ -->
-    <script>
-        // Kho bài học mẫu ban đầu ổn định hệ thống
-        const defaultData = [
-            {
-                id: "1", category: "cpp",
-                title: "Bài 3: Câu lệnh điều kiện IF - ELSE trong C++",
-                content: "Trong lập trình C++, câu lệnh điều kiện giúp chương trình đưa ra các quyết định rẽ nhánh dựa trên logic đúng/sai (true hoặc false). C++ sử dụng cặp dấu ngoặc nhọn { } để bao bọc khối lệnh.",
-                code: "#include <iostream>\nusing namespace std;\n\nint main() {\n    int score = 8.5;\n    if (score >= 8.0) {\n        cout << \"Học lực: Giỏi!\";\n    } else {\n        cout << \"Học lực: Khá\";\n    }\n    return 0;\n}",
-                author: "Hệ thống lớp học",
-                comments: [{ user: "Học sinh 10A2", text: "Bắc cầu tài khoản chung tiện lợi quá thầy Minh ơi!" }]
-            },
-            {
-                id: "2", category: "python",
-                title: "Bài 3: Cấu trúc rẽ nhánh điều kiện trong Python",
-                content: "Khác với C++, Python không sử dụng dấu ngoặc nhọn hay dấu chấm phẩy, thay vào đó ngôi nhà này sử dụng dấu hai chấm (:) và quy tắc thụt lề (indentation) bắt buộc để phân tách khối lệnh.",
-                code: "score = 8.5\n\nif score >= 8.0:\n    print('Học lực: Giỏi!')\nelse:\n    print('Học lực: Khá hoặc Trung bình.')",
-                author: "Hệ thống lớp học",
-                comments: [{ user: "Học sinh 10A2", text: "Bên Python nhìn gọn gàng dễ hiểu ghê!" }]
+    <!-- Firebase & Script Xử lý -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:8e15469ca906fce7f3b"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let activeLanguageTab = 'cpp';
+        let cachedAllLectures = [];
+
+        window.switchLang = (lang) => {
+            activeLanguageTab = lang;
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            const activeBtn = document.getElementById(`tab-${lang}`);
+            activeBtn.classList.add('active');
+            activeBtn.classList.remove('text-slate-400');
+            renderLecturesList();
+        };
+
+        window.openModal = () => document.getElementById('post-modal').classList.remove('hidden');
+        window.closeModal = () => document.getElementById('post-modal').classList.add('hidden');
+
+        // Lắng nghe dữ liệu bài giảng real-time từ Firestore
+        function loadLecturesRealtime() {
+            const q = query(collection(db, "lessons"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                cachedAllLectures = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderLecturesList();
+            });
+        }
+
+        // Vẽ danh sách bài giảng (Chỉ hiện tiêu đề, bấm vào mới sang trang chi tiết)
+        function renderLecturesList() {
+            const container = document.getElementById('lessons-container');
+            const filteredData = cachedAllLectures.filter(item => item.category === activeLanguageTab);
+
+            if (filteredData.length === 0) {
+                container.innerHTML = `<div class="text-center py-12 text-slate-500 italic text-xs">Chưa có bài giảng nào thuộc chuyên mục này. Hãy bấm "Đăng bài giảng mới" để thêm!</div>`;
+                return;
             }
-        ];
 
-        let activeTab = 'cpp';
-        let cachedLectures = JSON.parse(localStorage.getItem('minh_database')) || defaultData;
-        
-        // Đọc thông tin cầu nối tài khoản dùng chung được bắc ngang từ trang phòng Chat sang
-        let currentUser = JSON.parse(localStorage.getItem('shared_user')) || null;
+            container.innerHTML = filteredData.map(item => `
+                <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 flex items-center justify-between hover:border-cyan-500/50 transition group">
+                    <a href="/hoctap/baigiang.html?id=${item.id}" class="text-sm sm:text-base font-bold text-slate-200 group-hover:text-cyan-400 transition flex items-center gap-3">
+                        <i class="fa-solid fa-book-open text-cyan-400"></i> ${item.title}
+                    </a>
+                    <div class="flex items-center gap-3">
+                        <span class="text-[10px] bg-slate-800 text-slate-400 px-2.5 py-1 rounded-lg hidden sm:inline-block">Đăng bởi: ${item.author || 'Phạm Nhật Minh'}</span>
+                        <a href="/hoctap/baigiang.html?id=${item.id}" class="text-xs font-semibold text-purple-400 hover:text-purple-300 flex items-center gap-1 bg-purple-500/10 px-3 py-1.5 rounded-xl border border-purple-500/20 transition">
+                            Xem <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </a>
+                    </div>
+                </div>
+            `).join("");
+        }
 
-        function syncUserUI() {
-            const accountArea = document.getElementById('account-area');
-            if (currentUser) {
-                const displayName = currentUser.displayName || currentUser.name || "User Lớp Học";
-                const shortName = displayName.split(' ').pop();
+        // Tạo bài giảng mới lên Firebase
+        window.createNewPost = async () => {
+            const category = document.getElementById('new-category').value;
+            const title = document.getElementById('new-title').value.trim();
+            const content = document.getElementById('new-content').value.trim();
+            const codeSnippet = document.getElementById('new-code').value.trim();
 
-                if (currentUser.photoURL && currentUser.photoURL.includes('http')) {
+            if(!title || !content) return alert("Vui lòng điền đầy đủ tiêu đề và nội dung bài giảng!");
+
+            try {
+                await addDoc(collection(db, "lessons"), {
+                    category,
+                    title,
+                    content,
+                    codeSnippet,
+                    author: "Phạm Nhật Minh",
+                    createdAt: serverTimestamp()
+                });
+                closeModal();
+                document.getElementById('new-title').value = '';
+                document.getElementById('new-content').value = '';
+                document.getElementById('new-code').value = '';
+                alert("Đăng bài giảng thành công!");
+            } catch (e) {
+                alert("Lỗi khi đăng bài: " + e.message);
+            }
+        };
+
+        loadLecturesRealtime();
+    </script>
+</body>
+</html>
