@@ -177,12 +177,10 @@
 
                 <!-- TAB 5: TIN NHẮN RIÊNG 1-1 -->
                 <div id="content-private-chat" class="tab-content hidden glass-panel rounded-3xl p-4 sm:p-6 grid grid-cols-1 md:grid-cols-12 gap-4 flex-1 h-[550px]">
-                    <!-- Danh sách bạn bè để chọn chat -->
                     <div class="md:col-span-4 border-r border-slate-800 pr-3 flex flex-col space-y-2 overflow-hidden">
                         <p class="text-xs font-bold text-slate-400 mb-1">Chọn người trò chuyện:</p>
                         <div id="chat-friends-list" class="space-y-1.5 overflow-y-auto flex-1 pr-1"></div>
                     </div>
-                    <!-- Khung nhắn tin chi tiết -->
                     <div class="md:col-span-8 flex flex-col justify-between overflow-hidden">
                         <div id="chat-header" class="pb-3 border-b border-slate-800 text-xs font-bold text-slate-300 flex items-center gap-2">
                             <i class="fa-solid fa-paper-plane text-cyan-400"></i> Chọn một người bạn để bắt đầu nhắn tin
@@ -236,7 +234,6 @@
         let myUser = localStorage.getItem("chat_user");
         let activeChatFriend = null;
 
-        // Chuyển Tab
         window.switchTab = (tabName) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
@@ -250,7 +247,6 @@
 
         if (myUser) initApp();
 
-        // Đăng ký
         document.getElementById("btn-register").onclick = async () => {
             const u = document.getElementById("auth-user").value.trim().toLowerCase();
             const p = document.getElementById("auth-pass").value.trim();
@@ -264,7 +260,6 @@
             alert("Đăng ký thành công! Hãy đăng nhập.");
         };
 
-        // Đăng nhập
         document.getElementById("btn-login").onclick = async () => {
             const u = document.getElementById("auth-user").value.trim().toLowerCase();
             const p = document.getElementById("auth-pass").value.trim();
@@ -279,7 +274,6 @@
             initApp();
         };
 
-        // Đăng xuất
         document.getElementById("btn-logout").onclick = () => {
             localStorage.removeItem("chat_user");
             location.reload();
@@ -292,12 +286,19 @@
             document.getElementById("header-username").innerText = myUser;
             document.getElementById("profile-username-display").innerText = myUser;
 
+            // Kiểm tra nếu có tham số ?user=... trên URL thì hiển thị hồ sơ của người đó
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewUser = urlParams.get('user');
+            if (viewUser) {
+                window.switchTab('profile');
+                document.getElementById("profile-username-display").innerText = viewUser;
+            }
+
             listenRequests();
             loadFriends();
             listenGroupChat();
         }
 
-        // 1. Tìm kiếm kết bạn
         document.getElementById("btn-search").onclick = async () => {
             const s = document.getElementById("search-input").value.trim().toLowerCase();
             const res = document.getElementById("search-result");
@@ -323,7 +324,6 @@
             alert("Đã gửi lời mời kết bạn đến " + target);
         };
 
-        // 2. Lời mời kết bạn
         function listenRequests() {
             const q = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "pending"));
             onSnapshot(q, (snap) => {
@@ -359,7 +359,6 @@
             alert("Đã chấp nhận lời mời!");
         };
 
-        // 3. Bạn bè & Danh sách chọn Chat
         function loadFriends() {
             const q1 = query(collection(db, "friends"), where("from", "==", myUser), where("status", "==", "accepted"));
             const q2 = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "accepted"));
@@ -399,7 +398,6 @@
             onSnapshot(q2, render);
         }
 
-        // 4. Nhắn tin riêng 1-1
         let unsubscribeChat = null;
 
         window.openPrivateChat = (friendUsername) => {
@@ -457,7 +455,6 @@
             if(e.key === 'Enter') document.getElementById("btn-send-msg").click();
         });
 
-        // 5. Chat Nhóm
         function listenGroupChat() {
             const qGroup = query(collection(db, "group_messages"));
             onSnapshot(qGroup, (snap) => {
