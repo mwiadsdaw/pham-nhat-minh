@@ -77,11 +77,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Lấy ID từ URL (Ví dụ: baigiang.html?id=xyz123)
+        // Lấy ID bài giảng từ URL
         const urlParams = new URLSearchParams(window.location.search);
         const lessonId = urlParams.get('id');
 
-        // Lấy thông tin tài khoản từ trang Trò chuyện
+        // Lấy tên tài khoản đang đăng nhập
         const currentAccount = localStorage.getItem("chat_user");
 
         function renderUserBadge() {
@@ -89,9 +89,9 @@
             if (!container) return;
             if (currentAccount) {
                 container.innerHTML = `
-                    <span class="text-cyan-400 font-semibold flex items-center gap-1.5">
+                    <a href="/trochuyenn/idex.html?user=${currentAccount}" class="text-cyan-400 font-semibold flex items-center gap-1.5 hover:underline">
                         <i class="fa-solid fa-circle text-[8px] text-emerald-400"></i> ${currentAccount}
-                    </span>
+                    </a>
                 `;
             } else {
                 container.innerHTML = `
@@ -117,12 +117,17 @@
 
                 if (docSnap.exists()) {
                     const lesson = docSnap.data();
+                    const authorName = lesson.author || 'Phạm Nhật Minh';
                     
                     container.innerHTML = `
                         <div class="border-b border-slate-800 pb-4">
                             <span class="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-400 text-xs font-semibold uppercase tracking-wider">Chuyên mục: ${lesson.category.toUpperCase()}</span>
                             <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3 tracking-tight">${lesson.title}</h1>
-                            <p class="text-slate-400 text-xs mt-1">Đăng bởi: ${lesson.author || 'Phạm Nhật Minh'}</p>
+                            <p class="text-slate-400 text-xs mt-1">Đăng bởi: 
+                                <a href="/trochuyenn/idex.html?user=${authorName}" class="text-cyan-400 font-semibold hover:underline">
+                                    ${authorName}
+                                </a>
+                            </p>
                         </div>
 
                         <div class="text-sm text-slate-300 leading-relaxed whitespace-pre-line py-2">
@@ -196,13 +201,12 @@
             document.getElementById('comment-img-preview').src = "";
         };
 
-        // Gửi bình luận - Tự động lấy tên tài khoản từ trang Trò chuyện
+        // Gửi bình luận
         window.addComment = async () => {
             const input = document.getElementById('comment-input');
             const text = input.value.trim();
             if(!text && !commentImageBase64) return;
 
-            // Sử dụng tên tài khoản thực tế đang đăng nhập
             const authorName = localStorage.getItem("chat_user") || "Ẩn danh";
 
             try {
@@ -238,7 +242,9 @@
                 box.innerHTML = comments.map(c => `
                     <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800 text-xs space-y-2">
                         <div>
-                            <span class="font-bold text-cyan-300 mr-2">${c.author}:</span>
+                            <a href="/trochuyenn/idex.html?user=${c.author}" class="font-bold text-cyan-300 mr-2 hover:underline">
+                                ${c.author}:
+                            </a>
                             <span class="text-slate-200 whitespace-pre-line">${c.text}</span>
                         </div>
                         ${c.image ? `
