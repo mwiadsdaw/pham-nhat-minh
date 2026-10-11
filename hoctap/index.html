@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thư Viện Bài Giảng Lập Trình | Phạm Nhật Minh</title>
+    
+    <!-- CSS NỘI BỘ CHỐNG VỠ GIAO DIỆN TUYỆT ĐỐI -->
     <style>
         body {
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -163,7 +165,7 @@
         .btn-delete-card {
             position: absolute;
             top: 24px;
-            right: 50px;
+            right: 24px;
             background: #ef4444;
             border: none;
             color: white;
@@ -232,6 +234,17 @@
             box-sizing: border-box;
             font-size: 13px;
         }
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            border: none;
+            cursor: pointer;
+            margin-top: 8px;
+        }
     </style>
 </head>
 <body>
@@ -261,13 +274,3 @@
         <!-- Tab Switcher -->
         <div class="tab-container">
             <button onclick="switchLang('cpp')" id="tab-cpp" class="tab-btn active">Ngôn ngữ C++</button>
-            <button onclick="switchLang('python')" id="tab-python" class="tab-btn">Ngôn ngữ Python</button>
-        </div>
-
-        <div id="lessons-container"></div>
-    </div>
-
-    <!-- Modal Form Đăng Bài Giảng -->
-    <div id="post-modal" class="modal-mask">
-        <div class="modal-box">
-            <div class="modal-header">
