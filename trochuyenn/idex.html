@@ -250,6 +250,23 @@
 
     </div>
 
+    <!-- MODAL POPUP CHI TIẾT BÀI VIẾT & BÌNH LUẬN (ẢNH 1) -->
+    <div id="post-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-fbPanel rounded-2xl max-w-2xl w-full border border-fbHover max-h-[90vh] flex flex-col overflow-hidden relative shadow-2xl">
+            <div class="p-4 border-b border-fbHover flex items-center justify-between bg-fbHover/40">
+                <h3 id="modal-post-author" class="text-sm font-bold text-white">Bài viết</h3>
+                <button onclick="closePostDetailModal()" class="w-8 h-8 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-white font-bold cursor-pointer transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="modal-post-content" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+            <div class="p-3 border-t border-fbHover bg-fbPanel flex gap-2">
+                <input type="text" id="modal-comment-input" placeholder="Viết bình luận..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
+                <button id="modal-comment-btn" class="bg-fbBlue px-4 py-2 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90 transition">Gửi</button>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL ADMIN DUYỆT BÀI -->
     <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
         <div class="bg-fbPanel rounded-2xl max-w-xl w-full border border-fbHover p-6 space-y-4 max-h-[80vh] flex flex-col">
@@ -373,6 +390,7 @@
             loadFeedPosts();
             loadReels();
             loadFriendsData();
+            checkUrlForPost();
         }
 
         function checkSystemNotification() {
@@ -469,38 +487,90 @@
                                 <span>${comments.length} bình luận</span>
                             </div>
 
-                            <!-- Nút tương tác: Like, Trả lời (Bình luận), Share -->
+                            <!-- Nút tương tác: Like, Trả lời (Mở Popup Modal bài viết), Share -->
                             <div class="grid grid-cols-3 gap-1 pt-1 border-t border-fbHover text-xs font-semibold text-[#b0b3b8]">
                                 <button onclick="toggleLike('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer ${isLiked ? 'text-fbBlue font-bold' : ''}">
                                     <i class="fa-solid fa-thumbs-up"></i> Thích
                                 </button>
-                                <button onclick="document.getElementById('comment-input-${p.id}').focus()" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                <button onclick="openPostDetail('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
                                     <i class="fa-solid fa-comment"></i> Trả lời
                                 </button>
-                                <button onclick="sharePost('${p.title}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                <button onclick="sharePost('${p.id}', '${p.title}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
                                     <i class="fa-solid fa-share"></i> Share
                                 </button>
-                            </div>
-
-                            <!-- Khung hiển thị & nhập bình luận -->
-                            <div class="space-y-2 pt-2 border-t border-fbHover">
-                                <div class="space-y-1.5 max-h-[150px] overflow-y-auto">
-                                    ${comments.map(c => `
-                                        <div class="bg-fbInput p-2 rounded-xl text-[11px] flex flex-col">
-                                            <span class="font-bold text-white">${c.user}</span>
-                                            <span class="text-slate-200">${c.text}</span>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                                <div class="flex gap-2 pt-1">
-                                    <input type="text" id="comment-input-${p.id}" placeholder="Viết bình luận..." class="flex-1 bg-fbInput rounded-full px-3 py-1.5 text-xs text-white focus:outline-none">
-                                    <button onclick="addComment('${p.id}')" class="bg-fbBlue px-3 py-1.5 rounded-full text-xs font-bold text-white cursor-pointer">Gửi</button>
-                                </div>
                             </div>
                         </div>
                     `;
                 }).join("");
             });
+        }
+
+        // Mở Popup Chi Tiết Bài Viết & Cập nhật URL (?post=ID_BAI_VIET)
+        window.openPostDetail = async (postId) => {
+            window.history.pushState({}, '', `?post=${postId}`);
+
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if (!snap.exists()) return;
+
+            const p = snap.data();
+            const likesCount = p.likes ? p.likes.length : 0;
+            const comments = p.comments || [];
+
+            const modalContent = document.getElementById("modal-post-content");
+            document.getElementById("modal-post-author").innerText = `Bài viết của ${p.author}`;
+
+            modalContent.innerHTML = `
+                <div class="space-y-3">
+                    <p class="text-sm text-slate-100">${p.title}</p>
+                    ${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[450px] flex items-center justify-center border border-fbHover">
+                        ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[320px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
+                    </div>` : ''}
+                    <div class="flex justify-between text-xs text-[#b0b3b8] pt-2 border-t border-fbHover">
+                        <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} lượt thích</span>
+                        <span>${comments.length} bình luận</span>
+                    </div>
+                    <!-- Danh sách bình luận -->
+                    <div class="space-y-2 pt-2">
+                        <h5 class="text-xs font-bold text-white">Bình luận</h5>
+                        ${comments.length === 0 ? `<p class="text-xs text-[#b0b3b8] italic">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>` : ''}
+                        ${comments.map(c => `
+                            <div class="bg-fbInput p-2.5 rounded-xl text-xs space-y-0.5">
+                                <span class="font-bold text-white block">${c.user}</span>
+                                <span class="text-slate-200">${c.text}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("modal-comment-btn").onclick = async () => {
+                const input = document.getElementById("modal-comment-input");
+                const text = input.value.trim();
+                if (!text) return;
+                
+                let updatedComments = p.comments || [];
+                updatedComments.push({ user: myUser, text, time: new Date().toLocaleTimeString() });
+                await setDoc(postRef, { comments: updatedComments }, { merge: true });
+                
+                input.value = "";
+                openPostDetail(postId);
+            };
+
+            document.getElementById("post-detail-modal").classList.remove("hidden");
+        };
+
+        window.closePostDetailModal = () => {
+            document.getElementById("post-detail-modal").classList.add("hidden");
+            window.history.pushState({}, '', window.location.pathname);
+        };
+
+        function checkUrlForPost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('post');
+            if (postId) {
+                openPostDetail(postId);
+            }
         }
 
         window.toggleLike = async (postId) => {
@@ -516,22 +586,10 @@
             await setDoc(postRef, { likes }, { merge: true });
         };
 
-        window.addComment = async (postId) => {
-            const input = document.getElementById(`comment-input-${postId}`);
-            const text = input.value.trim();
-            if(!text) return;
-            const postRef = doc(db, "posts", postId);
-            const snap = await getDoc(postRef);
-            if(!snap.exists()) return;
-            let comments = snap.data().comments || [];
-            comments.push({ user: myUser, text, time: new Date().toLocaleTimeString() });
-            await setDoc(postRef, { comments }, { merge: true });
-            input.value = "";
-        };
-
-        window.sharePost = (title) => {
-            navigator.clipboard.writeText(title);
-            alert("Đã sao chép nội dung bài viết vào clipboard để chia sẻ!");
+        window.sharePost = (postId, title) => {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+            navigator.clipboard.writeText(shareUrl);
+            alert("Đã sao chép liên kết bài viết vào bộ nhớ tạm:\n" + shareUrl);
         };
 
         // Xem hồ sơ bất kỳ ai
