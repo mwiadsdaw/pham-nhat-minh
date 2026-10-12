@@ -70,7 +70,7 @@
                         <i class="fa-solid fa-circle text-[8px] text-emerald-400"></i>
                         <span id="header-username">---</span>
                     </span>
-                    <button id="btn-logout" class="text-[11px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-xl border border-red-500/30 transition">
+                    <button id="btn-logout" class="text-[11px] bg-red-500/20 text-red-400 hover:bg-red-500/30 px-3 py-1 rounded-xl border border-red-500/30 transition cursor-pointer">
                         Đăng xuất
                     </button>
                 </div>
@@ -101,8 +101,8 @@
                     <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." class="w-full bg-slate-900/90 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-400 mt-1">
                 </div>
                 <div class="flex gap-3 pt-3">
-                    <button id="btn-login" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 py-3 rounded-xl text-xs font-bold transition shadow-lg shadow-cyan-500/20">Đăng Nhập</button>
-                    <button id="btn-register" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 py-3 rounded-xl text-xs font-bold transition">Đăng Ký Mới</button>
+                    <button id="btn-login" class="flex-1 bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 py-3 rounded-xl text-xs font-bold transition shadow-lg shadow-cyan-500/20 cursor-pointer">Đăng Nhập</button>
+                    <button id="btn-register" class="flex-1 bg-slate-800 hover:bg-slate-700 border border-slate-600 py-3 rounded-xl text-xs font-bold transition cursor-pointer">Đăng Ký Mới</button>
                 </div>
             </div>
         </div>
@@ -112,23 +112,23 @@
 
             <!-- THANH ĐIỀU HƯỚNG CÁC NÚT TAB TRÊN CÙNG MÀN HÌNH -->
             <div class="glass-panel p-2 rounded-2xl flex flex-wrap items-center justify-around gap-2 border border-slate-700/80">
-                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <button onclick="switchTab('profile')" id="tab-profile" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-user"></i> Hồ Sơ
                 </button>
-                <button onclick="switchTab('add-friend')" id="tab-add-friend" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <button onclick="switchTab('add-friend')" id="tab-add-friend" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-user-plus"></i> Kết Bạn
                 </button>
-                <button onclick="switchTab('requests')" id="tab-requests" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 relative">
+                <button onclick="switchTab('requests')" id="tab-requests" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 relative cursor-pointer">
                     <i class="fa-solid fa-envelope-open-text"></i> Lời Mời
                     <span id="badge-requests" class="hidden bg-red-500 text-white text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-bold">0</span>
                 </button>
-                <button onclick="switchTab('friends')" id="tab-friends" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <button onclick="switchTab('friends')" id="tab-friends" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-users"></i> Bạn Bè
                 </button>
-                <button onclick="switchTab('private-chat')" id="tab-private-chat" class="tab-btn active px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2">
+                <button onclick="switchTab('private-chat')" id="tab-private-chat" class="tab-btn active px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-paper-plane"></i> Tin Nhắn Riêng
                 </button>
-                <button onclick="switchTab('group-chat')" id="tab-group-chat" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2">
+                <button onclick="switchTab('group-chat')" id="tab-group-chat" class="tab-btn px-4 py-2.5 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center gap-2 cursor-pointer">
                     <i class="fa-solid fa-comments"></i> Chat Nhóm
                 </button>
             </div>
@@ -162,7 +162,7 @@
                         <label class="text-xs text-slate-300">Nhập tên tài khoản người bạn muốn tìm:</label>
                         <div class="flex gap-2">
                             <input type="text" id="search-input" placeholder="Tên tài khoản (username)..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            <button id="btn-search" class="bg-cyan-600 hover:bg-cyan-500 px-5 py-2.5 rounded-xl text-xs font-bold transition">Tìm kiếm</button>
+                            <button id="btn-search" class="bg-cyan-600 hover:bg-cyan-500 px-5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer">Tìm kiếm</button>
                         </div>
                         <div id="search-result" class="pt-2"></div>
                     </div>
@@ -220,7 +220,7 @@
 
                         <div class="p-3 bg-slate-900/50 border-t border-slate-800 flex items-center gap-2">
                             <input type="text" id="msg-input" placeholder="Aa Nhập tin nhắn riêng..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
-                            <button id="btn-send-msg" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 px-4 py-2.5 rounded-xl text-xs font-bold transition text-white">
+                            <button id="btn-send-msg" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 px-4 py-2.5 rounded-xl text-xs font-bold transition text-white cursor-pointer">
                                 <i class="fa-solid fa-paper-plane"></i>
                             </button>
                         </div>
@@ -258,7 +258,7 @@
                     <div id="group-messages-box" class="flex-1 overflow-y-auto my-3 space-y-3 pr-2 text-xs"></div>
                     <div class="flex gap-2 pt-2 border-t border-slate-800">
                         <input type="text" id="group-msg-input" placeholder="Nhập tin nhắn nhóm..." class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-cyan-400">
-                        <button id="btn-send-group-msg" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 px-5 py-2.5 rounded-xl text-xs font-bold transition"><i class="fa-solid fa-paper-plane"></i></button>
+                        <button id="btn-send-group-msg" class="bg-gradient-to-r from-cyan-500 to-purple-600 hover:opacity-90 px-5 py-2.5 rounded-xl text-xs font-bold transition cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
                     </div>
                 </div>
 
@@ -363,7 +363,7 @@
             res.innerHTML = `
                 <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs">
                     <span class="font-bold text-white">${s}</span>
-                    <button onclick="sendFriendRequest('${s}')" class="bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-lg font-bold">Gửi lời mời kết bạn</button>
+                    <button onclick="sendFriendRequest('${s}')" class="bg-purple-600 hover:bg-purple-500 px-3 py-1.5 rounded-lg font-bold cursor-pointer">Gửi lời mời kết bạn</button>
                 </div>
             `;
         };
@@ -401,7 +401,7 @@
                 box.innerHTML = snap.docs.map(d => `
                     <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs">
                         <span class="font-bold text-slate-200">${d.data().from}</span>
-                        <button onclick="acceptFriend('${d.id}')" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg font-bold">Đồng ý</button>
+                        <button onclick="acceptFriend('${d.id}')" class="bg-green-600 hover:bg-green-500 px-3 py-1.5 rounded-lg font-bold cursor-pointer">Đồng ý</button>
                     </div>
                 `).join("");
             });
@@ -418,4 +418,135 @@
 
             const render = async () => {
                 const s1 = await getDocs(q1);
-                const s2 = await getDocs
+                const s2 = await getDocs(q2);
+                const list = [];
+                s1.docs.forEach(d => list.push(d.data().to));
+                s2.docs.forEach(d => list.push(d.data().from));
+
+                const friendsBox = document.getElementById("friends-list");
+                const chatFriendsBox = document.getElementById("chat-friends-list");
+
+                if(list.length === 0) {
+                    friendsBox.innerHTML = `<p class="text-xs text-slate-500 italic">Chưa có bạn bè nào</p>`;
+                    chatFriendsBox.innerHTML = `<p class="text-xs text-slate-500 italic">Không có bạn bè</p>`;
+                    return;
+                }
+
+                friendsBox.innerHTML = list.map(f => `
+                    <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs">
+                        <span class="font-bold text-slate-200"><i class="fa-solid fa-user-circle text-cyan-400 mr-2"></i>${f}</span>
+                        <button onclick="switchTab('private-chat'); openPrivateChat('${f}');" class="bg-cyan-600 hover:bg-cyan-500 px-3 py-1.5 rounded-lg font-bold cursor-pointer">Nhắn tin</button>
+                    </div>
+                `).join("");
+
+                chatFriendsBox.innerHTML = list.map(f => `
+                    <button onclick="openPrivateChat('${f}')" class="w-full text-left p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 transition border border-slate-700/50 text-xs flex items-center justify-between cursor-pointer">
+                        <span class="font-medium text-slate-200"><i class="fa-solid fa-user-circle text-cyan-400 mr-2"></i>${f}</span>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-500"></i>
+                    </button>
+                `).join("");
+            };
+
+            onSnapshot(q1, render);
+            onSnapshot(q2, render);
+        }
+
+        let unsubscribeChat = null;
+
+        window.openPrivateChat = (friendUsername) => {
+            activeChatFriend = friendUsername;
+            document.getElementById("active-chat-name").innerText = friendUsername;
+            document.getElementById("right-panel-name").innerText = friendUsername;
+
+            const roomId = [myUser, friendUsername].sort().join("_");
+            if(unsubscribeChat) unsubscribeChat();
+
+            const qRealtime = query(collection(db, "private_messages"), where("roomId", "==", roomId));
+            
+            unsubscribeChat = onSnapshot(qRealtime, (snap) => {
+                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                docs.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+                const box = document.getElementById("messages-box");
+                if(docs.length === 0) {
+                    box.innerHTML = `<p class="text-center text-slate-500 py-24 text-xs italic">Chưa có tin nhắn nào. Hãy nhắn tin chào bạn ấy!</p>`;
+                    return;
+                }
+
+                box.innerHTML = docs.map(m => {
+                    const isMe = m.sender === myUser;
+                    return `
+                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                            <span class="text-[9px] text-slate-500 mb-0.5 px-1">${m.sender}</span>
+                            <div class="px-3.5 py-2 rounded-2xl max-w-[80%] break-words text-xs ${isMe ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'}">
+                                ${m.text}
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+                box.scrollTop = box.scrollHeight;
+            });
+        };
+
+        document.getElementById("btn-send-msg").onclick = async () => {
+            if(!activeChatFriend) return alert("Vui lòng chọn bạn bè để nhắn tin!");
+            const input = document.getElementById("msg-input");
+            const text = input.value.trim();
+            if(!text) return;
+
+            const roomId = [myUser, activeChatFriend].sort().join("_");
+            await addDoc(collection(db, "private_messages"), {
+                roomId: roomId,
+                sender: myUser,
+                receiver: activeChatFriend,
+                text: text,
+                createdAt: serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        document.getElementById("msg-input").addEventListener("keypress", (e) => {
+            if(e.key === 'Enter') document.getElementById("btn-send-msg").click();
+        });
+
+        function listenGroupChat() {
+            const qGroup = query(collection(db, "group_messages"));
+            onSnapshot(qGroup, (snap) => {
+                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                docs.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+
+                const box = document.getElementById("group-messages-box");
+                box.innerHTML = docs.map(m => {
+                    const isMe = m.sender === myUser;
+                    return `
+                        <div class="flex flex-col ${isMe ? 'items-end' : 'items-start'}">
+                            <span class="text-[9px] text-slate-500 mb-0.5 px-1">${m.sender}</span>
+                            <div class="px-3.5 py-2 rounded-2xl max-w-[80%] break-words text-xs ${isMe ? 'bg-gradient-to-r from-cyan-500 to-purple-600 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 border border-slate-700 rounded-bl-none'}">
+                                ${m.text}
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        document.getElementById("btn-send-group-msg").onclick = async () => {
+            const input = document.getElementById("group-msg-input");
+            const text = input.value.trim();
+            if(!text) return;
+
+            await addDoc(collection(db, "group_messages"), {
+                sender: myUser,
+                text: text,
+                createdAt: serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        document.getElementById("group-msg-input").addEventListener("keypress", (e) => {
+            if(e.key === 'Enter') document.getElementById("btn-send-group-msg").click();
+        });
+    </script>
+</body>
+</html>
