@@ -517,7 +517,8 @@
                     return `
                         <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
                             <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
-                            <p class="text-xs text-slate-200">${p.title}</p>${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
+                            <p class="text-xs text-slate-200">${p.title}</p>
+                            ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
                                 ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[300px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
                             </div>`: ''}
                             
@@ -559,7 +560,8 @@
 
             modalContent.innerHTML = `
                 <div class="space-y-3">
-                    <p class="text-sm text-slate-100">${p.title}</p>${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[450px] flex items-center justify-center border border-fbHover">
+                    <p class="text-sm text-slate-100">${p.title}</p>
+                    ${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[450px] flex items-center justify-center border border-fbHover">
                         ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[320px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
                     </div>` : ''}
                     <div class="flex justify-between text-xs text-[#b0b3b8] pt-2 border-t border-fbHover">
@@ -597,7 +599,7 @@
                                             </div>
 
                                             ${replies.length > 0 ? `
-                                                <button onclick="toggleRepliesList('${postId}',${index})" class="flex items-center gap-1 text-xs font-bold text-[#b0b3b8] hover:underline pl-3 pt-2 cursor-pointer">
+                                                <button onclick="toggleRepliesList('${postId}', ${index})" class="flex items-center gap-1 text-xs font-bold text-[#b0b3b8] hover:underline pl-3 pt-2 cursor-pointer">
                                                     <i class="fa-solid fa-arrow-turn-down text-[10px]"></i>
                                                     <span>Xem ${replies.length} câu trả lời</span>
                                                 </button>
@@ -621,7 +623,7 @@
                                                             </div>
                                                             <div class="flex items-center gap-3 text-[10px] font-semibold text-[#b0b3b8] pl-3 pt-1">
                                                                 <button class="hover:underline cursor-pointer">Thích</button>
-                                                                <button onclick="toggleReplyBox('${postId}',${index})" class="hover:underline cursor-pointer">Trả lời</button>
+                                                                <button onclick="toggleReplyBox('${postId}', ${index})" class="hover:underline cursor-pointer">Trả lời</button>
                                                                 <span class="font-normal text-[#8a8d91]">${r.time || 'Vừa xong'}</span>
                                                             </div>
                                                         </div>
@@ -750,4 +752,128 @@
             if(username === myUser) {
                 actionBox.innerHTML = `<span class="text-xs text-[#b0b3b8]">Trang cá nhân của bạn</span>`;
             } else {
-                actionBox.innerHTML = `<button onclick="openMessengerModal('${username}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"><i class="fa-solid fa-message
+                actionBox.innerHTML = `<button onclick="openMessengerModal('${username}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"><i class="fa-solid fa-message mr-1"></i> Nhắn tin</button>`;
+            }
+
+            const postsQ = query(collection(db, "posts"), where("author", "==", username), where("approved", "==", true));
+            const postsSnap = await getDocs(postsQ);
+            const pContainer = document.getElementById("profile-posts-container");
+            if(postsSnap.empty) {
+                pContainer.innerHTML = `<p class="text-xs text-[#b0b3b8] text-center py-6">Chưa có bài viết nào.</p>`;
+            } else {
+                pContainer.innerHTML = postsSnap.docs.map(p => `
+                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
+                        <p class="text-xs text-slate-200">${p.data().title}</p>
+                        ${p.data().media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
+                            <img src="${p.data().media}" class="w-full object-cover">
+                        </div>` : ''}
+                    </div>
+                `).join("");
+            }
+
+            const fContainer = document.getElementById("profile-friends-container");
+            fContainer.innerHTML = friendsList.length === 0 ? `<p class="text-xs text-[#b0b3b8]">Chưa có bạn bè nào.</p>` : friendsList.map(f => `
+                <div class="bg-fbPanel p-3 rounded-xl flex items-center justify-between border border-fbHover">
+                    <span class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${f}')">${f}</span>
+                    <button onclick="openProfile('${f}')" class="bg-fbHover px-3 py-1.5 rounded-lg text-xs font-bold text-white cursor-pointer">Xem trang cá nhân</button>
+                </div>
+            `).join("");
+        };
+
+        window.switchProfileSubTab = (tab) => {
+            if(tab === 'friends') {
+                document.getElementById("profile-posts-container").classList.add("hidden");
+                document.getElementById("profile-friends-container").classList.remove("hidden");
+            } else {
+                document.getElementById("profile-posts-container").classList.remove("hidden");
+                document.getElementById("profile-friends-container").classList.add("hidden");
+            }
+        };
+
+        function loadFriendsData() {
+            const usersQ = query(collection(db, "users"));
+            onSnapshot(usersQ, async (snap) => {
+                const allUsers = snap.docs.map(d => d.data().username).filter(u => u !== myUser);
+                
+                const q1 = query(collection(db, "friends"), where("from", "==", myUser), where("status", "==", "accepted"));
+                const q2 = query(collection(db, "friends"), where("to", "==", myUser), where("status", "==", "accepted"));
+                const s1 = await getDocs(q1);
+                const s2 = await getDocs(q2);
+                const myFriends = [];
+                s1.docs.forEach(d => myFriends.push(d.data().to));
+                s2.docs.forEach(d => myFriends.push(d.data().from));
+
+                const suggestions = allUsers.filter(u => !myFriends.includes(u));
+
+                const homeSugg = document.getElementById("home-suggestion-list");
+                if(suggestions.length === 0) {
+                    document.getElementById("home-friend-suggestion-box").classList.add("hidden");
+                } else {
+                    document.getElementById("home-friend-suggestion-box").classList.remove("hidden");
+                    homeSugg.innerHTML = suggestions.slice(0, 3).map(u => `
+                        <div class="bg-fbInput p-3 rounded-xl flex flex-col items-center text-center space-y-2">
+                            <div class="w-12 h-12 rounded-full bg-fbHover flex items-center justify-center font-bold text-white"><i class="fa-solid fa-user"></i></div>
+                            <span class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${u}')">${u}</span>
+                            <span class="text-[10px] text-[#b0b3b8]">Có ${Math.floor(Math.random() * 11) + 10} bạn chung</span>
+                            <button onclick="sendFriendRequest('${u}')" class="w-full bg-fbBlue py-1.5 rounded-lg text-xs font-bold text-white cursor-pointer">Thêm bạn bè</button>
+                        </div>
+                    `).join("");
+                }
+
+                const contactsList = document.getElementById("messenger-contacts-list");
+                if(myFriends.length === 0) {
+                    contactsList.innerHTML = `<p class="text-[11px] text-[#b0b3b8] px-2">Chưa có bạn bè. Hãy thêm bạn để nhắn tin!</p>`;
+                } else {
+                    contactsList.innerHTML = myFriends.map(f => `
+                        <div class="flex items-center justify-between p-2 rounded-xl hover:bg-fbHover transition">
+                            <div class="flex items-center gap-3 cursor-pointer" onclick="openMessengerModal('${f}')">
+                                <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-user"></i></div>
+                                <span class="text-xs font-semibold text-white">${f}</span>
+                            </div>
+                            <button onclick="openProfile('${f}')" class="text-[10px] text-fbBlue hover:underline">Hồ sơ</button>
+                        </div>
+                    `).join("");
+                }
+
+                const suggBox = document.getElementById("friends-suggestions-list");
+                suggBox.innerHTML = suggestions.map(u => `
+                    <div class="bg-fbInput p-4 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full bg-fbHover flex items-center justify-center font-bold"><i class="fa-solid fa-user"></i></div>
+                            <div>
+                                <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${u}')">${u}</h4>
+                                <span class="text-[10px] text-[#b0b3b8]">Có ${Math.floor(Math.random() * 11) + 10} bạn chung</span>
+                            </div>
+                        </div>
+                        <button onclick="sendFriendRequest('${u}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer">Thêm bạn</button>
+                    </div>
+                `).join("");
+
+                const allBox = document.getElementById("all-friends-list");
+                if(myFriends.length === 0) {
+                    allBox.innerHTML = `<p class="text-xs text-[#b0b3b8]">Chưa có bạn bè nào.</p>`;
+                } else {
+                    allBox.innerHTML = myFriends.map(f => `
+                        <div class="bg-fbInput p-3 rounded-xl flex items-center justify-between">
+                            <span class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${f}')">${f}</span>
+                            <div class="flex gap-2">
+                                <button onclick="openProfile('${f}')" class="bg-fbHover px-3 py-1.5 rounded-xl text-xs font-bold text-white cursor-pointer">Xem trang</button>
+                                <button onclick="openMessengerModal('${f}')" class="bg-fbBlue px-3 py-1.5 rounded-xl text-xs font-bold text-white cursor-pointer">Nhắn tin</button>
+                            </div>
+                        </div>
+                    `).join("");
+                }
+            });
+        }
+
+        window.sendFriendRequest = async (target) => {
+            await addDoc(collection(db, "friends"), {
+                from: myUser,
+                to: target,
+                status: "accepted"
+            });
+            alert("Đã kết bạn với " + target + "!");
+            loadFriendsData();
+        };
+
+        window.openMessengerModal
