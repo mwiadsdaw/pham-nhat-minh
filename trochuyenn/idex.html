@@ -24,11 +24,6 @@
     <!-- Google Fonts & FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Firebase CDN SDKs (Compat v9) -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
     <style>
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -58,6 +53,7 @@
                     <i class="fa-solid fa-compass"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-white">Đăng Nhập MinhNet</h2>
+                <p class="text-xs text-[#b0b3b8]">Admin: phamnhatminh / 2011</p>
             </div>
             <div class="space-y-3 pt-2">
                 <div>
@@ -69,8 +65,8 @@
                     <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." class="w-full bg-fbInput border border-transparent focus:border-fbBlue rounded-xl px-4 py-3 text-sm text-white focus:outline-none mt-1">
                 </div>
                 <div class="flex gap-3 pt-3">
-                    <button id="btn-login" onclick="handleLogin()" class="flex-1 bg-fbBlue hover:opacity-90 py-3 rounded-xl text-xs font-bold transition text-white shadow-lg cursor-pointer">Đăng Nhập</button>
-                    <button id="btn-register" onclick="handleRegister()" class="flex-1 bg-fbHover hover:bg-[#4e4f50] py-3 rounded-xl text-xs font-bold transition text-white cursor-pointer">Đăng Ký</button>
+                    <button id="btn-login" class="flex-1 bg-fbBlue hover:opacity-90 py-3 rounded-xl text-xs font-bold transition text-white shadow-lg cursor-pointer">Đăng Nhập</button>
+                    <button id="btn-register" class="flex-1 bg-fbHover hover:bg-[#4e4f50] py-3 rounded-xl text-xs font-bold transition text-white cursor-pointer">Đăng Ký</button>
                 </div>
             </div>
         </div>
@@ -105,7 +101,7 @@
                     </div>
                     <span id="header-username" class="text-xs font-bold text-white hidden sm:block">---</span>
                 </div>
-                <button onclick="handleLogout()" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer">
+                <button id="btn-logout" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer">
                     <i class="fa-solid fa-right-from-bracket text-xs"></i>
                 </button>
             </div>
@@ -134,9 +130,644 @@
                     <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bạn bè</span>
                 </div>
+                <div id="admin-menu-btn" onclick="openAdminModal()" class="hidden flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-yellow-400">
+                    <i class="fa-solid fa-shield-halved text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Kiểm duyệt bài viết/video</span>
+                </div>
+                <div id="admin-broadcast-btn" onclick="openBroadcastModal()" class="hidden flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-red-400">
+                    <i class="fa-solid fa-bullhorn text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Thông báo toàn hệ thống</span>
+                </div>
             </div>
 
             <!-- TAB 1: HOME -->
             <div id="tab-home" class="flex-1 flex overflow-hidden">
                 <div class="flex-1 overflow-y-auto p-4 flex flex-col items-center">
-                    <div class="max
+                    <div class="max-w-[600px] w-full space-y-4">
+                        
+                        <!-- Thông báo hệ thống -->
+                        <div id="system-notification-banner" class="hidden bg-fbBlue/25 border border-fbBlue p-4 rounded-xl text-xs space-y-1">
+                            <h4 class="font-bold text-fbBlue flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Thông báo từ Quản trị viên (Admin)</h4>
+                            <p id="system-notification-text" class="text-white"></p>
+                        </div>
+
+                        <!-- KHUNG ĐĂNG BÀI -->
+                        <div class="bg-fbPanel p-4 rounded-xl border border-fbHover shadow space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
+                                    <i class="fa-solid fa-user text-sm"></i>
+                                </div>
+                                <div class="flex-1 bg-fbInput rounded-full px-4 py-2.5 flex items-center justify-between">
+                                    <input type="text" id="post-title-input" placeholder="Nhật Minh ơi, bạn đang nghĩ gì thế?" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                                    
+                                    <div class="flex items-center gap-2 shrink-0">
+                                        <input type="file" id="local-file-input" accept="image/*,video/*" class="hidden" onchange="handleLocalFileSelect(event)">
+                                        
+                                        <button title="Đăng Video trực tiếp" onclick="document.getElementById('local-file-input').click()" class="text-red-500 hover:opacity-80 text-base cursor-pointer"><i class="fa-solid fa-video"></i></button>
+                                        <button title="Lấy tệp Ảnh/Video từ máy" onclick="document.getElementById('local-file-input').click()" class="text-green-500 hover:opacity-80 text-base cursor-pointer"><i class="fa-solid fa-photo-film"></i></button>
+                                        <button title="Cảm xúc" class="text-yellow-400 hover:opacity-80 text-base cursor-pointer"><i class="fa-solid fa-face-smile"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="selected-media-preview" class="hidden text-[11px] text-green-400 px-3 bg-fbInput py-1.5 rounded-lg flex items-center justify-between">
+                                <span id="selected-filename" class="truncate">Đã đính kèm tệp từ thiết bị</span>
+                                <button onclick="clearSelectedFile()" class="text-red-400 hover:underline font-bold ml-2">Xóa</button>
+                            </div>
+
+                            <div class="flex items-center justify-between pt-2 border-t border-fbHover">
+                                <div class="flex gap-2">
+                                    <select id="post-privacy" class="bg-fbInput text-xs text-white px-3 py-1.5 rounded-xl focus:outline-none">
+                                        <option value="public">🌐 Công khai</option>
+                                        <option value="friends">👥 Bạn bè</option>
+                                        <option value="private">🔒 Chỉ mình tôi</option>
+                                    </select>
+                                    <select id="post-type" class="bg-fbInput text-xs text-white px-3 py-1.5 rounded-xl focus:outline-none">
+                                        <option value="post">Bài viết</option>
+                                        <option value="video">Thước phim (Reels)</option>
+                                    </select>
+                                </div>
+                                <button onclick="submitNewPost()" class="bg-fbBlue hover:opacity-90 px-5 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer">Đăng bài</button>
+                            </div>
+                        </div>
+
+                        <!-- Gợi ý kết bạn trên Home -->
+                        <div id="home-friend-suggestion-box" class="bg-fbPanel p-4 rounded-xl border border-fbHover space-y-3">
+                            <h4 class="text-xs font-bold text-white uppercase flex items-center gap-2"><i class="fa-solid fa-user-plus text-fbBlue"></i> Những người bạn có thể biết & Gợi ý kết bạn</h4>
+                            <div id="home-suggestion-list" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+                        </div>
+
+                        <!-- Danh sách bài viết -->
+                        <div id="feed-posts-container" class="space-y-4 w-full"></div>
+
+                    </div>
+                </div>
+
+                <!-- Cột phải: Người liên hệ -->
+                <div class="w-[300px] hidden xl:flex flex-col p-3 overflow-y-auto border-l border-fbHover shrink-0">
+                    <h4 class="text-xs font-bold text-[#b0b3b8] uppercase mb-2 px-2">Người liên hệ</h4>
+                    <div id="messenger-contacts-list" class="space-y-1"></div>
+                </div>
+            </div>
+
+            <!-- TAB 2: REELS -->
+            <div id="tab-reels" class="hidden flex-1 flex bg-black relative overflow-hidden items-center justify-center">
+                <div id="reels-container" class="h-full w-full max-w-[450px] flex flex-col snap-y snap-mandatory overflow-y-scroll relative"></div>
+                <div class="absolute right-8 flex flex-col gap-3">
+                    <button onclick="scrollReel(-1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-up"></i></button>
+                    <button onclick="scrollReel(1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </div>
+
+            <!-- TAB 3: QUẢN LÝ BẠN BÈ -->
+            <div id="tab-friends" class="hidden flex-1 overflow-y-auto p-6 flex flex-col items-center">
+                <div class="max-w-[800px] w-full space-y-6">
+                    <h2 class="text-xl font-bold text-white">Bạn bè</h2>
+                    <div class="bg-fbPanel p-6 rounded-2xl border border-fbHover space-y-4">
+                        <h3 class="text-sm font-bold text-fbBlue uppercase">Gợi ý kết bạn (Có bạn chung)</h3>
+                        <div id="friends-suggestions-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    </div>
+                    <div class="bg-fbPanel p-6 rounded-2xl border border-fbHover space-y-4">
+                        <h3 class="text-sm font-bold text-fbBlue uppercase">Tất cả bạn bè</h3>
+                        <div id="all-friends-list" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: XEM TRANG CÁ NHÂN NGƯỜI KHÁC -->
+            <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto p-6 flex flex-col items-center">
+                <div class="max-w-[800px] w-full space-y-6">
+                    <div class="bg-fbPanel rounded-2xl p-6 border border-fbHover space-y-4">
+                        <div class="flex items-center gap-5 border-b border-fbHover pb-6">
+                            <div id="profile-avatar-box" class="w-24 h-24 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-3xl font-bold text-white overflow-hidden shadow-lg">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h2 id="profile-username" class="text-xl font-bold text-white">---</h2>
+                                <p id="profile-friends-count" class="text-xs text-[#b0b3b8] mt-1">--- bạn bè</p>
+                            </div>
+                            <div id="profile-action-btn"></div>
+                        </div>
+
+                        <!-- Tab menu trang cá nhân -->
+                        <div class="flex gap-4 border-b border-fbHover pb-2 text-xs font-bold text-[#b0b3b8]">
+                            <span class="text-fbBlue border-b-2 border-fbBlue pb-2 cursor-pointer">Bài viết</span>
+                            <span class="cursor-pointer hover:text-white" onclick="switchProfileSubTab('friends')">Bạn bè</span>
+                        </div>
+                    </div>
+
+                    <!-- Nội dung bài viết của người đó -->
+                    <div id="profile-posts-container" class="space-y-4"></div>
+                    <!-- Nội dung bạn bè của người đó -->
+                    <div id="profile-friends-container" class="hidden space-y-2"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL POPUP CHI TIẾT BÀI VIẾT & BÌNH LUẬN LỒNG NHAU -->
+    <div id="post-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-fbPanel rounded-2xl max-w-2xl w-full border border-fbHover max-h-[90vh] flex flex-col overflow-hidden relative shadow-2xl">
+            <div class="p-4 border-b border-fbHover flex items-center justify-between bg-fbHover/40">
+                <h3 id="modal-post-author" class="text-sm font-bold text-white">Bài viết</h3>
+                <button onclick="closePostDetailModal()" class="w-8 h-8 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-white font-bold cursor-pointer transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="modal-post-content" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+            <div class="p-3 border-t border-fbHover bg-fbPanel flex gap-2 items-center">
+                <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <input type="text" id="modal-comment-input" placeholder="Viết bình luận công khai..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
+                <button id="modal-comment-btn" class="bg-fbBlue px-4 py-2 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90 transition">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADMIN DUYỆT BÀI -->
+    <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-fbPanel rounded-2xl max-w-xl w-full border border-fbHover p-6 space-y-4 max-h-[80vh] flex flex-col">
+            <h3 class="text-base font-bold text-yellow-400">Kiểm Duyệt Bài Viết & Video</h3>
+            <div id="admin-pending-list" class="flex-1 overflow-y-auto space-y-3"></div>
+            <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="bg-fbHover py-2 rounded-xl text-xs font-bold text-white cursor-pointer">Đóng</button>
+        </div>
+    </div>
+
+    <!-- MODAL ADMIN THÔNG BÁO TOÀN HỆ THỐNG -->
+    <div id="broadcast-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-fbPanel rounded-2xl max-w-md w-full border border-fbHover p-6 space-y-4">
+            <h3 class="text-base font-bold text-red-400">Thông báo tới tất cả tài khoản</h3>
+            <textarea id="broadcast-input" rows="4" placeholder="Nhập nội dung thông báo hướng dẫn về web..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-xs text-white focus:outline-none"></textarea>
+            <div class="flex gap-2">
+                <button onclick="sendBroadcast()" class="flex-1 bg-red-600 hover:bg-red-500 py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">Gửi thông báo</button>
+                <button onclick="document.getElementById('broadcast-modal').classList.add('hidden')" class="flex-1 bg-fbHover py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">Hủy</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CHAT FULL MÀN HÌNH -->
+    <div id="messenger-modal" class="hidden fixed bottom-0 right-6 z-50 w-[360px] h-[480px] bg-fbPanel border border-fbHover rounded-t-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div class="bg-fbHover p-3 flex items-center justify-between border-b border-fbHover">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white font-bold text-xs"><i class="fa-solid fa-user"></i></div>
+                <h4 id="chat-box-name" class="text-xs font-bold text-white">---</h4>
+            </div>
+            <button onclick="closeMessengerModal()" class="text-[#b0b3b8] hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages-box" class="flex-1 overflow-y-auto p-3 space-y-2 text-xs"></div>
+        <div class="p-2 border-t border-fbHover flex items-center gap-2 bg-fbPanel">
+            <input type="text" id="chat-msg-input" placeholder="Aa Nhập tin nhắn..." class="flex-1 bg-fbInput rounded-full px-3 py-2 text-xs text-white focus:outline-none">
+            <button onclick="sendChatMessage()" class="text-fbBlue font-bold px-2 cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- SCRIPT CHÍNH -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, onSnapshot, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:f5b017647a17deacfc3593"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let myUser = localStorage.getItem("chat_user");
+        let activeChatUser = null;
+        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
+        let uploadedFileBase64 = "";
+
+        window.switchMainTab = (tabName) => {
+            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            ['home', 'reels', 'friends'].forEach(n => {
+                const btn = document.getElementById(`nav-${n}`);
+                if(btn) {
+                    btn.classList.remove('border-fbBlue', 'text-fbBlue');
+                    btn.classList.add('border-transparent', 'text-[#b0b3b8]');
+                }
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if(activeNav) activeNav.classList.add('border-fbBlue', 'text-fbBlue');
+        };
+
+        if (myUser) initApp();
+
+        document.getElementById("btn-register").onclick = async () => {
+            const u = document.getElementById("auth-user").value.trim().toLowerCase();
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            const ref = doc(db, "users", u);
+            const snap = await getDoc(ref);
+            if(snap.exists()) return alert("Tài khoản đã tồn tại!");
+            
+            await setDoc(ref, { username: u, password: p, avatar: "", bio: "" });
+            alert("Đăng ký thành công!");
+        };
+
+        document.getElementById("btn-login").onclick = async () => {
+            const u = document.getElementById("auth-user").value.trim().toLowerCase();
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            const ref = doc(db, "users", u);
+            const snap = await getDoc(ref);
+            if(!snap.exists() || snap.data().password !== p) return alert("Sai tài khoản hoặc mật khẩu!");
+            myUser = u;
+            localStorage.setItem("chat_user", u);
+            initApp();
+        };
+
+        document.getElementById("btn-logout").onclick = () => {
+            localStorage.removeItem("chat_user");
+            location.reload();
+        };
+
+        function initApp() {
+            document.getElementById("auth-container").classList.add("hidden");
+            document.getElementById("app-container").classList.remove("hidden");
+            document.getElementById("header-username").innerText = myUser;
+            document.getElementById("sidebar-username").innerText = myUser;
+
+            if(myUser === "phamnhatminh") {
+                document.getElementById("admin-badge").classList.remove("hidden");
+                document.getElementById("admin-menu-btn").classList.remove("hidden");
+                document.getElementById("admin-broadcast-btn").classList.remove("hidden");
+            }
+
+            checkSystemNotification();
+            loadFeedPosts();
+            loadReels();
+            loadFriendsData();
+            checkUrlForPost();
+            updateAvatarUI();
+        }
+
+        function checkSystemNotification() {
+            const notifRef = doc(db, "system", "broadcast");
+            getDoc(notifRef).then(snap => {
+                if(snap.exists() && snap.data().message) {
+                    document.getElementById("system-notification-banner").classList.remove("hidden");
+                    document.getElementById("system-notification-text").innerText = snap.data().message;
+                }
+            });
+        }
+
+        window.openBroadcastModal = () => document.getElementById("broadcast-modal").classList.remove("hidden");
+
+        window.sendBroadcast = async () => {
+            const msg = document.getElementById("broadcast-input").value.trim();
+            if(!msg) return;
+            await setDoc(doc(db, "system", "broadcast"), { message: msg });
+            alert("Đã gửi thông báo đến toàn bộ hệ thống!");
+            document.getElementById("broadcast-modal").classList.add("hidden");
+            checkSystemNotification();
+        };
+
+        window.addEventListener('paste', (e) => {
+            const items = e.clipboardData.items;
+            for (let i = 0; i < items.length; i++) {
+                if (items[i].type.indexOf('image') !== -1) {
+                    const blob = items[i].getAsFile();
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        userAvatarBase64 = event.target.result;
+                        localStorage.setItem("user_avatar", userAvatarBase64);
+                        updateAvatarUI();
+                        alert("Đã cập nhật ảnh đại diện thành công qua Ctrl + V!");
+                    };
+                    reader.readAsDataURL(blob);
+                }
+            }
+        });
+
+        function updateAvatarUI() {
+            if(userAvatarBase64) {
+                document.getElementById("header-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                document.getElementById("sidebar-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                document.getElementById("create-post-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+            }
+        }
+
+        window.handleLocalFileSelect = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFileBase64 = e.target.result;
+                document.getElementById("selected-filename").innerText = `Đã chọn: ${file.name}`;
+                document.getElementById("selected-media-preview").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.clearSelectedFile = () => {
+            uploadedFileBase64 = "";
+            document.getElementById("local-file-input").value = "";
+            document.getElementById("selected-media-preview").classList.add("hidden");
+        };
+
+        window.submitNewPost = async () => {
+            const title = document.getElementById("post-title-input").value.trim();
+            const media = uploadedFileBase64;
+            const privacy = document.getElementById("post-privacy").value;
+            const type = document.getElementById("post-type").value;
+            if(!title && !media) return alert("Vui lòng nhập nội dung hoặc chọn tệp đính kèm!");
+
+            const isApproved = (myUser === "phamnhatminh");
+            await addDoc(collection(db, "posts"), {
+                author: myUser,
+                title,
+                media,
+                privacy,
+                type,
+                approved: isApproved,
+                likes: [],
+                comments: [],
+                createdAt: serverTimestamp()
+            });
+            document.getElementById("post-title-input").value = "";
+            clearSelectedFile();
+            alert(isApproved ? "Đăng bài thành công!" : "Đã gửi bài viết đến admin kiểm duyệt!");
+        };
+
+        function loadFeedPosts() {
+            const q = query(collection(db, "posts"), where("approved", "==", true));
+            onSnapshot(q, (snap) => {
+                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                const container = document.getElementById("feed-posts-container");
+                container.innerHTML = docs.map(p => {
+                    const likesCount = p.likes ? p.likes.length : 0;
+                    const isLiked = p.likes && p.likes.includes(myUser);
+                    const comments = p.comments || [];
+
+                    return `
+                        <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
+                            <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
+                            <p class="text-xs text-slate-200">${p.title}</p>${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
+                                ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[300px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
+                            </div>`: ''}
+                            
+                            <div class="flex items-center justify-between text-[11px] text-[#b0b3b8] pt-1 border-t border-fbHover">
+                                <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} thích</span>
+                                <span>${comments.length} bình luận</span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1 pt-1 border-t border-fbHover text-xs font-semibold text-[#b0b3b8]">
+                                <button onclick="toggleLike('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer ${isLiked ? 'text-fbBlue font-bold' : ''}">
+                                    <i class="fa-solid fa-thumbs-up"></i> Thích
+                                </button>
+                                <button onclick="openPostDetail('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-comment"></i> Trả lời
+                                </button>
+                                <button onclick="sharePost('${p.id}', '${p.title}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            });
+        }
+
+        window.openPostDetail = async (postId) => {
+            window.history.pushState({}, '', `?post=${postId}`);
+
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if (!snap.exists()) return;
+
+            const p = snap.data();
+            const likesCount = p.likes ? p.likes.length : 0;
+            const comments = p.comments || [];
+
+            const modalContent = document.getElementById("modal-post-content");
+            document.getElementById("modal-post-author").innerText = `Bài viết của ${p.author}`;
+
+            modalContent.innerHTML = `
+                <div class="space-y-3">
+                    <p class="text-sm text-slate-100">${p.title}</p>${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[450px] flex items-center justify-center border border-fbHover">
+                        ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[320px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
+                    </div>` : ''}
+                    <div class="flex justify-between text-xs text-[#b0b3b8] pt-2 border-t border-fbHover">
+                        <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} lượt thích</span>
+                        <span>${comments.length} bình luận</span>
+                    </div>
+
+                    <div class="space-y-4 pt-2">
+                        <h5 class="text-xs font-bold text-white">Bình luận</h5>
+                        ${comments.length === 0 ? `<p class="text-xs text-[#b0b3b8] italic">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>` : ''}
+                        
+                        ${comments.map((c, index) => {
+                            const replies = c.replies || [];
+                            return `
+                                <div class="space-y-2 group">
+                                    <div class="flex gap-2.5 items-start">
+                                        <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0 mt-1">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <div class="bg-fbInput p-3 rounded-2xl max-w-[85%] relative">
+                                                    <span class="font-bold text-xs text-white block cursor-pointer hover:underline" onclick="openProfile('${c.user}')">${c.user}</span>
+                                                    <span class="text-xs text-slate-200 break-words">${c.text}</span>
+                                                </div>
+                                                <button class="opacity-0 group-hover:opacity-100 text-[#b0b3b8] hover:text-white p-1 rounded-full hover:bg-fbHover transition cursor-pointer">
+                                                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                                                </button>
+                                            </div>
+
+                                            <div class="flex items-center gap-4 text-[11px] font-semibold text-[#b0b3b8] pl-3 pt-1">
+                                                <button class="hover:underline cursor-pointer">Thích</button>
+                                                <button onclick="toggleReplyBox('${postId}',${index})" class="hover:underline cursor-pointer">Trả lời</button>
+                                                <span class="text-[10px] font-normal text-[#8a8d91]">${c.time || 'Vừa xong'}</span>
+                                            </div>
+
+                                            ${replies.length > 0 ? `
+                                                <button onclick="toggleRepliesList('${postId}',${index})" class="flex items-center gap-1 text-xs font-bold text-[#b0b3b8] hover:underline pl-3 pt-2 cursor-pointer">
+                                                    <i class="fa-solid fa-arrow-turn-down text-[10px]"></i>
+                                                    <span>Xem ${replies.length} câu trả lời</span>
+                                                </button>
+                                            ` : ''}
+
+                                            <div id="replies-list-${index}" class="hidden space-y-2 pl-6 pt-2 border-l-2 border-fbHover/50 ml-3">
+                                                ${replies.map(r => `
+                                                    <div class="flex gap-2 items-start group/reply">
+                                                        <div class="w-6 h-6 rounded-full bg-fbHover flex items-center justify-center text-[10px] font-bold shrink-0 mt-1">
+                                                            <i class="fa-solid fa-user"></i>
+                                                        </div>
+                                                        <div class="flex-1">
+                                                            <div class="flex items-center gap-2">
+                                                                <div class="bg-fbInput p-2.5 rounded-2xl max-w-[85%]">
+                                                                    <span class="font-bold text-[11px] text-white block cursor-pointer hover:underline" onclick="openProfile('${r.user}')">${r.user}</span>
+                                                                    <span class="text-xs text-slate-200">${r.text}</span>
+                                                                </div>
+                                                                <button class="opacity-0 group-hover/reply:opacity-100 text-[#b0b3b8] hover:text-white p-1 rounded-full hover:bg-fbHover transition cursor-pointer">
+                                                                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="flex items-center gap-3 text-[10px] font-semibold text-[#b0b3b8] pl-3 pt-1">
+                                                                <button class="hover:underline cursor-pointer">Thích</button>
+                                                                <button onclick="toggleReplyBox('${postId}',${index})" class="hover:underline cursor-pointer">Trả lời</button>
+                                                                <span class="font-normal text-[#8a8d91]">${r.time || 'Vừa xong'}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+
+                                            <div id="reply-box-${index}" class="hidden flex gap-2 items-center pl-6 pt-2">
+                                                <div class="w-6 h-6 rounded-full bg-fbHover flex items-center justify-center text-[10px] font-bold shrink-0">
+                                                    <i class="fa-solid fa-user"></i>
+                                                </div>
+                                                <input type="text" id="reply-input-${index}" placeholder="Viết phản hồi công khai..." class="flex-1 bg-fbInput rounded-full px-3 py-1.5 text-xs text-white focus:outline-none">
+                                                <button onclick="addReplyComment('${postId}',${index})" class="bg-fbBlue px-3 py-1 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90">Gửi</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("modal-comment-btn").onclick = async () => {
+                const input = document.getElementById("modal-comment-input");
+                const text = input.value.trim();
+                if (!text) return;
+                
+                let updatedComments = p.comments || [];
+                updatedComments.push({ user: myUser, text, time: 'Vừa xong', replies: [] });
+                await setDoc(postRef, { comments: updatedComments }, { merge: true });
+                
+                input.value = "";
+                openPostDetail(postId);
+            };
+
+            document.getElementById("post-detail-modal").classList.remove("hidden");
+        };
+
+        window.toggleReplyBox = (postId, commentIndex) => {
+            const el = document.getElementById(`reply-box-${commentIndex}`);
+            if (el) {
+                el.classList.toggle('hidden');
+                if(!el.classList.contains('hidden')) {
+                    const input = document.getElementById(`reply-input-${commentIndex}`);
+                    if(input) input.focus();
+                }
+            }
+        };
+
+        window.toggleRepliesList = (postId, commentIndex) => {
+            const el = document.getElementById(`replies-list-${commentIndex}`);
+            if (el) el.classList.toggle('hidden');
+        };
+
+        window.addReplyComment = async (postId, commentIndex) => {
+            const input = document.getElementById(`reply-input-${commentIndex}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if (!snap.exists()) return;
+
+            let comments = snap.data().comments || [];
+            if (!comments[commentIndex].replies) {
+                comments[commentIndex].replies = [];
+            }
+            comments[commentIndex].replies.push({
+                user: myUser,
+                text,
+                time: 'Vừa xong'
+            });
+
+            await setDoc(postRef, { comments }, { merge: true });
+            openPostDetail(postId);
+        };
+
+        window.closePostDetailModal = () => {
+            document.getElementById("post-detail-modal").classList.add("hidden");
+            window.history.pushState({}, '', window.location.pathname);
+        };
+
+        function checkUrlForPost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postId = urlParams.get('post');
+            if (postId) {
+                openPostDetail(postId);
+            }
+        }
+
+        window.toggleLike = async (postId) => {
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if(!snap.exists()) return;
+            let likes = snap.data().likes || [];
+            if(likes.includes(myUser)) {
+                likes = likes.filter(u => u !== myUser);
+            } else {
+                likes.push(myUser);
+            }
+            await setDoc(postRef, { likes }, { merge: true });
+        };
+
+        window.sharePost = (postId, title) => {
+            const shareUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
+            navigator.clipboard.writeText(shareUrl);
+            alert("Đã sao chép liên kết bài viết vào bộ nhớ tạm:\n" + shareUrl);
+        };
+
+        window.openProfile = async (username) => {
+            switchMainTab('profile-page');
+            document.getElementById("profile-username").innerText = username;
+
+            const q1 = query(collection(db, "friends"), where("from", "==", username), where("status", "==", "accepted"));
+            const q2 = query(collection(db, "friends"), where("to", "==", username), where("status", "==", "accepted"));
+            const s1 = await getDocs(q1);
+            const s2 = await getDocs(q2);
+            const friendsList = [];
+            s1.docs.forEach(d => friendsList.push(d.data().to));
+            s2.docs.forEach(d => friendsList.push(d.data().from));
+
+            document.getElementById("profile-friends-count").innerText = `${friendsList.length} người bạn`;
+
+            const actionBox = document.getElementById("profile-action-btn");
+            if(username === myUser) {
+                actionBox.innerHTML = `<span class="text-xs text-[#b0b3b8]">Trang cá nhân của bạn</span>`;
+            } else {
+                actionBox.innerHTML = `<button onclick="openMessengerModal('${username}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"><i class="fa-solid fa-message"></i> Nhắn tin</button>`;
+            }
+        };
+
+        function loadReels() {}
+        function loadFriendsData() {}
+        window.openMessengerModal = (username) => {
+            activeChatUser = username;
+            document.getElementById("chat-box-name").innerText = username;
+            document.getElementById("messenger-modal").classList.remove("hidden");
+        };
+        window.closeMessengerModal = () => {
+            document.getElementById("messenger-modal").classList.add("hidden");
+        };
+        window.sendChatMessage = () => {};
+        window.openAdminModal = () => {
+            document.getElementById("admin-modal").classList.remove("hidden");
+        };
+    </script>
+</body>
+</html>
