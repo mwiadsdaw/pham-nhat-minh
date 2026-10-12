@@ -217,4 +217,373 @@
 
             <!-- TAB 2: REELS -->
             <div id="tab-reels" class="hidden flex-1 flex bg-black relative overflow-hidden items-center justify-center">
-                <div id="reels-container" class="
+                <div id="reels-container" class="h-full w-full max-w-[450px] flex flex-col snap-y snap-mandatory overflow-y-scroll relative"></div>
+                <div class="absolute right-8 flex flex-col gap-3">
+                    <button onclick="scrollReel(-1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-up"></i></button>
+                    <button onclick="scrollReel(1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-down"></i></button>
+                </div>
+            </div>
+
+            <!-- TAB 3: QUẢN LÝ BẠN BÈ -->
+            <div id="tab-friends" class="hidden flex-1 overflow-y-auto p-6 flex flex-col items-center">
+                <div class="max-w-[800px] w-full space-y-6">
+                    <h2 class="text-xl font-bold text-white">Bạn bè</h2>
+                    <div class="bg-fbPanel p-6 rounded-2xl border border-fbHover space-y-4">
+                        <h3 class="text-sm font-bold text-fbBlue uppercase">Gợi ý kết bạn (Có bạn chung)</h3>
+                        <div id="friends-suggestions-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    </div>
+                    <div class="bg-fbPanel p-6 rounded-2xl border border-fbHover space-y-4">
+                        <h3 class="text-sm font-bold text-fbBlue uppercase">Tất cả bạn bè</h3>
+                        <div id="all-friends-list" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: XEM TRANG CÁ NHÂN NGƯỜI KHÁC -->
+            <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto p-6 flex flex-col items-center">
+                <div class="max-w-[800px] w-full space-y-6">
+                    <div class="bg-fbPanel rounded-2xl p-6 border border-fbHover space-y-4">
+                        <div class="flex items-center gap-5 border-b border-fbHover pb-6">
+                            <div id="profile-avatar-box" class="w-24 h-24 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-3xl font-bold text-white overflow-hidden shadow-lg">
+                                <i class="fa-solid fa-user"></i>
+                            </div>
+                            <div class="flex-1">
+                                <h2 id="profile-username" class="text-xl font-bold text-white">---</h2>
+                                <p id="profile-friends-count" class="text-xs text-[#b0b3b8] mt-1">--- bạn bè</p>
+                            </div>
+                            <div id="profile-action-btn"></div>
+                        </div>
+
+                        <!-- Tab menu trang cá nhân -->
+                        <div class="flex gap-4 border-b border-fbHover pb-2 text-xs font-bold text-[#b0b3b8]">
+                            <span class="text-fbBlue border-b-2 border-fbBlue pb-2 cursor-pointer">Bài viết</span>
+                            <span class="cursor-pointer hover:text-white" onclick="switchProfileSubTab('friends')">Bạn bè</span>
+                        </div>
+                    </div>
+
+                    <!-- Nội dung bài viết của người đó -->
+                    <div id="profile-posts-container" class="space-y-4"></div>
+                    <!-- Nội dung bạn bè của người đó -->
+                    <div id="profile-friends-container" class="hidden space-y-2"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL POPUP CHI TIẾT BÀI VIẾT -->
+    <div id="post-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
+        <div class="bg-fbPanel rounded-2xl max-w-2xl w-full border border-fbHover max-h-[90vh] flex flex-col overflow-hidden relative shadow-2xl">
+            <div class="p-4 border-b border-fbHover flex items-center justify-between bg-fbHover/40">
+                <h3 id="modal-post-author" class="text-sm font-bold text-white">Bài viết</h3>
+                <button onclick="closePostDetailModal()" class="w-8 h-8 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-white font-bold cursor-pointer transition">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div id="modal-post-content" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
+            <div class="p-3 border-t border-fbHover bg-fbPanel flex gap-2 items-center">
+                <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <input type="text" id="modal-comment-input" placeholder="Viết bình luận công khai..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
+                <button id="modal-comment-btn" class="bg-fbBlue px-4 py-2 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90 transition">Gửi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL CHAT FULL MÀN HÌNH -->
+    <div id="messenger-modal" class="hidden fixed bottom-0 right-6 z-50 w-[360px] h-[480px] bg-fbPanel border border-fbHover rounded-t-2xl shadow-2xl flex flex-col overflow-hidden">
+        <div class="bg-fbHover p-3 flex items-center justify-between border-b border-fbHover">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white font-bold text-xs"><i class="fa-solid fa-user"></i></div>
+                <h4 id="chat-box-name" class="text-xs font-bold text-white">---</h4>
+            </div>
+            <button onclick="closeMessengerModal()" class="text-[#b0b3b8] hover:text-white cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="chat-messages-box" class="flex-1 overflow-y-auto p-3 space-y-2 text-xs"></div>
+        <div class="p-2 border-t border-fbHover flex items-center gap-2 bg-fbPanel">
+            <input type="text" id="chat-msg-input" placeholder="Aa Nhập tin nhắn..." class="flex-1 bg-fbInput rounded-full px-3 py-2 text-xs text-white focus:outline-none">
+            <button onclick="sendChatMessage()" class="text-fbBlue font-bold px-2 cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+
+    <!-- SCRIPT CHÍNH XỬ LÝ FIREBASE -->
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:f5b017647a17deacfc3593"
+        };
+
+        // Khởi tạo Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        let myUser = localStorage.getItem("chat_user");
+        let activeChatUser = null;
+        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
+        let uploadedFileBase64 = "";
+
+        window.switchMainTab = (tabName) => {
+            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            ['home', 'reels', 'friends'].forEach(n => {
+                const btn = document.getElementById(`nav-${n}`);
+                if(btn) {
+                    btn.classList.remove('border-fbBlue', 'text-fbBlue');
+                    btn.classList.add('border-transparent', 'text-[#b0b3b8]');
+                }
+            });
+
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if(activeNav) activeNav.classList.add('border-fbBlue', 'text-fbBlue');
+        };
+
+        if (myUser) initApp();
+
+        window.handleRegister = async () => {
+            const u = document.getElementById("auth-user").value.trim().toLowerCase();
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            
+            const docRef = db.collection("users").doc(u);
+            const snap = await docRef.get();
+            if(snap.exists) return alert("Tài khoản đã tồn tại!");
+            
+            await docRef.set({ username: u, password: p, avatar: "", bio: "" });
+            alert("Đăng ký thành công! Hãy bấm Đăng Nhập.");
+        };
+
+        window.handleLogin = async () => {
+            const u = document.getElementById("auth-user").value.trim().toLowerCase();
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            
+            const docRef = db.collection("users").doc(u);
+            const snap = await docRef.get();
+            if(!snap.exists || snap.data().password !== p) return alert("Sai tài khoản hoặc mật khẩu!");
+            
+            myUser = u;
+            localStorage.setItem("chat_user", u);
+            initApp();
+        };
+
+        window.handleLogout = () => {
+            localStorage.removeItem("chat_user");
+            location.reload();
+        };
+
+        function initApp() {
+            document.getElementById("auth-container").classList.add("hidden");
+            document.getElementById("app-container").classList.remove("hidden");
+            document.getElementById("header-username").innerText = myUser;
+            document.getElementById("sidebar-username").innerText = myUser;
+
+            if(myUser === "phamnhatminh") {
+                document.getElementById("admin-badge").classList.remove("hidden");
+                document.getElementById("admin-menu-btn").classList.remove("hidden");
+                document.getElementById("admin-broadcast-btn").classList.remove("hidden");
+            }
+
+            checkSystemNotification();
+            loadFeedPosts();
+            loadReels();
+            loadFriendsData();
+            updateAvatarUI();
+        }
+
+        function checkSystemNotification() {
+            db.collection("system").doc("broadcast").get().then(snap => {
+                if(snap.exists && snap.data().message) {
+                    document.getElementById("system-notification-banner").classList.remove("hidden");
+                    document.getElementById("system-notification-text").innerText = snap.data().message;
+                }
+            });
+        }
+
+        window.handleLocalFileSelect = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFileBase64 = e.target.result;
+                document.getElementById("selected-filename").innerText = `Đã chọn: ${file.name}`;
+                document.getElementById("selected-media-preview").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.clearSelectedFile = () => {
+            uploadedFileBase64 = "";
+            document.getElementById("local-file-input").value = "";
+            document.getElementById("selected-media-preview").classList.add("hidden");
+        };
+
+        window.submitNewPost = async () => {
+            const title = document.getElementById("post-title-input").value.trim();
+            const media = uploadedFileBase64;
+            const privacy = document.getElementById("post-privacy").value;
+            const type = document.getElementById("post-type").value;
+            if(!title && !media) return alert("Vui lòng nhập nội dung hoặc chọn tệp đính kèm!");
+
+            const isApproved = (myUser === "phamnhatminh");
+            await db.collection("posts").add({
+                author: myUser,
+                title,
+                media,
+                privacy,
+                type,
+                approved: isApproved,
+                likes: [],
+                comments: [],
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            document.getElementById("post-title-input").value = "";
+            clearSelectedFile();
+            alert(isApproved ? "Đăng bài thành công!" : "Đã gửi bài viết đến admin kiểm duyệt!");
+        };
+
+        function loadFeedPosts() {
+            db.collection("posts").where("approved", "==", true).onSnapshot((snap) => {
+                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                const container = document.getElementById("feed-posts-container");
+                container.innerHTML = docs.map(p => {
+                    const likesCount = p.likes ? p.likes.length : 0;
+                    const isLiked = p.likes && p.likes.includes(myUser);
+                    const comments = p.comments || [];
+
+                    return `
+                        <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
+                            <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
+                            <p class="text-xs text-slate-200">${p.title}</p>
+                            ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
+                                ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[300px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
+                            </div>`: ''}
+                            
+                            <div class="flex items-center justify-between text-[11px] text-[#b0b3b8] pt-1 border-t border-fbHover">
+                                <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} thích</span>
+                                <span>${comments.length} bình luận</span>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-1 pt-1 border-t border-fbHover text-xs font-semibold text-[#b0b3b8]">
+                                <button onclick="toggleLike('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer ${isLiked ? 'text-fbBlue font-bold' : ''}">
+                                    <i class="fa-solid fa-thumbs-up"></i> Thích
+                                </button>
+                                <button onclick="openPostDetail('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-comment"></i> Trả lời
+                                </button>
+                                <button onclick="sharePost('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-share"></i> Share
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
+            });
+        }
+
+        window.toggleLike = async (postId) => {
+            const postRef = db.collection("posts").doc(postId);
+            const snap = await postRef.get();
+            if(!snap.exists) return;
+            let likes = snap.data().likes || [];
+            if(likes.includes(myUser)) {
+                likes = likes.filter(u => u !== myUser);
+            } else {
+                likes.push(myUser);
+            }
+            await postRef.update({ likes });
+        };
+
+        function updateAvatarUI() {
+            if(userAvatarBase64) {
+                document.getElementById("header-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                document.getElementById("sidebar-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                document.getElementById("create-post-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+            }
+        }
+
+        function loadFriendsData() {
+            db.collection("users").onSnapshot(async (snap) => {
+                const allUsers = snap.docs.map(d => d.data().username).filter(u => u !== myUser);
+                const contactsList = document.getElementById("messenger-contacts-list");
+                contactsList.innerHTML = allUsers.map(f => `
+                    <div class="flex items-center justify-between p-2 rounded-xl hover:bg-fbHover transition cursor-pointer" onclick="openMessengerModal('${f}')">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold"><i class="fa-solid fa-user"></i></div>
+                            <span class="text-xs font-semibold text-white">${f}</span>
+                        </div>
+                    </div>
+                `).join("");
+            });
+        }
+
+        window.openMessengerModal = (username) => {
+            activeChatUser = username;
+            document.getElementById("chat-box-name").innerText = username;
+            document.getElementById("messenger-modal").classList.remove("hidden");
+
+            const roomId = [myUser, username].sort().join("_");
+            db.collection("private_messages").where("roomId", "==", roomId).onSnapshot((snap) => {
+                const docs = snap.docs.map(d => d.data());
+                docs.sort((a, b) => (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0));
+                const box = document.getElementById("chat-messages-box");
+                box.innerHTML = docs.map(m => `
+                    <div class="flex flex-col ${m.sender === myUser ? 'items-end' : 'items-start'}">
+                        <div class="px-3 py-1.5 rounded-xl max-w-[80%] ${m.sender === myUser ? 'bg-fbBlue text-white' : 'bg-fbHover text-white'}">${m.text}</div>
+                    </div>
+                `).join("");
+                box.scrollTop = box.scrollHeight;
+            });
+        };
+
+        window.closeMessengerModal = () => document.getElementById("messenger-modal").classList.add("hidden");
+
+        window.sendChatMessage = async () => {
+            const input = document.getElementById("chat-msg-input");
+            const text = input.value.trim();
+            if(!text || !activeChatUser) return;
+            const roomId = [myUser, activeChatUser].sort().join("_");
+            await db.collection("private_messages").add({
+                roomId,
+                sender: myUser,
+                receiver: activeChatUser,
+                text,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            input.value = "";
+        };
+
+        function loadReels() {
+            db.collection("posts").where("type", "==", "video").where("approved", "==", true).onSnapshot((snap) => {
+                const container = document.getElementById("reels-container");
+                if(snap.empty) {
+                    container.innerHTML = `<div class="h-full flex items-center justify-center text-xs text-[#b0b3b8]">Chưa có thước phim nào.</div>`;
+                    return;
+                }
+                container.innerHTML = snap.docs.map(d => `
+                    <div class="h-full w-full snap-start flex flex-col justify-center items-center relative p-4">
+                        <div class="w-full max-w-[320px] h-[550px] bg-black rounded-2xl overflow-hidden flex items-center justify-center border border-fbHover">
+                            ${d.data().media ? `<iframe src="${d.data().media.replace('watch?v=', 'embed/')}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>` : ``}
+                        </div>
+                        <p class="text-xs text-white mt-3 font-bold">${d.data().title}</p>
+                    </div>
+                `).join("");
+            });
+        }
+
+        window.scrollReel = (direction) => {
+            const container = document.getElementById("reels-container");
+            container.scrollBy({ top: direction * container.clientHeight, behavior: 'smooth' });
+        };
+    </script>
+</body>
+</html>
