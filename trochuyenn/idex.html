@@ -217,7 +217,7 @@
                 </div>
             </div>
 
-            <!-- TAB 4: XEM TRANG CÁ NHÂN NGƯỜI KHÁC (Ảnh 2) -->
+            <!-- TAB 4: XEM TRANG CÁ NHÂN NGƯỜI KHÁC -->
             <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto p-6 flex flex-col items-center">
                 <div class="max-w-[800px] w-full space-y-6">
                     <div class="bg-fbPanel rounded-2xl p-6 border border-fbHover space-y-4">
@@ -435,6 +435,8 @@
                 privacy,
                 type,
                 approved: isApproved,
+                likes: [],
+                comments: [],
                 createdAt: serverTimestamp()
             });
             document.getElementById("post-title-input").value = "";
@@ -448,24 +450,95 @@
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 const container = document.getElementById("feed-posts-container");
-                container.innerHTML = docs.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
-                        <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
-                        <p class="text-xs text-slate-200">${p.title}</p>
-                        ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
-                            ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[300px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
-                        </div>`: ''}
-                    </div>
-                `).join("");
+                container.innerHTML = docs.map(p => {
+                    const likesCount = p.likes ? p.likes.length : 0;
+                    const isLiked = p.likes && p.likes.includes(myUser);
+                    const comments = p.comments || [];
+
+                    return `
+                        <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3">
+                            <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
+                            <p class="text-xs text-slate-200">${p.title}</p>
+                            ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center">
+                                ${p.media.includes('youtube.com') || p.media.includes('youtu.be') ? `<iframe src="${p.media.replace('watch?v=', 'embed/')}" class="w-full h-[300px]" frameborder="0" allowfullscreen></iframe>` : `<img src="${p.media}" class="w-full object-cover">`}
+                            </div>`: ''}
+                            
+                            <!-- Thống kê tương tác -->
+                            <div class="flex items-center justify-between text-[11px] text-[#b0b3b8] pt-1 border-t border-fbHover">
+                                <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} thích</span>
+                                <span>${comments.length} bình luận</span>
+                            </div>
+
+                            <!-- Nút tương tác: Like, Trả lời (Bình luận), Share -->
+                            <div class="grid grid-cols-3 gap-1 pt-1 border-t border-fbHover text-xs font-semibold text-[#b0b3b8]">
+                                <button onclick="toggleLike('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer ${isLiked ? 'text-fbBlue font-bold' : ''}">
+                                    <i class="fa-solid fa-thumbs-up"></i> Thích
+                                </button>
+                                <button onclick="document.getElementById('comment-input-${p.id}').focus()" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-comment"></i> Trả lời
+                                </button>
+                                <button onclick="sharePost('${p.title}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-2 transition cursor-pointer">
+                                    <i class="fa-solid fa-share"></i> Share
+                                </button>
+                            </div>
+
+                            <!-- Khung hiển thị & nhập bình luận -->
+                            <div class="space-y-2 pt-2 border-t border-fbHover">
+                                <div class="space-y-1.5 max-h-[150px] overflow-y-auto">
+                                    ${comments.map(c => `
+                                        <div class="bg-fbInput p-2 rounded-xl text-[11px] flex flex-col">
+                                            <span class="font-bold text-white">${c.user}</span>
+                                            <span class="text-slate-200">${c.text}</span>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                                <div class="flex gap-2 pt-1">
+                                    <input type="text" id="comment-input-${p.id}" placeholder="Viết bình luận..." class="flex-1 bg-fbInput rounded-full px-3 py-1.5 text-xs text-white focus:outline-none">
+                                    <button onclick="addComment('${p.id}')" class="bg-fbBlue px-3 py-1.5 rounded-full text-xs font-bold text-white cursor-pointer">Gửi</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join("");
             });
         }
+
+        window.toggleLike = async (postId) => {
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if(!snap.exists()) return;
+            let likes = snap.data().likes || [];
+            if(likes.includes(myUser)) {
+                likes = likes.filter(u => u !== myUser);
+            } else {
+                likes.push(myUser);
+            }
+            await setDoc(postRef, { likes }, { merge: true });
+        };
+
+        window.addComment = async (postId) => {
+            const input = document.getElementById(`comment-input-${postId}`);
+            const text = input.value.trim();
+            if(!text) return;
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if(!snap.exists()) return;
+            let comments = snap.data().comments || [];
+            comments.push({ user: myUser, text, time: new Date().toLocaleTimeString() });
+            await setDoc(postRef, { comments }, { merge: true });
+            input.value = "";
+        };
+
+        window.sharePost = (title) => {
+            navigator.clipboard.writeText(title);
+            alert("Đã sao chép nội dung bài viết vào clipboard để chia sẻ!");
+        };
 
         // Xem hồ sơ bất kỳ ai
         window.openProfile = async (username) => {
             switchMainTab('profile-page');
             document.getElementById("profile-username").innerText = username;
 
-            // Lấy danh sách bạn bè của user đó
             const q1 = query(collection(db, "friends"), where("from", "==", username), where("status", "==", "accepted"));
             const q2 = query(collection(db, "friends"), where("to", "==", username), where("status", "==", "accepted"));
             const s1 = await getDocs(q1);
@@ -476,7 +549,6 @@
 
             document.getElementById("profile-friends-count").innerText = `${friendsList.length} người bạn`;
 
-            // Nút nhắn tin / kết bạn ở trang cá nhân
             const actionBox = document.getElementById("profile-action-btn");
             if(username === myUser) {
                 actionBox.innerHTML = `<span class="text-xs text-[#b0b3b8]">Trang cá nhân của bạn</span>`;
@@ -484,7 +556,6 @@
                 actionBox.innerHTML = `<button onclick="openMessengerModal('${username}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"><i class="fa-solid fa-message mr-1"></i> Nhắn tin</button>`;
             }
 
-            // Lấy bài viết của user đó
             const postsQ = query(collection(db, "posts"), where("author", "==", username), where("approved", "==", true));
             const postsSnap = await getDocs(postsQ);
             const pContainer = document.getElementById("profile-posts-container");
@@ -501,7 +572,6 @@
                 `).join("");
             }
 
-            // Render bạn bè của user đó
             const fContainer = document.getElementById("profile-friends-container");
             fContainer.innerHTML = friendsList.length === 0 ? `<p class="text-xs text-[#b0b3b8]">Chưa có bạn bè nào.</p>` : friendsList.map(f => `
                 <div class="bg-fbPanel p-3 rounded-xl flex items-center justify-between border border-fbHover">
@@ -521,7 +591,6 @@
             }
         };
 
-        // Quản lý bạn bè & Gợi ý (Đảm bảo gợi ý hiển thị từ 10-20 bạn chung)
         function loadFriendsData() {
             const usersQ = query(collection(db, "users"));
             onSnapshot(usersQ, async (snap) => {
@@ -537,7 +606,6 @@
 
                 const suggestions = allUsers.filter(u => !myFriends.includes(u));
 
-                // Gợi ý trên Home
                 const homeSugg = document.getElementById("home-suggestion-list");
                 if(suggestions.length === 0) {
                     document.getElementById("home-friend-suggestion-box").classList.add("hidden");
@@ -553,7 +621,6 @@
                     `).join("");
                 }
 
-                // Danh sách bạn bè ở cột phải
                 const contactsList = document.getElementById("messenger-contacts-list");
                 if(myFriends.length === 0) {
                     contactsList.innerHTML = `<p class="text-[11px] text-[#b0b3b8] px-2">Chưa có bạn bè. Hãy thêm bạn để nhắn tin!</p>`;
@@ -569,7 +636,6 @@
                     `).join("");
                 }
 
-                // Trang quản lý bạn bè (Ảnh 2 - Gợi ý có 10-20 bạn chung)
                 const suggBox = document.getElementById("friends-suggestions-list");
                 suggBox.innerHTML = suggestions.map(u => `
                     <div class="bg-fbInput p-4 rounded-xl flex items-center justify-between">
