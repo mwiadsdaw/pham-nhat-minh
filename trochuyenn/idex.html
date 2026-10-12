@@ -250,7 +250,7 @@
 
     </div>
 
-    <!-- MODAL POPUP CHI TIẾT BÀI VIẾT & BÌNH LUẬN (ẢNH 1) -->
+    <!-- MODAL POPUP CHI TIẾT BÀI VIẾT & BÌNH LUẬN LỒNG NHAU -->
     <div id="post-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
         <div class="bg-fbPanel rounded-2xl max-w-2xl w-full border border-fbHover max-h-[90vh] flex flex-col overflow-hidden relative shadow-2xl">
             <div class="p-4 border-b border-fbHover flex items-center justify-between bg-fbHover/40">
@@ -260,8 +260,11 @@
                 </button>
             </div>
             <div id="modal-post-content" class="flex-1 overflow-y-auto p-4 space-y-4"></div>
-            <div class="p-3 border-t border-fbHover bg-fbPanel flex gap-2">
-                <input type="text" id="modal-comment-input" placeholder="Viết bình luận..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
+            <div class="p-3 border-t border-fbHover bg-fbPanel flex gap-2 items-center">
+                <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0">
+                    <i class="fa-solid fa-user"></i>
+                </div>
+                <input type="text" id="modal-comment-input" placeholder="Viết bình luận công khai..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
                 <button id="modal-comment-btn" class="bg-fbBlue px-4 py-2 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90 transition">Gửi</button>
             </div>
         </div>
@@ -505,7 +508,7 @@
             });
         }
 
-        // Mở Popup Chi Tiết Bài Viết & Cập nhật URL (?post=ID_BAI_VIET)
+        // Mở Popup Chi Tiết Bài Viết & Bình luận lồng nhau
         window.openPostDetail = async (postId) => {
             window.history.pushState({}, '', `?post=${postId}`);
 
@@ -530,27 +533,100 @@
                         <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} lượt thích</span>
                         <span>${comments.length} bình luận</span>
                     </div>
-                    <!-- Danh sách bình luận -->
-                    <div class="space-y-2 pt-2">
+
+                    <!-- Danh sách bình luận lồng nhau (Giao diện chuẩn Ảnh 2 & Ảnh 3) -->
+                    <div class="space-y-4 pt-2">
                         <h5 class="text-xs font-bold text-white">Bình luận</h5>
                         ${comments.length === 0 ? `<p class="text-xs text-[#b0b3b8] italic">Chưa có bình luận nào. Hãy là người đầu tiên bình luận!</p>` : ''}
-                        ${comments.map(c => `
-                            <div class="bg-fbInput p-2.5 rounded-xl text-xs space-y-0.5">
-                                <span class="font-bold text-white block">${c.user}</span>
-                                <span class="text-slate-200">${c.text}</span>
-                            </div>
-                        `).join('')}
+                        
+                        ${comments.map((c, index) => {
+                            const replies = c.replies || [];
+                            return `
+                                <div class="space-y-2 group">
+                                    <!-- Bình luận chính -->
+                                    <div class="flex gap-2.5 items-start">
+                                        <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0 mt-1">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex items-center gap-2">
+                                                <div class="bg-fbInput p-3 rounded-2xl max-w-[85%] relative">
+                                                    <span class="font-bold text-xs text-white block cursor-pointer hover:underline" onclick="openProfile('${c.user}')">${c.user}</span>
+                                                    <span class="text-xs text-slate-200 break-words">${c.text}</span>
+                                                </div>
+                                                <!-- Dấu 3 chấm xuất hiện khi di chuột qua bình luận (Hover) -->
+                                                <button class="opacity-0 group-hover:opacity-100 text-[#b0b3b8] hover:text-white p-1 rounded-full hover:bg-fbHover transition cursor-pointer">
+                                                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                                                </button>
+                                            </div>
+
+                                            <!-- Các nút tương tác bài viết dưới bình luận -->
+                                            <div class="flex items-center gap-4 text-[11px] font-semibold text-[#b0b3b8] pl-3 pt-1">
+                                                <button class="hover:underline cursor-pointer">Thích</button>
+                                                <button onclick="toggleReplyBox('${postId}',${index})" class="hover:underline cursor-pointer">Trả lời</button>
+                                                <span class="text-[10px] font-normal text-[#8a8d91]">${c.time || 'Vừa xong'}</span>
+                                            </div>
+
+                                            <!-- Nút Xem câu trả lời (Ảnh 2/Ảnh 3) -->
+                                            ${replies.length > 0 ? `
+                                                <button onclick="toggleRepliesList('${postId}', ${index})" class="flex items-center gap-1 text-xs font-bold text-[#b0b3b8] hover:underline pl-3 pt-2 cursor-pointer">
+                                                    <i class="fa-solid fa-arrow-turn-down text-[10px]"></i>
+                                                    <span>Xem ${replies.length} câu trả lời</span>
+                                                </button>
+                                            ` : ''}
+
+                                            <!-- Danh sách các bình luận con (Phản hồi) -->
+                                            <div id="replies-list-${index}" class="hidden space-y-2 pl-6 pt-2 border-l-2 border-fbHover/50 ml-3">
+                                                ${replies.map(r => `
+                                                    <div class="flex gap-2 items-start group/reply">
+                                                        <div class="w-6 h-6 rounded-full bg-fbHover flex items-center justify-center text-[10px] font-bold shrink-0 mt-1">
+                                                            <i class="fa-solid fa-user"></i>
+                                                        </div>
+                                                        <div class="flex-1">
+                                                            <div class="flex items-center gap-2">
+                                                                <div class="bg-fbInput p-2.5 rounded-2xl max-w-[85%]">
+                                                                    <span class="font-bold text-[11px] text-white block cursor-pointer hover:underline" onclick="openProfile('${r.user}')">${r.user}</span>
+                                                                    <span class="text-xs text-slate-200">${r.text}</span>
+                                                                </div>
+                                                                <button class="opacity-0 group-hover/reply:opacity-100 text-[#b0b3b8] hover:text-white p-1 rounded-full hover:bg-fbHover transition cursor-pointer">
+                                                                    <i class="fa-solid fa-ellipsis text-xs"></i>
+                                                                </button>
+                                                            </div>
+                                                            <div class="flex items-center gap-3 text-[10px] font-semibold text-[#b0b3b8] pl-3 pt-1">
+                                                                <button class="hover:underline cursor-pointer">Thích</button>
+                                                                <button onclick="toggleReplyBox('${postId}', ${index})" class="hover:underline cursor-pointer">Trả lời</button>
+                                                                <span class="font-normal text-[#8a8d91]">${r.time || 'Vừa xong'}</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+
+                                            <!-- Khung viết phản hồi công khai (Ảnh 3) -->
+                                            <div id="reply-box-${index}" class="hidden flex gap-2 items-center pl-6 pt-2">
+                                                <div class="w-6 h-6 rounded-full bg-fbHover flex items-center justify-center text-[10px] font-bold shrink-0">
+                                                    <i class="fa-solid fa-user"></i>
+                                                </div>
+                                                <input type="text" id="reply-input-${index}" placeholder="Viết phản hồi công khai..." class="flex-1 bg-fbInput rounded-full px-3 py-1.5 text-xs text-white focus:outline-none">
+                                                <button onclick="addReplyComment('${postId}',${index})" class="bg-fbBlue px-3 py-1 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90">Gửi</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
                     </div>
                 </div>
             `;
 
+            // Nút gửi bình luận chính
             document.getElementById("modal-comment-btn").onclick = async () => {
                 const input = document.getElementById("modal-comment-input");
                 const text = input.value.trim();
                 if (!text) return;
                 
                 let updatedComments = p.comments || [];
-                updatedComments.push({ user: myUser, text, time: new Date().toLocaleTimeString() });
+                updatedComments.push({ user: myUser, text, time: 'Vừa xong', replies: [] });
                 await setDoc(postRef, { comments: updatedComments }, { merge: true });
                 
                 input.value = "";
@@ -558,6 +634,48 @@
             };
 
             document.getElementById("post-detail-modal").classList.remove("hidden");
+        };
+
+        // Bật/Tắt Khung nhập phản hồi
+        window.toggleReplyBox = (postId, commentIndex) => {
+            const el = document.getElementById(`reply-box-${commentIndex}`);
+            if (el) {
+                el.classList.toggle('hidden');
+                if(!el.classList.contains('hidden')) {
+                    const input = document.getElementById(`reply-input-${commentIndex}`);
+                    if(input) input.focus();
+                }
+            }
+        };
+
+        // Bật/Tắt Danh sách câu trả lời con
+        window.toggleRepliesList = (postId, commentIndex) => {
+            const el = document.getElementById(`replies-list-${commentIndex}`);
+            if (el) el.classList.toggle('hidden');
+        };
+
+        // Gửi câu trả lời vào bình luận chính (Phản hồi lồng nhau)
+        window.addReplyComment = async (postId, commentIndex) => {
+            const input = document.getElementById(`reply-input-${commentIndex}`);
+            const text = input.value.trim();
+            if (!text) return;
+
+            const postRef = doc(db, "posts", postId);
+            const snap = await getDoc(postRef);
+            if (!snap.exists()) return;
+
+            let comments = snap.data().comments || [];
+            if (!comments[commentIndex].replies) {
+                comments[commentIndex].replies = [];
+            }
+            comments[commentIndex].replies.push({
+                user: myUser,
+                text,
+                time: 'Vừa xong'
+            });
+
+            await setDoc(postRef, { comments }, { merge: true });
+            openPostDetail(postId);
         };
 
         window.closePostDetailModal = () => {
