@@ -452,7 +452,7 @@
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        window.switchMainTab = (tabName) => {
+        window.switchMainTab = (tabName, updateHistory = true) => {
             ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
@@ -476,12 +476,20 @@
 
             document.getElementById(`tab-${tabName}`).classList.remove('hidden');
             
-            const activeNav = document.getElementById(`nav-${tabName}`);
-            if(activeNav) activeNav.classList.add('border-fbBlue', 'text-fbBlue');
+            if(tabName !== 'profile-page') {
+                const activeNav = document.getElementById(`nav-${tabName}`);
+                if(activeNav) activeNav.classList.add('border-fbBlue', 'text-fbBlue');
 
-            const mobileKey = tabName === 'profile-page' ? 'profile' : tabName;
-            const activeMNav = document.getElementById(`mobile-nav-${mobileKey}`);
-            if(activeMNav) activeMNav.classList.add('text-fbBlue');
+                const activeMNav = document.getElementById(`mobile-nav-${tabName}`);
+                if(activeMNav) activeMNav.classList.add('text-fbBlue');
+
+                if (updateHistory) {
+                    window.history.pushState({}, '', window.location.pathname);
+                }
+            } else {
+                const activeMNav = document.getElementById(`mobile-nav-profile`);
+                if(activeMNav) activeMNav.classList.add('text-fbBlue');
+            }
         };
 
         if (window.myUser) initApp();
@@ -533,8 +541,18 @@
 
             checkSystemNotification();
             loadFeedPosts();
-            checkUrlForPost();
-            checkUrlForProfile();
+            
+            // Ưu tiên check xem URL đang có profile hay post để render chính xác sau khi F5
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUser = urlParams.get('profile');
+            const postId = urlParams.get('post');
+
+            if (profileUser) {
+                openProfile(profileUser, false);
+            } else if (postId) {
+                openPostDetail(postId);
+            }
+
             updateAvatarUI();
         }
 
@@ -779,20 +797,6 @@
             window.history.pushState({}, '', window.location.pathname);
         };
 
-        function checkUrlForPost() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('post');
-            if (postId) openPostDetail(postId);
-        }
-
-        function checkUrlForProfile() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const profileUser = urlParams.get('profile');
-            if (profileUser) {
-                openProfile(profileUser);
-            }
-        }
-
         window.toggleLike = async (postId) => {
             const postRef = doc(db, "posts", postId);
             const snap = await getDoc(postRef);
@@ -809,11 +813,12 @@
             alert("Đã sao chép liên kết bài viết!");
         };
 
-        window.openProfile = async (username) => {
-            switchMainTab('profile-page');
+        window.openProfile = async (username, updateHistory = true) => {
+            switchMainTab('profile-page', false);
             
-            // Tự động thêm ký tự/username vào URL (ví dụ: ?profile=ten_nguoi_dung)
-            window.history.pushState({}, '', `?profile=${username}`);
+            if (updateHistory) {
+                window.history.pushState({}, '', `?profile=${username}`);
+            }
 
             document.getElementById("profile-username").innerText = username === 'phamnhatminh' ? 'Phạm Nhật Minh' : username;
             document.getElementById("profile-friends-count").innerText = `222 người bạn`;
