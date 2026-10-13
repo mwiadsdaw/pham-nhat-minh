@@ -49,13 +49,9 @@
         </div>
       </div>
 
-      <!-- Auth / Admin Control Area -->
+      <!-- Ô nhập tên người dùng (Không còn nút admin bậy bạ) -->
       <div id="auth-container" class="flex items-center space-x-3">
-        <input type="text" id="username-input" placeholder="Tên của bạn..." class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500">
-        <button id="admin-login-btn" class="flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-medium transition">
-          <i class="fa-solid fa-shield-halved text-purple-400"></i>
-          <span>Kích hoạt Admin</span>
-        </button>
+        <input type="text" id="username-input" placeholder="Tên của bạn..." class="bg-slate-900 border border-slate-700 rounded-xl px-3.5 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500">
       </div>
 
     </div>
@@ -114,10 +110,10 @@
 
   </main>
 
-  <!-- Firebase Script (Only Firestore, No Auth SDK conflict) -->
+  <!-- Firebase Script (Clean & Safe) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp, deleteDoc, doc, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -131,43 +127,13 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    let isAdmin = localStorage.getItem("gcn_admin") === "true";
-
-    // Admin login toggle
-    const adminBtn = document.getElementById('admin-login-btn');
-    function updateAdminUI() {
-      if (isAdmin) {
-        adminBtn.innerHTML = `<i class="fa-solid fa-shield-check text-green-400 mr-1"></i><span>Admin Mode</span>`;
-        adminBtn.className = "flex items-center space-x-1.5 bg-green-500/20 text-green-300 px-3 py-1.5 rounded-xl border border-green-500/40 text-xs font-medium transition";
-      } else {
-        adminBtn.innerHTML = `<i class="fa-solid fa-shield-halved text-purple-400 mr-1"></i><span>Kích hoạt Admin</span>`;
-        adminBtn.className = "flex items-center space-x-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-xl border border-slate-700 text-xs font-medium transition";
-      }
-      renderAdminControls();
-      if(window.refreshSongsUI) window.refreshSongsUI();
+    // --- BẢO MẬT: Chống XSS Escape ---
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
     }
-
-    adminBtn.onclick = () => {
-      if (!isAdmin) {
-        const pass = prompt("Nhập mã PIN Admin:");
-        if (pass === "123456" || pass === "minh2001") {
-          isAdmin = true;
-          localStorage.setItem("gcn_admin", "true");
-          alert("Đã kích hoạt quyền Quản trị viên thành công!");
-          updateAdminUI();
-        } else {
-          alert("Mã PIN không đúng!");
-        }
-      } else {
-        if(confirm("Tắt chế độ Admin?")) {
-          isAdmin = false;
-          localStorage.removeItem("gcn_admin");
-          updateAdminUI();
-        }
-      }
-    };
-
-    updateAdminUI();
 
     // Helper Youtube Embed
     function getYoutubeEmbedUrl(url) {
@@ -181,7 +147,7 @@
     // Share Song
     document.getElementById('share-btn').onclick = async () => {
       const nameInput = document.getElementById('username-input').value.trim();
-      const userName = nameInput || "Ẩn danh";
+      const userName = escapeHTML(nameInput) || "Ẩn danh";
       const urlInput = document.getElementById('song-url');
       const embedUrl = getYoutubeEmbedUrl(urlInput.value.trim());
       
@@ -198,17 +164,10 @@
     };
 
     // Render Songs
-    let latestSnapshots = null;
     const qSongs = query(collection(db, "songs"), orderBy("createdAt", "desc"));
     onSnapshot(qSongs, (snapshot) => {
-      latestSnapshots = snapshot;
-      window.refreshSongsUI();
-    });
-
-    window.refreshSongsUI = () => {
-      const snapshot = latestSnapshots;
       const songList = document.getElementById('song-list');
-      if (!snapshot || snapshot.empty) {
+      if (snapshot.empty) {
         songList.innerHTML = `<p class="text-slate-500 text-center py-10 text-sm">Chưa có bài hát nào. Hãy là người đầu tiên chia sẻ!</p>`;
         return;
       }
@@ -219,13 +178,7 @@
         return `
           <div class="glass-panel p-4 rounded-2xl border border-slate-800/80 relative group">
             <div class="flex items-center justify-between mb-3">
-              <span class="text-xs font-semibold text-purple-300"><i class="fa-solid fa-user-circle mr-1"></i>${data.user || 'Ẩn danh'}</span>
-              ${isAdmin ? `
-                <button onclick="deleteSong('${docSnap.id}')" class="text-xs text-red-400 hover:text-red-300 bg-red-500/10 hover:bg-red-500/20 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
-                  <i class="fa-solid fa-trash"></i>
-                  <span>Xóa video này</span>
-                </button>
-              ` : ''}
+              <span class="text-xs font-semibold text-purple-300"><i class="fa-solid fa-user-circle mr-1"></i>${escapeHTML(data.user || 'Ẩn danh')}</span>
             </div>
             <div class="aspect-video w-full rounded-xl overflow-hidden bg-slate-900 border border-slate-800">
               ${embedUrl ? `<iframe src="${embedUrl}" class="w-full h-full" frameborder="0" allowfullscreen></iframe>` : `<p class="text-center py-12 text-xs text-red-400">Đường dẫn video lỗi</p>`}
@@ -233,7 +186,7 @@
           </div>
         `;
       }).join('');
-    };
+    });
 
     // Chat Logic
     document.getElementById('send-btn').onclick = sendMessage;
@@ -241,9 +194,9 @@
 
     async function sendMessage() {
       const nameInput = document.getElementById('username-input').value.trim();
-      const userName = nameInput || "Ẩn danh";
+      const userName = escapeHTML(nameInput) || "Ẩn danh";
       const input = document.getElementById('chat-input');
-      const text = input.value.trim();
+      const text = escapeHTML(input.value.trim());
       if (!text) return;
       
       await addDoc(collection(db, "messages"), {
@@ -261,43 +214,15 @@
         const msg = docSnap.data();
         return `
           <div class="flex flex-col items-start mb-2">
-            <span class="text-[10px] text-slate-400 mb-0.5 px-1 font-medium">${msg.user || 'Ẩn danh'}</span>
+            <span class="text-[10px] text-slate-400 mb-0.5 px-1 font-medium">${escapeHTML(msg.user || 'Ẩn danh')}</span>
             <div class="px-3 py-1.5 rounded-xl max-w-[85%] break-words bg-slate-800 text-slate-200 border border-slate-700/60 text-xs">
-              ${msg.text}
+              ${escapeHTML(msg.text)}
             </div>
           </div>
         `;
       }).join('');
       chatBox.scrollTop = chatBox.scrollHeight;
     });
-
-    // Admin Controls Header
-    function renderAdminControls() {
-      const chatHeader = document.getElementById('chat-header');
-      chatHeader.innerHTML = `
-        <span class="font-semibold text-sm text-slate-300 flex items-center space-x-2">
-          <i class="fa-solid fa-comments text-cyan-400"></i>
-          <span>Trò chuyện</span>
-        </span>
-        ${isAdmin ? `
-          <button onclick="deleteAllMessages()" class="text-[11px] bg-red-500/10 hover:bg-red-500/20 text-red-400 px-2.5 py-1 rounded-lg border border-red-500/20 transition flex items-center space-x-1">
-            <i class="fa-solid fa-broom"></i>
-            <span>Xóa tất cả tin nhắn</span>
-          </button>
-        ` : ''}
-      `;
-    }
-
-    window.deleteSong = async (id) => {
-      if (confirm("Xóa bài hát này?")) deleteDoc(doc(db, "songs", id));
-    };
-
-    window.deleteAllMessages = async () => {
-      if (confirm("Xóa toàn bộ tin nhắn trò chuyện?")) {
-        const snap = await getDocs(collection(db, "messages"));
-        snap.docs.forEach(d => deleteDoc(doc(db, "messages", d.id)));
-      }
-    };
   </script>
 
 </body>
