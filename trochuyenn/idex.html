@@ -452,7 +452,7 @@
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        window.switchMainTab = (tabName, updateHistory = true) => {
+        window.switchMainTab = (tabName) => {
             ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
@@ -483,9 +483,7 @@
                 const activeMNav = document.getElementById(`mobile-nav-${tabName}`);
                 if(activeMNav) activeMNav.classList.add('text-fbBlue');
 
-                if (updateHistory) {
-                    window.history.pushState({}, '', window.location.pathname);
-                }
+                window.history.pushState({}, '', window.location.pathname);
             } else {
                 const activeMNav = document.getElementById(`mobile-nav-profile`);
                 if(activeMNav) activeMNav.classList.add('text-fbBlue');
@@ -542,19 +540,30 @@
             checkSystemNotification();
             loadFeedPosts();
             
-            // Ưu tiên check xem URL đang có profile hay post để render chính xác sau khi F5
+            // Xử lý tự động load profile hoặc post dựa trên URL sau khi F5
             const urlParams = new URLSearchParams(window.location.search);
             const profileUser = urlParams.get('profile');
             const postId = urlParams.get('post');
 
             if (profileUser) {
-                openProfile(profileUser, false);
+                openProfile(profileUser);
             } else if (postId) {
                 openPostDetail(postId);
             }
 
             updateAvatarUI();
         }
+
+        // Lắng nghe sự kiện back/forward trên trình duyệt
+        window.onpopstate = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUser = urlParams.get('profile');
+            if (profileUser) {
+                openProfile(profileUser);
+            } else {
+                switchMainTab('home');
+            }
+        };
 
         function checkSystemNotification() {
             const hiddenUntil = localStorage.getItem("hide_system_notif_until");
@@ -813,12 +822,36 @@
             alert("Đã sao chép liên kết bài viết!");
         };
 
-        window.openProfile = async (username, updateHistory = true) => {
-            switchMainTab('profile-page', false);
-            
-            if (updateHistory) {
+        window.openProfile = async (username) => {
+            const currentUrlParam = new URLSearchParams(window.location.search).get('profile');
+            if (currentUrlParam !== username) {
                 window.history.pushState({}, '', `?profile=${username}`);
             }
+
+            // Kích hoạt hiển thị tab profile trực tiếp mà không cần reset trạng thái lịch sử
+            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if(el) el.classList.add('hidden');
+            });
+            document.getElementById('tab-profile-page').classList.remove('hidden');
+
+            ['home', 'reels', 'friends'].forEach(n => {
+                const btn = document.getElementById(`nav-${n}`);
+                if(btn) {
+                    btn.classList.remove('border-fbBlue', 'text-fbBlue');
+                    btn.classList.add('border-transparent', 'text-[#b0b3b8]');
+                }
+            });
+
+            ['home', 'reels', 'friends', 'profile'].forEach(n => {
+                const mBtn = document.getElementById(`mobile-nav-${n}`);
+                if(mBtn) {
+                    mBtn.classList.remove('text-fbBlue');
+                    mBtn.classList.add('text-[#b0b3b8]');
+                }
+            });
+            const activeMNav = document.getElementById(`mobile-nav-profile`);
+            if(activeMNav) activeMNav.classList.add('text-fbBlue');
 
             document.getElementById("profile-username").innerText = username === 'phamnhatminh' ? 'Phạm Nhật Minh' : username;
             document.getElementById("profile-friends-count").innerText = `222 người bạn`;
