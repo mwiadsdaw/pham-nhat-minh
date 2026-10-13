@@ -147,10 +147,13 @@
                 <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
                     <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
                         
-                        <!-- Thông báo hệ thống -->
-                        <div id="system-notification-banner" class="hidden bg-fbBlue/25 border border-fbBlue p-4 rounded-xl text-xs space-y-1">
-                            <h4 class="font-bold text-fbBlue flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Thông báo từ Quản trị viên</h4>
-                            <p id="system-notification-text" class="text-white"></p>
+                        <!-- Thông báo hệ thống (Có nút tắt & tối ưu mobile/pc) -->
+                        <div id="system-notification-banner" class="hidden bg-fbBlue/25 border border-fbBlue p-3 sm:p-4 rounded-xl text-xs space-y-1 relative">
+                            <div class="flex items-center justify-between">
+                                <h4 class="font-bold text-fbBlue flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Thông báo từ Quản trị viên</h4>
+                                <button onclick="dismissSystemNotification()" class="text-[#b0b3b8] hover:text-white px-2 py-1 cursor-pointer font-bold text-sm" title="Ẩn thông báo">&times;</button>
+                            </div>
+                            <p id="system-notification-text" class="text-white pr-4"></p>
                         </div>
 
                         <!-- KHUNG ĐĂNG BÀI -->
@@ -354,6 +357,10 @@
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let uploadedFileBase64 = "";
 
+        // --- CẤU HÌNH THỜI GIAN ẨN THÔNG BÁO HỆ THỐNG (Mặc định: 2 giờ) ---
+        // Ông có thể đổi thời gian tùy ý: ví dụ 30 * 60 * 1000 (30 phút) hoặc 24 * 3600 * 1000 (1 ngày)
+        const NOTIFICATION_HIDE_DURATION = 2 * 60 * 60 * 1000; 
+
         window.switchMainTab = (tabName) => {
             ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
@@ -443,6 +450,14 @@
         }
 
         function checkSystemNotification() {
+            const hiddenUntil = localStorage.getItem("hide_system_notif_until");
+            const now = new Date().getTime();
+
+            // Nếu chưa hết thời gian ẩn thì không hiển thị banner
+            if (hiddenUntil && now < parseInt(hiddenUntil)) {
+                return;
+            }
+
             const notifRef = doc(db, "system", "broadcast");
             getDoc(notifRef).then(snap => {
                 if(snap.exists() && snap.data().message) {
@@ -452,12 +467,20 @@
             });
         }
 
+        window.dismissSystemNotification = () => {
+            const hideUntilTime = new Date().getTime() + NOTIFICATION_HIDE_DURATION;
+            localStorage.setItem("hide_system_notif_until", hideUntilTime);
+            document.getElementById("system-notification-banner").classList.add("hidden");
+        };
+
         window.openBroadcastModal = () => document.getElementById("broadcast-modal").classList.remove("hidden");
 
         window.sendBroadcast = async () => {
             const msg = escapeHTML(document.getElementById("broadcast-input").value.trim());
             if(!msg) return;
             await setDoc(doc(db, "system", "broadcast"), { message: msg });
+            // Khi có thông báo mới, reset lại trạng thái ẩn để mọi người đều thấy
+            localStorage.removeItem("hide_system_notif_until");
             alert("Đã gửi thông báo hệ thống!");
             document.getElementById("broadcast-modal").classList.add("hidden");
             checkSystemNotification();
