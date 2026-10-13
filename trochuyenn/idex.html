@@ -534,6 +534,7 @@
             checkSystemNotification();
             loadFeedPosts();
             checkUrlForPost();
+            checkUrlForProfile();
             updateAvatarUI();
         }
 
@@ -784,6 +785,14 @@
             if (postId) openPostDetail(postId);
         }
 
+        function checkUrlForProfile() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const profileUser = urlParams.get('profile');
+            if (profileUser) {
+                openProfile(profileUser);
+            }
+        }
+
         window.toggleLike = async (postId) => {
             const postRef = doc(db, "posts", postId);
             const snap = await getDoc(postRef);
@@ -802,6 +811,10 @@
 
         window.openProfile = async (username) => {
             switchMainTab('profile-page');
+            
+            // Tự động thêm ký tự/username vào URL (ví dụ: ?profile=ten_nguoi_dung)
+            window.history.pushState({}, '', `?profile=${username}`);
+
             document.getElementById("profile-username").innerText = username === 'phamnhatminh' ? 'Phạm Nhật Minh' : username;
             document.getElementById("profile-friends-count").innerText = `222 người bạn`;
             
