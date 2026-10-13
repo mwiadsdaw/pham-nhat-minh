@@ -298,7 +298,7 @@
     <!-- SCRIPT TÍCH HỢP BẢO MẬT SHA-256 & XSS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, onSnapshot, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -389,7 +389,7 @@
         function initApp() {
             document.getElementById("auth-container").classList.add("hidden");
             document.getElementById("app-container").classList.remove("hidden");
-            document.getElementById("header-usernameinnerText") = myUser;
+            document.getElementById("header-username").innerText = myUser;
             document.getElementById("sidebar-username").innerText = myUser;
 
             if(myUser === "phamnhatminh") {
@@ -459,25 +459,23 @@
             const type = document.getElementById("post-type").value;
             if(!title && !media) return alert("Vui lòng nhập nội dung hoặc chọn tệp đính kèm!");
 
-            const isApproved = (myUser === "phamnhatminh");
             await addDoc(collection(db, "posts"), {
                 author: myUser,
                 title,
                 media,
                 privacy,
                 type,
-                approved: isApproved,
                 likes: [],
                 comments: [],
                 createdAt: serverTimestamp()
             });
             document.getElementById("post-title-input").value = "";
             clearSelectedFile();
-            alert(isApproved ? "Đăng bài thành công!" : "Đã gửi bài viết đến admin kiểm duyệt!");
+            alert("Đăng bài thành công!");
         };
 
         function loadFeedPosts() {
-            const q = query(collection(db, "posts"), where("approved", "==", true));
+            const q = query(collection(db, "posts"));
             onSnapshot(q, (snap) => {
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
