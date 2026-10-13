@@ -1,310 +1,69 @@
 <!DOCTYPE html>
-<html lang="vi" class="scroll-smooth">
+<html lang="vi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhNet | Phạm Nhật Minh</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Phòng Trò Chuyện Trực Tuyến - MinhNet</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        fbBg: '#18191a',
-                        fbPanel: '#242526',
-                        fbHover: '#3a3b3c',
-                        fbInput: '#3a3b3c',
-                        fbBlue: '#2d88ff',
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Google Fonts & FontAwesome -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #18191a;
-            color: #e4e6eb;
-            -webkit-tap-highlight-color: transparent;
-        }
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #3a3b3c;
-            border-radius: 3px;
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
     </style>
 </head>
-<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ -->
-    <div id="auth-container" class="fixed inset-0 z-50 bg-[#18191a] flex items-center justify-center p-4">
-        <div class="bg-fbPanel p-6 sm:p-8 rounded-2xl max-w-md w-full border border-fbHover shadow-2xl space-y-5">
-            <div class="text-center space-y-2">
-                <div class="w-16 h-16 bg-fbBlue/10 rounded-full flex items-center justify-center text-fbBlue text-3xl mx-auto border border-fbBlue/20">
-                    <i class="fa-solid fa-compass"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-white">Đăng Nhập MinhNet</h2>
-            </div>
-            <div class="space-y-3 pt-2">
-                <div>
-                    <label class="text-[11px] font-semibold text-[#b0b3b8] uppercase">Tên tài khoản</label>
-                    <input type="text" id="auth-user" placeholder="Nhập username..." class="w-full bg-fbInput border border-transparent focus:border-fbBlue rounded-xl px-4 py-3 text-sm text-white focus:outline-none mt-1">
-                </div>
-                <div>
-                    <label class="text-[11px] font-semibold text-[#b0b3b8] uppercase">Mật khẩu</label>
-                    <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." class="w-full bg-fbInput border border-transparent focus:border-fbBlue rounded-xl px-4 py-3 text-sm text-white focus:outline-none mt-1">
-                </div>
-                <div class="flex gap-3 pt-3">
-                    <button id="btn-login" class="flex-1 bg-fbBlue hover:opacity-90 py-3 rounded-xl text-xs font-bold transition text-white shadow-lg cursor-pointer">Đăng Nhập</button>
-                    <button id="btn-register" class="flex-1 bg-fbHover hover:bg-[#4e4f50] py-3 rounded-xl text-xs font-bold transition text-white cursor-pointer">Đăng Ký</button>
-                </div>
-            </div>
+    <!-- Header -->
+    <header class="glass-panel border-b border-slate-800 px-4 py-3 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <a href="../index.html" class="flex items-center space-x-2 bg-slate-800/80 hover:bg-slate-700 text-slate-200 px-3.5 py-1.5 rounded-xl border border-slate-700/60 transition text-sm font-medium">
+                <i class="fa-solid fa-house text-cyan-400"></i>
+                <span>Trang chủ</span>
+            </a>
+            <h1 class="text-base sm:text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent flex items-center gap-2">
+                <i class="fa-solid fa-comments text-cyan-400"></i> Phòng Trò Chuyện Chung
+            </h1>
+            <div class="w-20"></div> <!-- Spacer căn giữa tiêu đề -->
         </div>
-    </div>
+    </header>
 
-    <!-- GIAO DIỆN CHÍNH -->
-    <div id="app-container" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
-
-        <!-- HEADER TOP -->
-        <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
-            <div class="flex items-center gap-2 sm:gap-3">
-                <i class="fa-solid fa-compass text-fbBlue text-2xl sm:text-3xl cursor-pointer" onclick="switchMainTab('home')"></i>
-                <div class="bg-fbInput rounded-full px-3 py-2 hidden sm:flex items-center gap-2 w-[180px] md:w-[240px]">
-                    <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
-                    <input type="text" placeholder="Tìm kiếm trên MinhNet" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
-                </div>
+    <!-- Main Chat Container -->
+    <main class="max-w-4xl mx-auto w-full flex-1 p-4 flex flex-col justify-between my-auto">
+        <div class="glass-panel rounded-2xl p-4 flex flex-col h-[75vh] border border-slate-800 shadow-2xl">
+            
+            <!-- Nhập tên hiển thị -->
+            <div class="pb-3 mb-3 border-b border-slate-800 flex items-center gap-3">
+                <span class="text-xs text-slate-400 font-medium shrink-0"><i class="fa-solid fa-user-pen mr-1 text-cyan-400"></i> Tên của bạn:</span>
+                <input type="text" id="chat-username" placeholder="Nhập tên hiển thị..." 
+                       class="bg-slate-900 border border-slate-700/80 rounded-xl px-3 py-1.5 text-xs text-white focus:outline-none focus:border-cyan-500 w-48 transition">
             </div>
 
-            <div class="flex items-center gap-1 sm:gap-4">
-                <button onclick="switchMainTab('home')" id="nav-home" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-house"></i></button>
-                <button onclick="switchMainTab('reels')" id="nav-reels" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-clapperboard"></i></button>
-                <button onclick="switchMainTab('friends')" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-user-group"></i></button>
+            <!-- Khung chứa tin nhắn -->
+            <div id="chat-messages" class="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-slate-800">
+                <p class="text-slate-500 text-center py-10 text-xs">Đang tải lịch sử trò chuyện...</p>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 justify-end">
-                <div id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold">
-                    Admin
-                </div>
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-fbHover p-1.5 rounded-full" onclick="openProfile(myUser)">
-                    <div id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center font-bold text-xs text-white overflow-hidden shrink-0">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <span id="header-username" class="text-xs font-bold text-white hidden md:block">---</span>
-                </div>
-                <button id="btn-logout" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
-                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+            <!-- Khu vực gửi tin nhắn -->
+            <div class="pt-3 mt-3 border-t border-slate-800 flex gap-2">
+                <input type="text" id="chat-message-input" placeholder="Nhập nội dung tin nhắn..." 
+                       class="flex-1 bg-slate-900/90 border border-slate-700/80 rounded-xl px-4 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-cyan-500 transition">
+                <button id="chat-send-btn" class="bg-gradient-to-r from-cyan-600 to-purple-600 hover:opacity-90 text-white px-5 py-2.5 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-1.5 shadow-lg shadow-cyan-500/10">
+                    <span>Gửi</span>
+                    <i class="fa-solid fa-paper-plane"></i>
                 </button>
             </div>
-        </header>
-
-        <!-- BODY CHÍNH -->
-        <div class="flex-1 flex overflow-hidden relative">
-
-            <!-- CỘT TRÁI CHUNG (Desktop) -->
-            <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
-                <div onclick="openProfile(myUser)" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
-                    <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
-                        <i class="fa-solid fa-user"></i>
-                    </div>
-                    <span id="sidebar-username" class="text-xs font-bold text-white truncate">---</span>
-                </div>
-                <div onclick="switchMainTab('home')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
-                    <i class="fa-solid fa-users text-fbBlue text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Bảng feed</span>
-                </div>
-                <div onclick="switchMainTab('reels')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
-                    <i class="fa-solid fa-clapperboard text-purple-400 text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Thước phim (Reels)</span>
-                </div>
-                <div onclick="switchMainTab('friends')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
-                    <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Bạn bè</span>
-                </div>
-                <div id="admin-menu-btn" onclick="openAdminModal()" class="hidden flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-yellow-400">
-                    <i class="fa-solid fa-shield-halved text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Kiểm duyệt bài viết</span>
-                </div>
-                <div id="admin-broadcast-btn" onclick="openBroadcastModal()" class="hidden flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-red-400">
-                    <i class="fa-solid fa-bullhorn text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Thông báo hệ thống</span>
-                </div>
-            </div>
-
-            <!-- TAB 1: HOME -->
-            <div id="tab-home" class="flex-1 flex overflow-hidden">
-                <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
-                    <div class="max-w-[600px] w-full space-y-4 pb-16 lg:pb-4">
-                        
-                        <!-- Thông báo hệ thống -->
-                        <div id="system-notification-banner" class="hidden bg-fbBlue/25 border border-fbBlue p-4 rounded-xl text-xs space-y-1">
-                            <h4 class="font-bold text-fbBlue flex items-center gap-2"><i class="fa-solid fa-circle-info"></i> Thông báo từ Quản trị viên</h4>
-                            <p id="system-notification-text" class="text-white"></p>
-                        </div>
-
-                        <!-- KHUNG ĐĂNG BÀI -->
-                        <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
-                            <div class="flex items-center gap-3">
-                                <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
-                                    <i class="fa-solid fa-user text-sm"></i>
-                                </div>
-                                <div class="flex-1 bg-fbInput rounded-full px-4 py-2.5 flex items-center justify-between">
-                                    <input type="text" id="post-title-input" placeholder="Bạn đang nghĩ gì thế?" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
-                                    
-                                    <div class="flex items-center gap-2 shrink-0">
-                                        <input type="file" id="local-file-input" accept="image/*,video/*" class="hidden" onchange="handleLocalFileSelect(event)">
-                                        <button title="Đăng Ảnh/Video" onclick="document.getElementById('local-file-input').click()" class="text-green-500 hover:opacity-80 text-base cursor-pointer"><i class="fa-solid fa-photo-film"></i></button>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="selected-media-preview" class="hidden text-[11px] text-green-400 px-3 bg-fbInput py-1.5 rounded-lg flex items-center justify-between">
-                                <span id="selected-filename" class="truncate">Đã đính kèm tệp từ thiết bị</span>
-                                <button onclick="clearSelectedFile()" class="text-red-400 hover:underline font-bold ml-2">Xóa</button>
-                            </div>
-
-                            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-2 border-t border-fbHover">
-                                <div class="flex gap-2">
-                                    <select id="post-privacy" class="bg-fbInput text-xs text-white px-3 py-1.5 rounded-xl focus:outline-none flex-1 sm:flex-none">
-                                        <option value="public">🌐 Công khai</option>
-                                        <option value="friends">👥 Bạn bè</option>
-                                        <option value="private">🔒 Chỉ mình tôi</option>
-                                    </select>
-                                    <select id="post-type" class="bg-fbInput text-xs text-white px-3 py-1.5 rounded-xl focus:outline-none flex-1 sm:flex-none">
-                                        <option value="post">Bài viết</option>
-                                        <option value="video">Thước phim (Reels)</option>
-                                    </select>
-                                </div>
-                                <button onclick="submitNewPost()" class="bg-fbBlue hover:opacity-90 px-5 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer">Đăng bài</button>
-                            </div>
-                        </div>
-
-                        <!-- Danh sách bài viết -->
-                        <div id="feed-posts-container" class="space-y-4 w-full"></div>
-
-                    </div>
-                </div>
-
-                <!-- Cột phải: Người liên hệ (Desktop rộng) -->
-                <div class="w-[280px] hidden xl:flex flex-col p-3 overflow-y-auto border-l border-fbHover shrink-0">
-                    <h4 class="text-xs font-bold text-[#b0b3b8] uppercase mb-2 px-2">Người liên hệ</h4>
-                    <div id="messenger-contacts-list" class="space-y-1"></div>
-                </div>
-            </div>
-
-            <!-- TAB 2: REELS -->
-            <div id="tab-reels" class="hidden flex-1 flex bg-black relative overflow-hidden items-center justify-center">
-                <div id="reels-container" class="h-full w-full max-w-[450px] flex flex-col snap-y snap-mandatory overflow-y-scroll relative"></div>
-                <div class="absolute right-4 sm:right-8 flex flex-col gap-3">
-                    <button onclick="scrollReel(-1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-up"></i></button>
-                    <button onclick="scrollReel(1)" class="w-10 h-10 rounded-full bg-fbHover/80 flex items-center justify-center text-white hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-chevron-down"></i></button>
-                </div>
-            </div>
-
-            <!-- TAB 3: QUẢN LÝ BẠN BÈ -->
-            <div id="tab-friends" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center">
-                <div class="max-w-[800px] w-full space-y-6 pb-16">
-                    <h2 class="text-xl font-bold text-white">Bạn bè</h2>
-                    <div class="bg-fbPanel p-4 sm:p-6 rounded-2xl border border-fbHover space-y-4">
-                        <h3 class="text-sm font-bold text-fbBlue uppercase">Gợi ý kết bạn</h3>
-                        <div id="friends-suggestions-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: TRANG CÁ NHÂN -->
-            <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center">
-                <div class="max-w-[800px] w-full space-y-6 pb-16">
-                    <div class="bg-fbPanel rounded-2xl p-4 sm:p-6 border border-fbHover space-y-4">
-                        <div class="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-5 border-b border-fbHover pb-6 text-center sm:text-left">
-                            <div id="profile-avatar-box" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-3xl font-bold text-white overflow-hidden shadow-lg shrink-0">
-                                <i class="fa-solid fa-user"></i>
-                            </div>
-                            <div class="flex-1">
-                                <h2 id="profile-username" class="text-xl font-bold text-white">---</h2>
-                                <p id="profile-friends-count" class="text-xs text-[#b0b3b8] mt-1">--- bạn bè</p>
-                            </div>
-                            <div id="profile-action-btn" class="mt-2 sm:mt-0"></div>
-                        </div>
-                    </div>
-                    <div id="profile-posts-container" class="space-y-4"></div>
-                </div>
-            </div>
 
         </div>
+    </main>
 
-    </div>
-
-    <!-- MODAL CHI TIẾT BÀI VIẾT & BÌNH LUẬN -->
-    <div id="post-detail-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-2 sm:p-4">
-        <div class="bg-fbPanel rounded-2xl max-w-2xl w-full border border-fbHover max-h-[92vh] flex flex-col overflow-hidden relative shadow-2xl">
-            <div class="p-3 sm:p-4 border-b border-fbHover flex items-center justify-between bg-fbHover/40 shrink-0">
-                <h3 id="modal-post-author" class="text-sm font-bold text-white truncate max-w-[80%]">Bài viết</h3>
-                <button onclick="closePostDetailModal()" class="w-8 h-8 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-white font-bold cursor-pointer transition shrink-0">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div id="modal-post-content" class="flex-1 overflow-y-auto p-3 sm:p-4 space-y-4"></div>
-            <div class="p-2.5 sm:p-3 border-t border-fbHover bg-fbPanel flex gap-2 items-center shrink-0">
-                <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0">
-                    <i class="fa-solid fa-user"></i>
-                </div>
-                <input type="text" id="modal-comment-input" placeholder="Viết bình luận..." class="flex-1 bg-fbInput rounded-full px-4 py-2 text-xs text-white focus:outline-none">
-                <button id="modal-comment-btn" class="bg-fbBlue px-4 py-2 rounded-full text-xs font-bold text-white cursor-pointer hover:opacity-90 transition shrink-0">Gửi</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL ADMIN DUYỆT BÀI -->
-    <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-fbPanel rounded-2xl max-w-xl w-full border border-fbHover p-5 space-y-4 max-h-[85vh] flex flex-col">
-            <h3 class="text-base font-bold text-yellow-400">Kiểm Duyệt Bài Viết</h3>
-            <div id="admin-pending-list" class="flex-1 overflow-y-auto space-y-3"></div>
-            <button onclick="document.getElementById('admin-modal').classList.add('hidden')" class="bg-fbHover py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">Đóng</button>
-        </div>
-    </div>
-
-    <!-- MODAL THÔNG BÁO ADMIN -->
-    <div id="broadcast-modal" class="hidden fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4">
-        <div class="bg-fbPanel rounded-2xl max-w-md w-full border border-fbHover p-5 space-y-4">
-            <h3 class="text-base font-bold text-red-400">Thông báo toàn hệ thống</h3>
-            <textarea id="broadcast-input" rows="4" placeholder="Nhập nội dung thông báo..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-xs text-white focus:outline-none"></textarea>
-            <div class="flex gap-2">
-                <button onclick="sendBroadcast()" class="flex-1 bg-red-600 hover:bg-red-500 py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">Gửi</button>
-                <button onclick="document.getElementById('broadcast-modal').classList.add('hidden')" class="flex-1 bg-fbHover py-2.5 rounded-xl text-xs font-bold text-white cursor-pointer">Hủy</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL CHAT DI ĐỘNG / MÁY TÍNH -->
-    <div id="messenger-modal" class="hidden fixed bottom-0 right-2 sm:right-6 z-50 w-[calc(100%-16px)] sm:w-[360px] h-[450px] bg-fbPanel border border-fbHover rounded-t-2xl shadow-2xl flex flex-col overflow-hidden">
-        <div class="bg-fbHover p-3 flex items-center justify-between border-b border-fbHover shrink-0">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white font-bold text-xs"><i class="fa-solid fa-user"></i></div>
-                <h4 id="chat-box-name" class="text-xs font-bold text-white">---</h4>
-            </div>
-            <button onclick="closeMessengerModal()" class="text-[#b0b3b8] hover:text-white cursor-pointer p-1"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="chat-messages-box" class="flex-1 overflow-y-auto p-3 space-y-2 text-xs"></div>
-        <div class="p-2.5 border-t border-fbHover flex items-center gap-2 bg-fbPanel shrink-0">
-            <input type="text" id="chat-msg-input" placeholder="Nhập tin nhắn..." class="flex-1 bg-fbInput rounded-full px-3 py-2 text-xs text-white focus:outline-none">
-            <button onclick="sendChatMessage()" class="text-fbBlue font-bold px-2 cursor-pointer"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <!-- SCRIPT CHÍNH -->
+    <!-- Firebase Script -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, where, onSnapshot, serverTimestamp, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -318,375 +77,61 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        let myUser = localStorage.getItem("chat_user");
-        let activeChatUser = null;
-        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
-        let uploadedFileBase64 = "";
-
-        window.switchMainTab = (tabName) => {
-            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
-                const el = document.getElementById(`tab-${t}`);
-                if(el) el.classList.add('hidden');
-            });
-            ['home', 'reels', 'friends'].forEach(n => {
-                const btn = document.getElementById(`nav-${n}`);
-                if(btn) {
-                    btn.classList.remove('border-fbBlue', 'text-fbBlue');
-                    btn.classList.add('border-transparent', 'text-[#b0b3b8]');
-                }
-            });
-
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${tabName}`);
-            if(activeNav) activeNav.classList.add('border-fbBlue', 'text-fbBlue');
-        };
-
-        if (myUser) initApp();
-
-        document.getElementById("btn-register").onclick = async () => {
-            const u = document.getElementById("auth-user").value.trim().toLowerCase();
-            const p = document.getElementById("auth-pass").value.trim();
-            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
-            const ref = doc(db, "users", u);
-            const snap = await getDoc(ref);
-            if(snap.exists()) return alert("Tài khoản đã tồn tại!");
-            
-            await setDoc(ref, { username: u, password: p, avatar: "", bio: "" });
-            alert("Đăng ký thành công!");
-        };
-
-        document.getElementById("btn-login").onclick = async () => {
-            const u = document.getElementById("auth-user").value.trim().toLowerCase();
-            const p = document.getElementById("auth-pass").value.trim();
-            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
-            const ref = doc(db, "users", u);
-            const snap = await getDoc(ref);
-            if(!snap.exists() || snap.data().password !== p) return alert("Sai tài khoản hoặc mật khẩu!");
-            myUser = u;
-            localStorage.setItem("chat_user", u);
-            initApp();
-        };
-
-        document.getElementById("btn-logout").onclick = () => {
-            localStorage.removeItem("chat_user");
-            location.reload();
-        };
-
-        function initApp() {
-            document.getElementById("auth-container").classList.add("hidden");
-            document.getElementById("app-container").classList.remove("hidden");
-            document.getElementById("header-username").innerText = myUser;
-            document.getElementById("sidebar-username").innerText = myUser;
-
-            if(myUser === "phamnhatminh") {
-                document.getElementById("admin-badge").classList.remove("hidden");
-                document.getElementById("admin-menu-btn").classList.remove("hidden");
-                document.getElementById("admin-broadcast-btn").classList.remove("hidden");
-            }
-
-            checkSystemNotification();
-            loadFeedPosts();
-            loadReels();
-            loadFriendsData();
-            checkUrlForPost();
-            updateAvatarUI();
+        // Chống XSS
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
         }
 
-        function checkSystemNotification() {
-            const notifRef = doc(db, "system", "broadcast");
-            getDoc(notifRef).then(snap => {
-                if(snap.exists() && snap.data().message) {
-                    document.getElementById("system-notification-banner").classList.remove("hidden");
-                    document.getElementById("system-notification-text").innerText = snap.data().message;
-                }
-            });
-        }
+        const msgInput = document.getElementById('chat-message-input');
+        const nameInput = document.getElementById('chat-username');
+        const sendBtn = document.getElementById('chat-send-btn');
+        const messagesContainer = document.getElementById('chat-messages');
 
-        window.openBroadcastModal = () => document.getElementById("broadcast-modal").classList.remove("hidden");
-
-        window.sendBroadcast = async () => {
-            const msg = document.getElementById("broadcast-input").value.trim();
-            if(!msg) return;
-            await setDoc(doc(db, "system", "broadcast"), { message: msg });
-            alert("Đã gửi thông báo hệ thống!");
-            document.getElementById("broadcast-modal").classList.add("hidden");
-            checkSystemNotification();
-        };
-
-        window.addEventListener('paste', (e) => {
-            const items = e.clipboardData.items;
-            for (let i = 0; i < items.length; i++) {
-                if (items[i].type.indexOf('image') !== -1) {
-                    const blob = items[i].getAsFile();
-                    const reader = new FileReader();
-                    reader.onload = function(event) {
-                        userAvatarBase64 = event.target.result;
-                        localStorage.setItem("user_avatar", userAvatarBase64);
-                        updateAvatarUI();
-                        alert("Đã cập nhật ảnh đại diện qua Ctrl + V!");
-                    };
-                    reader.readAsDataURL(blob);
-                }
-            }
-        });
-
-        function updateAvatarUI() {
-            if(userAvatarBase64) {
-                document.getElementById("header-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
-                document.getElementById("sidebar-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
-                document.getElementById("create-post-avatar").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
-            }
-        }
-
-        window.handleLocalFileSelect = (event) => {
-            const file = event.target.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                uploadedFileBase64 = e.target.result;
-                document.getElementById("selected-filename").innerText = `Đã chọn: ${file.name}`;
-                document.getElementById("selected-media-preview").classList.remove("hidden");
-            };
-            reader.readAsDataURL(file);
-        };
-
-        window.clearSelectedFile = () => {
-            uploadedFileBase64 = "";
-            document.getElementById("local-file-input").value = "";
-            document.getElementById("selected-media-preview").classList.add("hidden");
-        };
-
-        window.submitNewPost = async () => {
-            const title = document.getElementById("post-title-input").value.trim();
-            const media = uploadedFileBase64;
-            const privacy = document.getElementById("post-privacy").value;
-            const type = document.getElementById("post-type").value;
-            if(!title && !media) return alert("Vui lòng nhập nội dung hoặc chọn tệp đính kèm!");
-
-            const isApproved = (myUser === "phamnhatminh");
-            await addDoc(collection(db, "posts"), {
-                author: myUser,
-                title,
-                media,
-                privacy,
-                type,
-                approved: isApproved,
-                likes: [],
-                comments: [],
-                createdAt: serverTimestamp()
-            });
-            document.getElementById("post-title-input").value = "";
-            clearSelectedFile();
-            alert(isApproved ? "Đăng bài thành công!" : "Đã gửi bài viết đến admin kiểm duyệt!");
-        };
-
-        function loadFeedPosts() {
-            const q = query(collection(db, "posts"), where("approved", "==", true));
-            onSnapshot(q, (snap) => {
-                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                const container = document.getElementById("feed-posts-container");
-                container.innerHTML = docs.map(p => {
-                    const likesCount = p.likes ? p.likes.length : 0;
-                    const isLiked = p.likes && p.likes.includes(myUser);
-                    const comments = p.comments || [];
-
-                    return `
-                        <div class="bg-fbPanel rounded-xl border border-fbHover p-3 sm:p-4 space-y-3">
-                            <h4 class="text-xs font-bold text-white cursor-pointer hover:underline" onclick="openProfile('${p.author}')">${p.author}</h4>
-                            <p class="text-xs text-slate-200 break-words">${p.title}</p>${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center">
-                                <img src="${p.media}" class="w-full object-cover">
-                            </div>`: ''}
-                            
-                            <div class="flex items-center justify-between text-[11px] text-[#b0b3b8] pt-1 border-t border-fbHover">
-                                <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} thích</span>
-                                <span>${comments.length} bình luận</span>
-                            </div>
-
-                            <div class="grid grid-cols-3 gap-1 pt-1 border-t border-fbHover text-xs font-semibold text-[#b0b3b8]">
-                                <button onclick="toggleLike('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-2 transition cursor-pointer ${isLiked ? 'text-fbBlue font-bold' : ''}">
-                                    <i class="fa-solid fa-thumbs-up"></i> Thích
-                                </button>
-                                <button onclick="openPostDetail('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-2 transition cursor-pointer">
-                                    <i class="fa-solid fa-comment"></i> Trả lời
-                                </button>
-                                <button onclick="sharePost('${p.id}')" class="hover:bg-fbHover py-2 rounded-lg flex items-center justify-center gap-1 sm:gap-2 transition cursor-pointer">
-                                    <i class="fa-solid fa-share"></i> Chia sẻ
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join("");
-            });
-        }
-
-        window.openPostDetail = async (postId) => {
-            window.history.pushState({}, '', `?post=${postId}`);
-            const postRef = doc(db, "posts", postId);
-            const snap = await getDoc(postRef);
-            if (!snap.exists()) return;
-
-            const p = snap.data();
-            const likesCount = p.likes ? p.likes.length : 0;
-            const comments = p.comments || [];
-
-            const modalContent = document.getElementById("modal-post-content");
-            document.getElementById("modal-post-author").innerText = `Bài viết của ${p.author}`;
-
-            modalContent.innerHTML = `
-                <div class="space-y-3">
-                    <p class="text-sm text-slate-100 break-words">${p.title}</p>${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[400px] flex items-center justify-center border border-fbHover">
-                        <img src="${p.media}" class="w-full object-cover">
-                    </div>` : ''}
-                    <div class="flex justify-between text-xs text-[#b0b3b8] pt-2 border-t border-fbHover">
-                        <span><i class="fa-solid fa-thumbs-up text-fbBlue"></i> ${likesCount} lượt thích</span>
-                        <span>${comments.length} bình luận</span>
-                    </div>
-
-                    <div class="space-y-4 pt-2">
-                        <h5 class="text-xs font-bold text-white">Bình luận</h5>
-                        ${comments.length === 0 ? `<p class="text-xs text-[#b0b3b8] italic">Chưa có bình luận nào.</p>` : ''}
-                        
-                        ${comments.map((c, index) => {
-                            const replies = c.replies || [];
-                            return `
-                                <div class="space-y-2">
-                                    <div class="flex gap-2 items-start">
-                                        <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-fbHover flex items-center justify-center text-xs font-bold shrink-0 mt-1">
-                                            <i class="fa-solid fa-user"></i>
-                                        </div>
-                                        <div class="flex-1">
-                                            <div class="bg-fbInput p-2.5 sm:p-3 rounded-2xl max-w-[90%]">
-                                                <span class="font-bold text-xs text-white block cursor-pointer hover:underline" onclick="openProfile('${c.user}')">${c.user}</span>
-                                                <span class="text-xs text-slate-200 break-words">${c.text}</span>
-                                            </div>
-                                            <div class="flex items-center gap-3 text-[11px] font-semibold text-[#b0b3b8] pl-3 pt-1">
-                                                <button onclick="toggleReplyBox('${postId}',${index})" class="hover:underline cursor-pointer">Trả lời</button>
-                                                <span class="font-normal text-[#8a8d91]">${c.time || 'Vừa xong'}</span>
-                                            </div>
-
-                                            ${replies.length > 0 ? `
-                                                <button onclick="toggleRepliesList('${postId}',${index})" class="flex items-center gap-1 text-xs font-bold text-[#b0b3b8] hover:underline pl-3 pt-2 cursor-pointer">
-                                                    <span>Xem ${replies.length} câu trả lời</span>
-                                                </button>
-                                            ` : ''}
-
-                                            <div id="replies-list-${index}" class="hidden space-y-2 pl-4 pt-2 border-l-2 border-fbHover/50 ml-3">
-                                                ${replies.map(r => `
-                                                    <div class="flex gap-2 items-start">
-                                                        <div class="w-6 h-6 rounded-full bg-fbHover flex items-center justify-center text-[10px] font-bold shrink-0 mt-1"><i class="fa-solid fa-user"></i></div>
-                                                        <div class="bg-fbInput p-2 rounded-2xl max-w-[90%]">
-                                                            <span class="font-bold text-[11px] text-white block">${r.user}</span>
-                                                            <span class="text-xs text-slate-200 break-words">${r.text}</span>
-                                                        </div>
-                                                    </div>
-                                                `).join('')}
-                                            </div>
-
-                                            <div id="reply-box-${index}" class="hidden flex gap-2 items-center pl-4 pt-2">
-                                                <input type="text" id="reply-input-${index}" placeholder="Viết phản hồi..." class="flex-1 bg-fbInput rounded-full px-3 py-1.5 text-xs text-white focus:outline-none">
-                                                <button onclick="addReplyComment('${postId}',${index})" class="bg-fbBlue px-3 py-1 rounded-full text-xs font-bold text-white cursor-pointer">Gửi</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            `;
-                        }).join('')}
-                    </div>
-                </div>
-            `;
-
-            document.getElementById("modal-comment-btn").onclick = async () => {
-                const input = document.getElementById("modal-comment-input");
-                const text = input.value.trim();
-                if (!text) return;
-                let updatedComments = p.comments || [];
-                updatedComments.push({ user: myUser, text, time: 'Vừa xong', replies: [] });
-                await setDoc(postRef, { comments: updatedComments }, { merge: true });
-                input.value = "";
-                openPostDetail(postId);
-            };
-
-            document.getElementById("post-detail-modal").classList.remove("hidden");
-        };
-
-        window.toggleReplyBox = (postId, commentIndex) => {
-            const el = document.getElementById(`reply-box-${commentIndex}`);
-            if (el) el.classList.toggle('hidden');
-        };
-
-        window.toggleRepliesList = (postId, commentIndex) => {
-            const el = document.getElementById(`replies-list-${commentIndex}`);
-            if (el) el.classList.toggle('hidden');
-        };
-
-        window.addReplyComment = async (postId, commentIndex) => {
-            const input = document.getElementById(`reply-input-${commentIndex}`);
-            const text = input.value.trim();
+        // Gửi tin nhắn
+        async function sendChatMessage() {
+            const text = escapeHTML(msgInput.value.trim());
+            const userName = escapeHTML(nameInput.value.trim()) || "Ẩn danh";
             if (!text) return;
-            const postRef = doc(db, "posts", postId);
-            const snap = await getDoc(postRef);
-            if (!snap.exists()) return;
-            let comments = snap.data().comments || [];
-            if (!comments[commentIndex].replies) comments[commentIndex].replies = [];
-            comments[commentIndex].replies.push({ user: myUser, text, time: 'Vừa xong' });
-            await setDoc(postRef, { comments }, { merge: true });
-            openPostDetail(postId);
-        };
 
-        window.closePostDetailModal = () => {
-            document.getElementById("post-detail-modal").classList.add("hidden");
-            window.history.pushState({}, '', window.location.pathname);
-        };
-
-        function checkUrlForPost() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const postId = urlParams.get('post');
-            if (postId) openPostDetail(postId);
+            try {
+                await addDoc(collection(db, "messages"), {
+                    text: text,
+                    user: userName,
+                    createdAt: serverTimestamp()
+                });
+                msgInput.value = "";
+            } catch (err) {
+                alert("Lỗi gửi tin nhắn: " + err.message);
+            }
         }
 
-        window.toggleLike = async (postId) => {
-            const postRef = doc(db, "posts", postId);
-            const snap = await getDoc(postRef);
-            if(!snap.exists()) return;
-            let likes = snap.data().likes || [];
-            if(likes.includes(myUser)) likes = likes.filter(u => u !== myUser);
-            else likes.push(myUser);
-            await setDoc(postRef, { likes }, { merge: true });
-        };
+        sendBtn.onclick = sendChatMessage;
+        msgInput.onkeypress = (e) => { if (e.key === 'Enter') sendChatMessage(); };
 
-        window.sharePost = (postId) => {
-            const shareUrl = `${window.location.origin}${window.location.pathname}?post=${postId}`;
-            navigator.clipboard.writeText(shareUrl);
-            alert("Đã sao chép liên kết bài viết!");
-        };
-
-        window.openProfile = async (username) => {
-            switchMainTab('profile-page');
-            document.getElementById("profile-username").innerText = username;
-            document.getElementById("profile-friends-count").innerText = `Thành viên MinhNet`;
-            const actionBox = document.getElementById("profile-action-btn");
-            if(username === myUser) {
-                actionBox.innerHTML = `<span class="text-xs text-[#b0b3b8]">Trang cá nhân của bạn</span>`;
-            } else {
-                actionBox.innerHTML = `<button onclick="openMessengerModal('${username}')" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white cursor-pointer"><i class="fa-solid fa-message"></i> Nhắn tin</button>`;
+        // Lắng nghe realtime tin nhắn
+        const q = query(collection(db, "messages"), orderBy("createdAt", "asc"));
+        onSnapshot(q, (snapshot) => {
+            if (snapshot.empty) {
+                messagesContainer.innerHTML = `<p class="text-slate-500 text-center py-10 text-xs">Chưa có tin nhắn nào. Hãy mở lời chào đầu tiên!</p>`;
+                return;
             }
-        };
 
-        function loadReels() {}
-        function loadFriendsData() {}
-        window.openMessengerModal = (username) => {
-            activeChatUser = username;
-            document.getElementById("chat-box-name").innerText = username;
-            document.getElementById("messenger-modal").classList.remove("hidden");
-        };
-        window.closeMessengerModal = () => {
-            document.getElementById("messenger-modal").classList.add("hidden");
-        };
-        window.sendChatMessage = () => {};
-        window.openAdminModal = () => {
-            document.getElementById("admin-modal").classList.remove("hidden");
-        };
+            messagesContainer.innerHTML = snapshot.docs.map(docSnap => {
+                const msg = docSnap.data();
+                return `
+                    <div class="flex flex-col items-start">
+                        <span class="text-[10px] text-purple-400 mb-0.5 px-1 font-semibold"><i class="fa-solid fa-user-circle mr-1"></i>${escapeHTML(msg.user || 'Ẩn danh')}</span>
+                        <div class="px-3.5 py-2 rounded-xl max-w-[85%] break-words bg-slate-900 text-slate-200 border border-slate-800 text-xs shadow-sm">
+                            ${escapeHTML(msg.text)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        });
     </script>
 </body>
 </html>
