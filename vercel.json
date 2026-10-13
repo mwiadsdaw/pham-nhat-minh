@@ -1,5 +1,5 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/idex.html" }
+    { "source": "/(.*)", "destination": "/trochuyenn/idex.html" }
   ]
 }
