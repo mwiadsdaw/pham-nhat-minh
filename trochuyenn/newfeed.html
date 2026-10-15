@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bảng Tin - MinhNet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-newspaper text-cyan-400 text-xl"></i>
+        <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">MinhNet Newsfeed</span>
+      </div>
+      <nav class="flex items-center space-x-4 text-sm font-medium">
+        <a href="trangchu.html" class="text-slate-300 hover:text-cyan-400 transition flex items-center space-x-1.5"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="newfeed.html" class="text-cyan-400 flex items-center space-x-1.5"><i class="fa-solid fa-newspaper"></i><span>Bảng Tin</span></a>
+        <a href="profile.html" class="text-slate-300 hover:text-cyan-400 transition flex items-center space-x-1.5"><i class="fa-solid fa-user"></i><span>Cá Nhân</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-2xl mx-auto px-4 py-6 space-y-6">
+    <!-- Đăng bài -->
+    <div class="glass-panel p-5 rounded-2xl shadow-xl space-y-3">
+      <h2 class="text-sm font-semibold text-slate-300 flex items-center space-x-2">
+        <i class="fa-solid fa-pen-to-square text-cyan-400"></i><span>Bạn đang nghĩ gì?</span>
+      </h2>
+      <textarea id="post-content" rows="3" placeholder="Nhập nội dung chia sẻ..." class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-xs text-white focus:outline-none focus:border-cyan-500"></textarea>
+      <div class="flex justify-between items-center">
+        <span id="current-user-tag" class="text-xs text-slate-400">Đăng với tư cách: Khách</span>
+        <button id="post-btn" class="bg-cyan-600 hover:bg-cyan-500 text-white px-5 py-2 rounded-xl text-xs font-bold transition shadow-md">Đăng Bài</button>
+      </div>
+    </div>
+
+    <!-- Danh sách bài viết -->
+    <div id="feed-list" class="space-y-4">
+      <p class="text-center text-slate-500 text-xs py-8">Đang tải bảng tin...</p>
+    </div>
+  </main>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+      authDomain: "minh-s-website.firebaseapp.com",
+      projectId: "minh-s-website",
+      storageBucket: "minh-s-website.appspot.com",
+      messagingSenderId: "453574408938",
+      appId: "1:453574408938:web:f5b017647a17deacfc3593"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // XSS Escape bảo mật tuyệt đối
+    function escapeHTML(str) {
+      if (!str) return '';
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+      }[tag] || tag));
+    }
+
+    // Lấy thông tin user hiện tại từ localStorage (giữ nguyên Database và session cũ)
+    const loggedUser = localStorage.getItem("minhnet_user") || "Ẩn danh";
+    document.getElementById('current-user-tag').innerText = `Đăng với tư cách: ${loggedUser}`;
+
+    document.getElementById('post-btn').onclick = async () => {
+      const text = document.getElementById('post-content').value.trim();
+      if (!text) return alert("Vui lòng nhập nội dung bài viết!");
+
+      try {
+        await addDoc(collection(db, "posts"), {
+          content: escapeHTML(text),
+          author: escapeHTML(loggedUser),
+          createdAt: serverTimestamp()
+        });
+        document.getElementById('post-content').value = "";
+      } catch (e) {
+        alert("Lỗi đăng bài: " + e.message);
+      }
+    };
+
+    // Lắng nghe dữ liệu real-time từ collection cũ
+    const q = query(collection(db, "posts"), orderBy("createdAt", "desc"));
+    onSnapshot(q, (snapshot) => {
+      const feedList = document.getElementById('feed-list');
+      if (snapshot.empty) {
+        feedList.innerHTML = `<p class="text-center text-slate-500 text-xs py-8">Chưa có bài viết nào.</p>`;
+        return;
+      }
+      feedList.innerHTML = snapshot.docs.map(docSnap => {
+        const post = docSnap.data();
+        return `
+          <div class="glass-panel p-4 rounded-2xl border border-slate-800 space-y-2">
+            <div class="flex items-center space-x-2">
+              <i class="fa-solid fa-circle-user text-cyan-400 text-base"></i>
+              <span class="text-xs font-bold text-slate-200">${escapeHTML(post.author || 'Ẩn danh')}</span>
+            </div>
+            <p class="text-xs text-slate-300 leading-relaxed break-words">${escapeHTML(post.content)}</p>
+          </div>
+        `;
+      }).join('');
+    });
+  </script>
+</body>
+</html>
