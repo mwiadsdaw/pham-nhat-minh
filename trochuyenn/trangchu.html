@@ -100,11 +100,29 @@
 
             <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
                 <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
+                    
                     <!-- KHUNG ĐĂNG BÀI -->
                     <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
                         <div class="flex items-center gap-3">
-                            <input type="text" id="post-title-input" placeholder="Bạn đang nghĩ gì thế?" class="bg-fbInput rounded-full px-4 py-2.5 text-xs text-white focus:outline-none w-full">
-                            <button onclick="submitNewPost()" class="bg-fbBlue hover:opacity-90 px-5 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer shrink-0">Đăng bài</button>
+                            <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
+                                <i class="fa-solid fa-user text-sm"></i>
+                            </div>
+                            <div class="flex-1 bg-fbInput rounded-full px-4 py-2.5 flex items-center justify-between">
+                                <input type="text" id="post-title-input" placeholder="Bạn đang nghĩ gì thế?" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                                <div class="flex items-center gap-2 shrink-0">
+                                    <input type="file" id="local-file-input" accept="image/*,video/*" class="hidden" onchange="handleLocalFileSelect(event)">
+                                    <button title="Đăng Ảnh/Video" onclick="document.getElementById('local-file-input').click()" class="text-green-500 hover:opacity-80 text-base cursor-pointer"><i class="fa-solid fa-photo-film"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="selected-media-preview" class="hidden text-[11px] text-green-400 px-3 bg-fbInput py-1.5 rounded-lg flex items-center justify-between">
+                            <span id="selected-filename" class="truncate">Đã đính kèm tệp</span>
+                            <button onclick="clearSelectedFile()" class="text-red-400 hover:underline font-bold ml-2">Xóa</button>
+                        </div>
+
+                        <div class="flex items-center justify-between pt-2 border-t border-fbHover">
+                            <button onclick="submitNewPost()" class="w-full bg-fbBlue hover:opacity-90 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer">Đăng bài</button>
                         </div>
                     </div>
 
@@ -132,6 +150,8 @@
         const db = getFirestore(app);
 
         window.myUser = localStorage.getItem("chat_user");
+        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
+        let uploadedFileBase64 = "";
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -189,19 +209,54 @@
             document.getElementById("header-profile-link").href = `profile.html?profile=${window.myUser}`;
             document.getElementById("sidebar-profile-link").href = `profile.html?profile=${window.myUser}`;
 
+            updateAvatarUI();
             loadFeedPosts();
         }
 
+        function updateAvatarUI() {
+            if(userAvatarBase64) {
+                const imgTag = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                const hAv = document.getElementById("header-avatar");
+                const sAv = document.getElementById("sidebar-avatar");
+                const cAv = document.getElementById("create-post-avatar");
+                if(hAv) hAv.innerHTML = imgTag;
+                if(sAv) sAv.innerHTML = imgTag;
+                if(cAv) cAv.innerHTML = imgTag;
+            }
+        }
+
+        window.handleLocalFileSelect = (event) => {
+            const file = event.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                uploadedFileBase64 = e.target.result;
+                document.getElementById("selected-filename").innerText = `Đã chọn: ${file.name}`;
+                document.getElementById("selected-media-preview").classList.remove("hidden");
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.clearSelectedFile = () => {
+            uploadedFileBase64 = "";
+            document.getElementById("local-file-input").value = "";
+            document.getElementById("selected-media-preview").classList.add("hidden");
+        };
+
         window.submitNewPost = async () => {
             const title = escapeHTML(document.getElementById("post-title-input").value.trim());
-            if(!title) return alert("Vui lòng nhập nội dung!");
+            const media = uploadedFileBase64;
+            if(!title && !media) return alert("Vui lòng nhập nội dung hoặc chọn tệp đính kèm!");
 
             await addDoc(collection(db, "posts"), {
                 author: window.myUser,
                 title,
+                media,
                 createdAt: serverTimestamp()
             });
             document.getElementById("post-title-input").value = "";
+            clearSelectedFile();
+            alert("Đăng bài thành công!");
         };
 
         function loadFeedPosts() {
@@ -210,9 +265,10 @@
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 document.getElementById("feed-posts-container").innerHTML = docs.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-2 shadow">
+                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3 shadow">
                         <a href="profile.html?profile=${escapeHTML(p.author)}" class="text-xs font-bold text-white hover:underline">${escapeHTML(p.author)}</a>
-                        <p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>
+                        ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
+                        ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
                     </div>
                 `).join("");
             });
