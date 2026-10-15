@@ -90,7 +90,7 @@
             <div class="hidden md:flex items-center gap-1 sm:gap-4">
                 <button onclick="switchMainTab('home')" id="nav-home" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-users"></i></button>
                 <button onclick="switchMainTab('reels')" id="nav-reels" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-clapperboard"></i></button>
-                <button onclick="switchMainTab('friends')" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-user-group"></i></button>
+                <button onclick="location.href='friends.html'" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-user-group"></i></button>
             </div>
 
             <div class="flex items-center gap-2 sm:gap-3 justify-end">
@@ -128,7 +128,7 @@
                     <i class="fa-solid fa-clapperboard text-purple-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Thước phim (Reels)</span>
                 </div>
-                <div onclick="switchMainTab('friends')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
+                <div onclick="location.href='friends.html'" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
                     <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bạn bè</span>
                 </div>
@@ -210,18 +210,7 @@
                 <div id="reels-container" class="h-full w-full max-w-[450px] flex flex-col snap-y snap-mandatory overflow-y-scroll relative"></div>
             </div>
 
-            <!-- TAB 3: BẠN BÈ -->
-            <div id="tab-friends" class="hidden flex-1 overflow-y-auto p-4 sm:p-6 flex flex-col items-center">
-                <div class="max-w-[800px] w-full space-y-6 pb-20">
-                    <h2 class="text-xl font-bold text-white">Bạn bè</h2>
-                    <div class="bg-fbPanel p-4 sm:p-6 rounded-2xl border border-fbHover space-y-4">
-                        <h3 class="text-sm font-bold text-fbBlue uppercase">Gợi ý kết bạn</h3>
-                        <div id="friends-suggestions-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 4: TRANG CÁ NHÂN (STYLE FACEBOOK 1:1) -->
+            <!-- TAB 3: TRANG CÁ NHÂN (STYLE FACEBOOK 1:1) -->
             <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto">
                 <div class="w-full flex flex-col items-center bg-fbBg pb-20">
                     
@@ -320,7 +309,7 @@
                             <div class="bg-fbPanel p-3 rounded-xl border border-fbHover flex items-center justify-between shadow">
                                 <h3 class="text-sm font-bold text-white">Bài viết</h3>
                                 <div class="flex gap-2">
-                                    <button class="bg-fbHover hover:bg-[#4e4f50] px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5"><i class="fa-solid fa-[#b0b3b8] fa-sliders"></i> Bộ lọc</button>
+                                    <button class="bg-fbHover hover:bg-[#4e4f50] px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5"><i class="fa-solid fa-sliders"></i> Bộ lọc</button>
                                     <button class="bg-fbHover hover:bg-[#4e4f50] px-3 py-1.5 rounded-lg text-xs font-semibold text-white flex items-center gap-1.5"><i class="fa-solid fa-gear"></i> Quản lý bài viết</button>
                                 </div>
                             </div>
@@ -348,7 +337,7 @@
             <i class="fa-solid fa-clapperboard text-base"></i>
             <span class="text-[10px] font-semibold">Reels</span>
         </button>
-        <button onclick="switchMainTab('friends')" id="mobile-nav-friends" class="flex flex-col items-center justify-center text-[#b0b3b8] flex-1 py-1 cursor-pointer">
+        <button onclick="location.href='friends.html'" id="mobile-nav-friends" class="flex flex-col items-center justify-center text-[#b0b3b8] flex-1 py-1 cursor-pointer">
             <i class="fa-solid fa-user-group text-base"></i>
             <span class="text-[10px] font-semibold">Bạn bè</span>
         </button>
@@ -453,12 +442,12 @@
         }
 
         window.switchMainTab = (tabName) => {
-            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
+            ['home', 'reels', 'profile-page'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
             });
             
-            ['home', 'reels', 'friends'].forEach(n => {
+            ['home', 'reels'].forEach(n => {
                 const btn = document.getElementById(`nav-${n}`);
                 if(btn) {
                     btn.classList.remove('border-fbBlue', 'text-fbBlue');
@@ -466,7 +455,7 @@
                 }
             });
 
-            ['home', 'reels', 'friends', 'profile'].forEach(n => {
+            ['home', 'reels', 'profile'].forEach(n => {
                 const mBtn = document.getElementById(`mobile-nav-${n}`);
                 if(mBtn) {
                     mBtn.classList.remove('text-fbBlue');
@@ -540,7 +529,6 @@
             checkSystemNotification();
             loadFeedPosts();
             
-            // Xử lý tự động load profile hoặc post dựa trên URL sau khi F5
             const urlParams = new URLSearchParams(window.location.search);
             const profileUser = urlParams.get('profile');
             const postId = urlParams.get('post');
@@ -554,7 +542,6 @@
             updateAvatarUI();
         }
 
-        // Lắng nghe sự kiện back/forward trên trình duyệt
         window.onpopstate = () => {
             const urlParams = new URLSearchParams(window.location.search);
             const profileUser = urlParams.get('profile');
@@ -828,14 +815,13 @@
                 window.history.pushState({}, '', `?profile=${username}`);
             }
 
-            // Kích hoạt hiển thị tab profile trực tiếp mà không cần reset trạng thái lịch sử
-            ['home', 'reels', 'friends', 'profile-page'].forEach(t => {
+            ['home', 'reels', 'profile-page'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if(el) el.classList.add('hidden');
             });
             document.getElementById('tab-profile-page').classList.remove('hidden');
 
-            ['home', 'reels', 'friends'].forEach(n => {
+            ['home', 'reels'].forEach(n => {
                 const btn = document.getElementById(`nav-${n}`);
                 if(btn) {
                     btn.classList.remove('border-fbBlue', 'text-fbBlue');
@@ -843,7 +829,7 @@
                 }
             });
 
-            ['home', 'reels', 'friends', 'profile'].forEach(n => {
+            ['home', 'reels', 'profile'].forEach(n => {
                 const mBtn = document.getElementById(`mobile-nav-${n}`);
                 if(mBtn) {
                     mBtn.classList.remove('text-fbBlue');
@@ -870,7 +856,6 @@
                 `;
             }
 
-            // Tải bài viết cá nhân
             const q = query(collection(db, "posts"));
             onSnapshot(q, (snap) => {
                 const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
