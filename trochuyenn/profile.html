@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cá Nhân - MinhNet</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans">
+
+  <!-- Header Navigation -->
+  <header class="sticky top-0 z-50 glass-panel border-b border-slate-800 px-6 py-4">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <i class="fa-solid fa-user text-cyan-400 text-xl"></i>
+        <span class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">MinhNet Profile</span>
+      </div>
+      <nav class="flex items-center space-x-4 text-sm font-medium">
+        <a href="trangchu.html" class="text-slate-300 hover:text-cyan-400 transition flex items-center space-x-1.5"><i class="fa-solid fa-house"></i><span>Trang Chủ</span></a>
+        <a href="newfeed.html" class="text-slate-300 hover:text-cyan-400 transition flex items-center space-x-1.5"><i class="fa-solid fa-newspaper"></i><span>Bảng Tin</span></a>
+        <a href="profile.html" class="text-cyan-400 flex items-center space-x-1.5"><i class="fa-solid fa-user"></i><span>Cá Nhân</span></a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-md mx-auto px-4 py-10 space-y-6">
+    <div class="glass-panel p-6 rounded-2xl shadow-xl space-y-4 text-center">
+      <div class="w-16 h-16 bg-cyan-500/10 border border-cyan-500/30 rounded-full flex items-center justify-center text-cyan-400 text-2xl mx-auto">
+        <i class="fa-solid fa-user-shield"></i>
+      </div>
+      <h2 id="profile-username" class="text-base font-bold text-white">Đang tải tài khoản...</h2>
+      <p class="text-xs text-slate-400">Quản lý bảo mật thông tin & mật khẩu băm SHA-256</p>
+
+      <div class="space-y-3 pt-4 text-left">
+        <div>
+          <label class="text-[11px] text-slate-400 font-medium">Mật khẩu mới</label>
+          <input type="password" id="new-password" placeholder="Nhập mật khẩu mới..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-cyan-500">
+        </div>
+        <button id="update-pass-btn" class="w-full bg-gradient-to-r from-cyan-600 to-purple-600 hover:opacity-90 text-white py-2.5 rounded-xl text-xs font-bold transition shadow-md">Cập Nhật Mật Khẩu (SHA-256)</button>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Kiểm tra tên đăng nhập hiện tại từ bộ nhớ localStorage cũ
+    const currentUser = localStorage.getItem("minhnet_user") || "Chưa đăng nhập";
+    document.getElementById('profile-username').innerText = `Tài khoản: ${currentUser}`;
+
+    // Thuật toán chuẩn SHA-256 dùng Web Crypto API
+    async function hashPassword(password) {
+      const msgBuffer = new TextEncoder().encode(password);
+      const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+      const hashArray = Array.from(new Uint8Array(hashBuffer));
+      return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    document.getElementById('update-pass-btn').onclick = async () => {
+      const pass = document.getElementById('new-password').value.trim();
+      if (!pass) return alert("Vui lòng nhập mật khẩu mới!");
+      
+      const hashed = await hashPassword(pass);
+      localStorage.setItem("minhnet_password_hash", hashed);
+      alert("Đã cập nhật và mã hóa mật khẩu thành công bằng SHA-256!");
+      document.getElementById('new-password').value = "";
+    };
+  </script>
+</body>
+</html>
