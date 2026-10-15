@@ -28,7 +28,7 @@
 </head>
 <body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14">
 
-    <!-- HEADER TOP (Nút quay lại trỏ thẳng về trangchu.html) -->
+    <!-- HEADER TOP -->
     <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
         <div class="flex items-center gap-3">
             <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-85 transition" title="Quay lại Bảng tin"><i class="fa-solid fa-arrow-left"></i></a>
@@ -125,6 +125,7 @@
         const urlParams = new URLSearchParams(window.location.search);
         const loggedUser = localStorage.getItem("chat_user");
         const targetUser = urlParams.get('profile') || loggedUser;
+        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -132,6 +133,10 @@
         }
 
         document.getElementById("profile-username").innerText = targetUser === 'phamnhatminh' ? 'Phạm Nhật Minh' : targetUser;
+
+        if (userAvatarBase64) {
+            document.getElementById("profile-avatar-box").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+        }
 
         if (targetUser === loggedUser) {
             document.getElementById("security-box").classList.remove("hidden");
@@ -144,7 +149,7 @@
             `;
         }
 
-        // Tải bài viết cá nhân
+        // Tải bài viết cá nhân kèm hiển thị ảnh/video (media) đầy đủ
         const q = query(collection(db, "posts"));
         onSnapshot(q, (snap) => {
             const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -156,9 +161,10 @@
                 container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-fbHover text-center text-xs text-[#b0b3b8] italic">Chưa có bài viết nào.</div>`;
             } else {
                 container.innerHTML = userPosts.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-2 shadow">
+                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3 shadow">
                         <h4 class="text-xs font-bold text-white">${escapeHTML(p.author)}</h4>
-                        <p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>
+                        ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
+                        ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
                     </div>
                 `).join("");
             }
