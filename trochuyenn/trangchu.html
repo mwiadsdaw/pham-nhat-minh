@@ -3,34 +3,268 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhNet | Phạm Nhật Minh</title>
+    <title>MinhNet | Bảng Tin</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        fbBg: '#18191a',
+                        fbPanel: '#242526',
+                        fbHover: '#3a3b3c',
+                        fbInput: '#3a3b3c',
+                        fbBlue: '#2d88ff',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts & FontAwesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #18191a; color: #e4e6eb; }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #18191a;
+            color: #e4e6eb;
+            -webkit-tap-highlight-color: transparent;
+        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3a3b3c; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-[#18191a] text-[#e4e6eb] min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14 lg:pb-0">
 
-    <div class="bg-[#242526] p-8 rounded-2xl max-w-lg w-full border border-[#3a3b3c] shadow-2xl text-center space-y-6">
-        <div class="w-20 h-20 bg-[#2d88ff]/10 rounded-full flex items-center justify-center text-[#2d88ff] text-4xl mx-auto border border-[#2d88ff]/20">
-            <i class="fa-solid fa-compass"></i>
-        </div>
-        <div class="space-y-2">
-            <h1 class="text-3xl font-extrabold text-white">Chào mừng đến với MinhNet</h1>
-            <p class="text-xs text-[#b0b3b8]">Hệ thống mạng xã hội cá nhân bảo mật cao, kết nối thời gian thực.</p>
-        </div>
-
-        <div class="flex flex-col gap-3 pt-4">
-            <a href="newfeed.html" class="w-full bg-[#2d88ff] hover:opacity-90 py-3.5 rounded-xl text-xs font-bold transition text-white shadow-lg flex items-center justify-center gap-2">
-                <i class="fa-solid fa-newspaper text-sm"></i> Vào Bảng Tin (Newsfeed)
-            </a>
-            <a href="profile.html" class="w-full bg-[#3a3b3c] hover:bg-[#4e4f50] py-3.5 rounded-xl text-xs font-bold transition text-white flex items-center justify-center gap-2">
-                <i class="fa-solid fa-user text-sm"></i> Quản Lý Tài Khoản Cá Nhân
-            </a>
+    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (BẢO MẬT SHA-256) -->
+    <div id="auth-container" class="fixed inset-0 z-50 bg-[#18191a] flex items-center justify-center p-4">
+        <div class="bg-fbPanel p-6 sm:p-8 rounded-2xl max-w-md w-full border border-fbHover shadow-2xl space-y-5">
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 bg-fbBlue/10 rounded-full flex items-center justify-center text-fbBlue text-3xl mx-auto border border-fbBlue/20">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white">Đăng Nhập MinhNet</h2>
+                <p class="text-xs text-[#b0b3b8]">Hệ thống mạng xã hội cá nhân bảo mật</p>
+            </div>
+            <div class="space-y-3 pt-2">
+                <div>
+                    <label class="text-[11px] font-semibold text-[#b0b3b8] uppercase">Tên tài khoản</label>
+                    <input type="text" id="auth-user" placeholder="Nhập username..." class="w-full bg-fbInput border border-transparent focus:border-fbBlue rounded-xl px-4 py-3 text-sm text-white focus:outline-none mt-1">
+                </div>
+                <div>
+                    <label class="text-[11px] font-semibold text-[#b0b3b8] uppercase">Mật khẩu</label>
+                    <input type="password" id="auth-pass" placeholder="Nhập mật khẩu..." class="w-full bg-fbInput border border-transparent focus:border-fbBlue rounded-xl px-4 py-3 text-sm text-white focus:outline-none mt-1">
+                </div>
+                <div class="flex gap-3 pt-3">
+                    <button id="btn-login" class="flex-1 bg-fbBlue hover:opacity-90 py-3 rounded-xl text-xs font-bold transition text-white shadow-lg cursor-pointer">Đăng Nhập</button>
+                    <button id="btn-register" class="flex-1 bg-fbHover hover:bg-[#4e4f50] py-3 rounded-xl text-xs font-bold transition text-white cursor-pointer">Đăng Ký</button>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- GIAO DIỆN CHÍNH -->
+    <div id="app-container" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
+
+        <!-- HEADER TOP -->
+        <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="../index.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Về trang chủ Portfolio"><i class="fa-solid fa-house"></i></a>
+                <div class="bg-fbInput rounded-full px-3 py-2 hidden sm:flex items-center gap-2 w-[180px] md:w-[240px]">
+                    <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
+                    <input type="text" placeholder="Tìm kiếm trên MinhNet" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                </div>
+            </div>
+
+            <!-- Navbar Desktop -->
+            <div class="hidden md:flex items-center gap-1 sm:gap-4">
+                <button onclick="switchMainTab('home')" id="nav-home" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-users"></i></button>
+                <button onclick="switchMainTab('reels')" id="nav-reels" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-clapperboard"></i></button>
+                <button onclick="switchMainTab('friends')" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-user-group"></i></button>
+            </div>
+
+            <div class="flex items-center gap-2 sm:gap-3 justify-end">
+                <div id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold">
+                    Admin
+                </div>
+                <!-- Chuyển hướng sang profile.html -->
+                <a id="header-profile-link" href="profile.html" class="flex items-center gap-2 cursor-pointer hover:bg-fbHover p-1.5 rounded-full">
+                    <div id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center font-bold text-xs text-white overflow-hidden shrink-0">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span id="header-username" class="text-xs font-bold text-white hidden md:block">---</span>
+                </a>
+                <button id="btn-logout" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-right-from-bracket text-xs"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- BODY CHÍNH -->
+        <div class="flex-1 flex overflow-hidden relative">
+
+            <!-- CỘT TRÁI CHUNG (Desktop) -->
+            <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
+                <a id="sidebar-profile-link" href="profile.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
+                    <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span id="sidebar-username" class="text-xs font-bold text-white truncate">---</span>
+                </a>
+                <div onclick="switchMainTab('home')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
+                    <i class="fa-solid fa-users text-fbBlue text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Bảng feed</span>
+                </div>
+                <div onclick="switchMainTab('reels')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
+                    <i class="fa-solid fa-clapperboard text-purple-400 text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Thước phim (Reels)</span>
+                </div>
+                <div onclick="switchMainTab('friends')" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
+                    <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Bạn bè</span>
+                </div>
+            </div>
+
+            <!-- TAB 1: HOME (FEED) -->
+            <div id="tab-home" class="flex-1 flex overflow-hidden">
+                <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
+                    <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
+                        
+                        <!-- KHUNG ĐĂNG BÀI -->
+                        <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
+                            <div class="flex items-center gap-3">
+                                <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
+                                    <i class="fa-solid fa-user text-sm"></i>
+                                </div>
+                                <div class="flex-1 bg-fbInput rounded-full px-4 py-2.5 flex items-center justify-between">
+                                    <input type="text" id="post-title-input" placeholder="Bạn đang nghĩ gì thế?" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between pt-2 border-t border-fbHover">
+                                <button onclick="submitNewPost()" class="w-full bg-fbBlue hover:opacity-90 py-2 rounded-xl text-xs font-bold text-white transition cursor-pointer">Đăng bài</button>
+                            </div>
+                        </div>
+
+                        <!-- Danh sách bài viết -->
+                        <div id="feed-posts-container" class="space-y-4 w-full"></div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- SCRIPT FIREBASE & BẢO MẬT SHA-256 -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:f5b017647a17deacfc3593"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        window.myUser = localStorage.getItem("chat_user");
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
+        }
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        if (window.myUser) initApp();
+
+        document.getElementById("btn-register").onclick = async () => {
+            const u = escapeHTML(document.getElementById("auth-user").value.trim().toLowerCase());
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            const ref = doc(db, "users", u);
+            const snap = await getDoc(ref);
+            if(snap.exists()) return alert("Tài khoản đã tồn tại!");
+            
+            const hashedPass = await hashPassword(p);
+            await setDoc(ref, { username: u, password: hashedPass });
+            alert("Đăng ký thành công!");
+        };
+
+        document.getElementById("btn-login").onclick = async () => {
+            const u = escapeHTML(document.getElementById("auth-user").value.trim().toLowerCase());
+            const p = document.getElementById("auth-pass").value.trim();
+            if(!u || !p) return alert("Vui lòng điền đủ thông tin!");
+            const ref = doc(db, "users", u);
+            const snap = await getDoc(ref);
+            
+            const hashedPass = await hashPassword(p);
+            if(!snap.exists() || snap.data().password !== hashedPass) return alert("Sai tài khoản hoặc mật khẩu!");
+            
+            window.myUser = u;
+            localStorage.setItem("chat_user", u);
+            initApp();
+        };
+
+        document.getElementById("btn-logout").onclick = () => {
+            localStorage.removeItem("chat_user");
+            location.reload();
+        };
+
+        function initApp() {
+            document.getElementById("auth-container").classList.add("hidden");
+            document.getElementById("app-container").classList.remove("hidden");
+            document.getElementById("header-username").innerText = window.myUser;
+            document.getElementById("sidebar-username").innerText = window.myUser;
+
+            // Cập nhật link profile kèm username
+            document.getElementById("header-profile-link").href = `profile.html?profile=${window.myUser}`;
+            document.getElementById("sidebar-profile-link").href = `profile.html?profile=${window.myUser}`;
+
+            loadFeedPosts();
+        }
+
+        window.submitNewPost = async () => {
+            const title = escapeHTML(document.getElementById("post-title-input").value.trim());
+            if(!title) return alert("Vui lòng nhập nội dung!");
+
+            await addDoc(collection(db, "posts"), {
+                author: window.myUser,
+                title,
+                likes: [],
+                comments: [],
+                createdAt: serverTimestamp()
+            });
+            document.getElementById("post-title-input").value = "";
+            alert("Đăng bài thành công!");
+        };
+
+        function loadFeedPosts() {
+            const q = query(collection(db, "posts"));
+            onSnapshot(q, (snap) => {
+                const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                document.getElementById("feed-posts-container").innerHTML = docs.map(p => `
+                    <div class="bg-fbPanel rounded-xl border border-fbHover p-3 sm:p-4 space-y-3 shadow">
+                        <a href="profile.html?profile=${escapeHTML(p.author)}" class="text-xs font-bold text-white hover:underline">${escapeHTML(p.author)}</a>
+                        <p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>
+                    </div>
+                `).join("");
+            });
+        }
+    </script>
 </body>
 </html>
-
