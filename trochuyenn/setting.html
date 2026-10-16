@@ -34,7 +34,7 @@
     <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
         <div class="flex items-center gap-3">
             <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-85 transition" title="Quay lại Bảng tin"><i class="fa-solid fa-arrow-left"></i></a>
-            <span class="text-sm font-bold text-white">Cài Đặt & Tùy Chỉnh</span>
+            <span class="text-sm font-bold text-white">Cài Đặt & Kéo Thả Ảnh Bìa</span>
         </div>
         <div class="flex items-center gap-2">
             <a href="profile.html" class="text-xs bg-fbInput px-3 py-1.5 rounded-xl hover:bg-fbHover text-white font-bold">Trang Cá Nhân</a>
@@ -47,49 +47,36 @@
             
             <div class="flex items-center gap-3 border-b border-fbHover pb-4">
                 <div class="w-12 h-12 rounded-full bg-fbBlue/10 flex items-center justify-center text-fbBlue text-xl border border-fbBlue/20">
-                    <i class="fa-solid fa-sliders"></i>
+                    <i class="fa-solid fa-arrows-up-down"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-white">Tùy chỉnh Ảnh đại diện & Ảnh bìa</h2>
-                    <p class="text-xs text-[#b0b3b8]">Kéo thả ảnh bìa và căn chỉnh vị trí hiển thị chuẩn xác</p>
+                    <h2 class="text-xl font-bold text-white">Kéo thả tùy chỉnh Ảnh Bìa</h2>
+                    <p class="text-xs text-[#b0b3b8]">Bấm giữ và kéo lên/xuống trực tiếp trên khung hình để canh góc</p>
                 </div>
             </div>
 
             <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa (Kéo giữ và dịch chuyển)</label>
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Vùng hiển thị ảnh bìa</label>
                     <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
                     <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Tải ảnh bìa mới</button>
                 </div>
                 
-                <div id="cover-drag-container" class="w-full h-52 sm:h-72 md:h-80 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
-                    <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
-                    <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc dùng ảnh hiện tại</span>
+                <div id="cover-drag-container" class="w-full h-52 sm:h-72 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none cursor-grab active:cursor-grabbing">
+                    <img id="cover-drag-img" src="" class="absolute w-full h-full object-cover drag-cover hidden" style="object-position: center 50%;" draggable="false">
+                    <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc chọn ảnh có sẵn</span>
                 </div>
             </div>
 
-            <!-- CHỌN AVATAR & CĂN VỊ TRÍ -->
+            <!-- CHỌN AVATAR -->
             <div class="space-y-3 pt-2 border-t border-fbHover">
                 <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn (<2s)</label>
-                <div class="flex flex-col sm:flex-row items-center gap-4">
-                    <div id="settings-avatar-preview" class="w-20 h-20 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg shadow">
+                <div class="flex items-center gap-4">
+                    <div id="settings-avatar-preview" class="w-16 h-16 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg shadow">
                         <i class="fa-solid fa-user"></i>
                     </div>
-                    <div class="space-y-2.5 w-full">
-                        <input type="file" id="settings-avatar-input" accept="image/*,video/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-fbBlue file:text-white cursor-pointer">
-                        
-                        <div class="flex items-center gap-2">
-                            <span class="text-[11px] text-[#b0b3b8] shrink-0 font-semibold">Căn trọng tâm:</span>
-                            <select id="settings-avatar-pos" class="w-full bg-fbInput border border-fbHover rounded-xl p-2 text-white text-xs focus:outline-none">
-                                <option value="center center">Chính giữa (Mặc định)</option>
-                                <option value="top center">Căn lên trên (Ưu tiên mặt)</option>
-                                <option value="bottom center">Căn xuống dưới</option>
-                                <option value="center left">Căn sang trái</option>
-                                <option value="center right">Căn sang phải</option>
-                            </select>
-                        </div>
-                    </div>
+                    <input type="file" id="settings-avatar-input" accept="image/*,video/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-fbBlue file:text-white cursor-pointer">
                 </div>
             </div>
 
@@ -132,9 +119,8 @@
         if (!loggedUser) window.location.href = "trangchu.html";
 
         document.getElementById("settings-bio-input").value = localStorage.getItem("user_bio") || "";
-        document.getElementById("settings-avatar-pos").value = localStorage.getItem("user_avatar_pos") || "center center";
         
-        let coverPercent = parseFloat(localStorage.getItem("user_cover_pos_percent") || "0");
+        let coverPosYPercent = parseFloat(localStorage.getItem("user_cover_percent") || "50");
         let currentCover = localStorage.getItem("user_cover") || "";
         let currentAvatar = localStorage.getItem("user_avatar") || "";
 
@@ -143,79 +129,45 @@
 
         if (currentCover) {
             imgCover.src = currentCover;
+            imgCover.style.objectPosition = `center ${coverPosYPercent}%`;
             imgCover.classList.remove("hidden");
             placeholderCover.classList.add("hidden");
-            
-            // Khôi phục vị trí dựa trên % khi load ảnh vào khung
-            imgCover.onload = () => {
-                const containerHeight = dragContainer.clientHeight;
-                const imgHeight = imgCover.clientHeight;
-                const minTop = containerHeight - imgHeight;
-                const restoredTop = (coverPercent / 100) * minTop;
-                imgCover.style.top = (isNaN(restoredTop) ? 0 : restoredTop) + "px";
-            };
-            if (imgCover.complete) {
-                const containerHeight = dragContainer.clientHeight;
-                const imgHeight = imgCover.clientHeight;
-                const minTop = containerHeight - imgHeight;
-                const restoredTop = (coverPercent / 100) * minTop;
-                imgCover.style.top = (isNaN(restoredTop) ? 0 : restoredTop) + "px";
-            }
-        }
-
-        function updateAvatarPreview(src, isVideo = false) {
-            const previewBox = document.getElementById("settings-avatar-preview");
-            if (isVideo) {
-                previewBox.innerHTML = `<video src="${src}" class="w-full h-full object-cover" style="object-position: ${document.getElementById("settings-avatar-pos").value};" autoplay loop muted></video>`;
-            } else {
-                previewBox.innerHTML = `<img src="${src}" class="w-full h-full object-cover" style="object-position: ${document.getElementById("settings-avatar-pos").value};">`;
-            }
         }
 
         if (currentAvatar) {
-            updateAvatarPreview(currentAvatar, currentAvatar.startsWith("data:video"));
+            if (currentAvatar.startsWith("data:video")) {
+                document.getElementById("settings-avatar-preview").innerHTML = `<video src="${currentAvatar}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+            } else {
+                document.getElementById("settings-avatar-preview").innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+            }
         }
 
-        document.getElementById("settings-avatar-pos").onchange = (e) => {
-            if (currentAvatar) {
-                updateAvatarPreview(currentAvatar, currentAvatar.startsWith("data:video"));
-            }
-        };
-
-        // KÉO THẢ ẢNH BÌA TÍNH THEO %
+        // CƠ CHẾ KÉO THẢ TÍNH THEO PHẦN TRĂM (%) SẠCH SẼ, KHÔNG LO LỆCH KHUNG
         let isDragging = false;
         let startY = 0;
-        let initialTop = 0;
+        let startPercent = 50;
 
         const dragContainer = document.getElementById("cover-drag-container");
 
         const startDrag = (e) => {
-            if (!imgCover.src) return;
+            if (!imgCover.src || imgCover.classList.contains("hidden")) return;
             isDragging = true;
             startY = e.pageY || (e.touches && e.touches[0].pageY);
-            initialTop = parseInt(imgCover.style.top || 0);
+            startPercent = coverPosYPercent;
         };
 
         const onDrag = (e) => {
             if (!isDragging) return;
             const currentY = e.pageY || (e.touches && e.touches[0].pageY);
             const deltaY = currentY - startY;
-            let newTop = initialTop + deltaY;
-
-            const containerHeight = dragContainer.clientHeight;
-            const imgHeight = imgCover.clientHeight;
-            const minTop = containerHeight - imgHeight;
-
-            if (newTop > 0) newTop = 0;
-            if (minTop < 0 && newTop < minTop) newTop = minTop;
-
-            imgCover.style.top = newTop + "px";
             
-            if (minTop < 0) {
-                coverPercent = (newTop / minTop) * 100;
-            } else {
-                coverPercent = 0;
-            }
+            // Dịch chuyển phần trăm theo độ cao kéo chuột
+            let newPercent = startPercent - (deltaY / 2);
+            if (newPercent < 0) newPercent = 0;
+            if (newPercent > 100) newPercent = 100;
+
+            coverPosYPercent = newPercent;
+            imgCover.style.objectPosition = `center ${coverPosYPercent}%`;
         };
 
         const stopDrag = () => { isDragging = false; };
@@ -234,8 +186,8 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 imgCover.src = e.target.result;
-                imgCover.style.top = "0px";
-                coverPercent = 0;
+                coverPosYPercent = 50;
+                imgCover.style.objectPosition = `center 50%`;
                 imgCover.classList.remove("hidden");
                 placeholderCover.classList.add("hidden");
             };
@@ -249,8 +201,11 @@
             const reader = new FileReader();
             reader.onload = (e) => {
                 tempAvatarBase64 = e.target.result;
-                currentAvatar = tempAvatarBase64;
-                updateAvatarPreview(tempAvatarBase64, file.type.startsWith("video"));
+                if (file.type.startsWith("video")) {
+                    document.getElementById("settings-avatar-preview").innerHTML = `<video src="${tempAvatarBase64}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+                } else {
+                    document.getElementById("settings-avatar-preview").innerHTML = `<img src="${tempAvatarBase64}" class="w-full h-full object-cover">`;
+                }
             };
             reader.readAsDataURL(file);
         };
@@ -265,13 +220,11 @@
         window.saveAppSettings = async () => {
             const bio = document.getElementById("settings-bio-input").value.trim();
             const pass = document.getElementById("settings-new-pass").value.trim();
-            const avPos = document.getElementById("settings-avatar-pos").value;
 
             if (bio) localStorage.setItem("user_bio", bio);
-            localStorage.setItem("user_cover_pos_percent", coverPercent);
-            localStorage.setItem("user_avatar_pos", avPos);
+            localStorage.setItem("user_cover_percent", coverPosYPercent);
 
-            if (imgCover.src && imgCover.src !== window.location.href) {
+            if (imgCover.src && !imgCover.classList.contains("hidden")) {
                 localStorage.setItem("user_cover", imgCover.src);
             }
 
@@ -284,7 +237,7 @@
                 await setDoc(doc(db, "users", loggedUser), { password: hashed }, { merge: true });
             }
 
-            alert("Đã lưu cài đặt và vị trí ảnh thành công!");
+            alert("Đã lưu vị trí ảnh bìa thành công!");
             window.location.href = "profile.html";
         };
     </script>
