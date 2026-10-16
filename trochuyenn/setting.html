@@ -55,20 +55,19 @@
                 </div>
             </div>
 
-            <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA -->
-            <div class="space-y-2">
-                <div class="flex items-center justify-between">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa (Kéo giữ và dịch chuyển)</label>
-                    <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
-                    <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Tải ảnh bìa mới</button>
-                </div>
-                
-                <div id="cover-drag-container" class="w-full h-48 sm:h-60 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
-                    <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
-                    <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc dùng ảnh hiện tại</span>
-                </div>
-            </div>
-
+           <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA (ĐÃ ĐỒNG BỘ CHIỀU CAO VỚI PROFILE) -->
+<div class="space-y-2">
+    <div class="flex items-center justify-between">
+        <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa (Kéo giữ và dịch chuyển)</label>
+        <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
+        <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Tải ảnh bìa mới</button>
+    </div>
+    
+    <div id="cover-drag-container" class="w-full h-52 sm:h-72 md:h-80 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
+        <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
+        <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc dùng ảnh hiện tại</span>
+    </div>
+</div>
             <!-- CHỌN AVATAR & CĂN VỊ TRÍ -->
             <div class="space-y-3 pt-2 border-t border-fbHover">
                 <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn (<2s)</label>
