@@ -45,10 +45,9 @@
     <!-- TRANG CÁ NHÂN FACEBOOK 1:1 -->
     <div class="w-full flex flex-col items-center bg-fbBg pb-20">
         
-        <!-- Khung Header Profile -->
         <div class="w-full max-w-[1050px] bg-fbPanel border-b border-fbHover rounded-b-2xl overflow-hidden shadow-2xl relative">
             
-            <!-- Ảnh bìa hiển thị vị trí kéo thả -->
+            <!-- Ảnh bìa -->
             <div id="profile-cover-box" class="w-full h-52 sm:h-72 md:h-80 bg-gradient-to-r from-slate-900 via-gray-800 to-zinc-900 relative overflow-hidden flex items-center justify-center"></div>
 
             <!-- Khung Thông tin User -->
@@ -74,7 +73,6 @@
         <!-- Bố cục 2 Cột -->
         <div class="w-full max-w-[1050px] p-2 sm:p-4 grid grid-cols-1 md:grid-cols-5 gap-4 mt-2">
             
-            <!-- CỘT TRÁI -->
             <div class="md:col-span-2 space-y-4">
                 <div class="bg-fbPanel p-4 rounded-2xl border border-fbHover space-y-3 shadow">
                     <h3 class="text-base font-bold text-white">Giới thiệu</h3>
@@ -91,7 +89,6 @@
                 </div>
             </div>
 
-            <!-- CỘT PHẢI: Bài viết -->
             <div class="md:col-span-3 space-y-4">
                 <div class="bg-fbPanel p-3.5 rounded-2xl border border-fbHover flex items-center justify-between shadow">
                     <h3 class="text-sm font-bold text-white">Bài viết</h3>
@@ -125,6 +122,7 @@
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let userCoverBase64 = localStorage.getItem("user_cover") || "";
         let userCoverPosY = localStorage.getItem("user_cover_pos_y") || "0";
+        let userAvatarPos = localStorage.getItem("user_avatar_pos") || "center center";
         let userBio = localStorage.getItem("user_bio") || "";
 
         function escapeHTML(str) {
@@ -135,16 +133,16 @@
         document.getElementById("profile-username").innerText = targetUser === 'phamnhatminh' ? 'Phạm Nhật Minh' : targetUser;
         if (userBio) document.getElementById("profile-bio-text").innerText = userBio;
 
-        // Render Avatar (Video / GIF / Ảnh)
+        // Render Avatar với vị trí căn chỉnh tùy chọn
         if (userAvatarBase64) {
             if (userAvatarBase64.startsWith("data:video")) {
-                document.getElementById("profile-avatar-box").innerHTML = `<video src="${userAvatarBase64}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+                document.getElementById("profile-avatar-box").innerHTML = `<video src="${userAvatarBase64}" class="w-full h-full object-cover" style="object-position: ${userAvatarPos};" autoplay loop muted></video>`;
             } else {
-                document.getElementById("profile-avatar-box").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+                document.getElementById("profile-avatar-box").innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover" style="object-position: ${userAvatarPos};">`;
             }
         }
 
-        // Render Cover Photo khớp với tọa độ đã kéo thả
+        // Render Cover Photo
         if (userCoverBase64) {
             document.getElementById("profile-cover-box").innerHTML = `<img src="${userCoverBase64}" class="absolute w-full object-cover" style="top: ${userCoverPosY}px;">`;
         }
@@ -159,7 +157,6 @@
             `;
         }
 
-        // Tải danh sách bài viết
         const q = query(collection(db, "posts"));
         onSnapshot(q, (snap) => {
             const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
