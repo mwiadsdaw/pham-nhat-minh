@@ -46,47 +46,44 @@
     <div class="w-full flex flex-col items-center bg-fbBg pb-20">
         
         <!-- Khung Header Profile -->
-        <div class="w-full max-w-[1050px] bg-fbPanel border-b border-fbHover relative rounded-b-xl overflow-hidden shadow">
+        <div class="w-full max-w-[1050px] bg-fbPanel border-b border-fbHover rounded-b-2xl overflow-hidden shadow-2xl relative">
             
-            <!-- Ảnh bìa -->
+            <!-- Ảnh bìa hiển thị vị trí kéo thả -->
             <div id="profile-cover-box" class="w-full h-52 sm:h-72 md:h-80 bg-gradient-to-r from-slate-900 via-gray-800 to-zinc-900 relative overflow-hidden flex items-center justify-center"></div>
 
-            <!-- Khung Avatar + Tên + Nút bấm -->
-            <div class="px-4 sm:px-8 pb-4 relative flex flex-col md:flex-row items-center md:items-end justify-between gap-4 -mt-16 sm:-mt-20 z-10">
-                <div class="flex flex-col md:flex-row items-center md:items-end gap-4 text-center md:text-left">
+            <!-- Khung Thông tin User -->
+            <div class="px-4 sm:px-8 pb-5 pt-2 relative flex flex-col md:flex-row items-center md:items-end justify-between gap-4">
+                <div class="flex flex-col md:flex-row items-center md:items-end gap-5 text-center md:text-left -mt-20 sm:-mt-24 z-20 w-full md:w-auto">
                     
-                    <!-- Avatar tròn căn lề chuẩn -->
                     <div class="relative shrink-0">
                         <div id="profile-avatar-box" class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-fbPanel bg-fbHover flex items-center justify-center text-5xl font-bold text-white overflow-hidden shadow-2xl relative">
                             <i class="fa-solid fa-user"></i>
                         </div>
                     </div>
 
-                    <!-- Thông tin tên & bio -->
-                    <div class="space-y-1 pb-1">
-                        <h2 id="profile-username" class="text-2xl sm:text-3xl font-extrabold text-white">---</h2>
+                    <div class="space-y-1 md:mb-3">
+                        <h2 id="profile-username" class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">---</h2>
                         <p id="profile-bio-text" class="text-xs text-[#b0b3b8] italic">Chưa có tiểu sử</p>
                     </div>
                 </div>
 
-                <!-- Action Button -->
-                <div id="profile-action-btn" class="flex items-center gap-2 pb-2 w-full md:w-auto justify-center"></div>
+                <div id="profile-action-btn" class="flex items-center gap-2 md:mb-3 w-full md:w-auto justify-center shrink-0 z-20"></div>
             </div>
         </div>
 
         <!-- Bố cục 2 Cột -->
-        <div class="w-full max-w-[1050px] p-2 sm:p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div class="w-full max-w-[1050px] p-2 sm:p-4 grid grid-cols-1 md:grid-cols-5 gap-4 mt-2">
             
             <!-- CỘT TRÁI -->
             <div class="md:col-span-2 space-y-4">
-                <div class="bg-fbPanel p-4 rounded-xl border border-fbHover space-y-3 shadow">
+                <div class="bg-fbPanel p-4 rounded-2xl border border-fbHover space-y-3 shadow">
                     <h3 class="text-base font-bold text-white">Giới thiệu</h3>
-                    <div class="space-y-2 text-xs text-slate-300">
-                        <div class="flex items-center gap-2">
+                    <div class="space-y-2.5 text-xs text-slate-300">
+                        <div class="flex items-center gap-2.5">
                             <i class="fa-solid fa-location-dot text-[#b0b3b8] w-4 text-center"></i>
                             <span>Sống tại <strong class="text-white">Đông Xuân, Hà Nội</strong></span>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center gap-2.5">
                             <i class="fa-solid fa-graduation-cap text-[#b0b3b8] w-4 text-center"></i>
                             <span>Học sinh tại <strong class="text-white">THPT Sóc Sơn</strong></span>
                         </div>
@@ -94,9 +91,9 @@
                 </div>
             </div>
 
-            <!-- CỘT PHẢI: Bài viết cá nhân -->
+            <!-- CỘT PHẢI: Bài viết -->
             <div class="md:col-span-3 space-y-4">
-                <div class="bg-fbPanel p-3 rounded-xl border border-fbHover flex items-center justify-between shadow">
+                <div class="bg-fbPanel p-3.5 rounded-2xl border border-fbHover flex items-center justify-between shadow">
                     <h3 class="text-sm font-bold text-white">Bài viết</h3>
                 </div>
                 <div id="profile-posts-container" class="space-y-4"></div>
@@ -127,6 +124,7 @@
         const targetUser = urlParams.get('profile') || loggedUser;
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let userCoverBase64 = localStorage.getItem("user_cover") || "";
+        let userCoverPosY = localStorage.getItem("user_cover_pos_y") || "0";
         let userBio = localStorage.getItem("user_bio") || "";
 
         function escapeHTML(str) {
@@ -137,7 +135,7 @@
         document.getElementById("profile-username").innerText = targetUser === 'phamnhatminh' ? 'Phạm Nhật Minh' : targetUser;
         if (userBio) document.getElementById("profile-bio-text").innerText = userBio;
 
-        // Xử lý Avatar (Video ngắn / GIF / Ảnh)
+        // Render Avatar (Video / GIF / Ảnh)
         if (userAvatarBase64) {
             if (userAvatarBase64.startsWith("data:video")) {
                 document.getElementById("profile-avatar-box").innerHTML = `<video src="${userAvatarBase64}" class="w-full h-full object-cover" autoplay loop muted></video>`;
@@ -146,22 +144,22 @@
             }
         }
 
-        // Xử lý Cover Photo
+        // Render Cover Photo khớp với tọa độ đã kéo thả
         if (userCoverBase64) {
-            document.getElementById("profile-cover-box").innerHTML = `<img src="${userCoverBase64}" class="w-full h-full object-cover">`;
+            document.getElementById("profile-cover-box").innerHTML = `<img src="${userCoverBase64}" class="absolute w-full object-cover" style="top: ${userCoverPosY}px;">`;
         }
 
         if (targetUser === loggedUser) {
             document.getElementById("profile-action-btn").innerHTML = `
-                <button class="bg-fbBlue hover:opacity-90 px-4 py-2 rounded-lg text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-plus"></i> Thêm vào tin</button>
+                <button class="bg-fbBlue hover:opacity-90 px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5 shadow"><i class="fa-solid fa-plus"></i> Thêm vào tin</button>
             `;
         } else {
             document.getElementById("profile-action-btn").innerHTML = `
-                <button class="bg-fbBlue hover:opacity-90 px-4 py-2 rounded-lg text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-message"></i> Nhắn tin</button>
+                <button class="bg-fbBlue hover:opacity-90 px-4 py-2 rounded-lg text-xs font-bold text-white flex items-center gap-1.5 shadow"><i class="fa-solid fa-message"></i> Nhắn tin</button>
             `;
         }
 
-        // Load bài viết cá nhân
+        // Tải danh sách bài viết
         const q = query(collection(db, "posts"));
         onSnapshot(q, (snap) => {
             const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
@@ -170,13 +168,13 @@
             
             const container = document.getElementById("profile-posts-container");
             if (userPosts.length === 0) {
-                container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-fbHover text-center text-xs text-[#b0b3b8] italic">Chưa có bài viết nào.</div>`;
+                container.innerHTML = `<div class="bg-fbPanel p-6 rounded-2xl border border-fbHover text-center text-xs text-[#b0b3b8] italic">Chưa có bài viết nào.</div>`;
             } else {
                 container.innerHTML = userPosts.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3 shadow">
+                    <div class="bg-fbPanel rounded-2xl border border-fbHover p-4 space-y-3 shadow">
                         <h4 class="text-xs font-bold text-white">${escapeHTML(p.author)}</h4>
                         ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
-                        ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
+                        ${p.media ? `<div class="rounded-xl overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
                     </div>
                 `).join("");
             }
