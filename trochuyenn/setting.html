@@ -24,8 +24,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #18191a; color: #e4e6eb; }
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-thumb { background: #3a3b3c; border-radius: 3px; }
+        .drag-cover { cursor: grab; user-select: none; }
+        .drag-cover:active { cursor: grabbing; }
     </style>
 </head>
 <body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14">
@@ -34,7 +34,7 @@
     <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
         <div class="flex items-center gap-3">
             <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-85 transition" title="Quay lại Bảng tin"><i class="fa-solid fa-arrow-left"></i></a>
-            <span class="text-sm font-bold text-white">Cài Đặt Tài Khoản</span>
+            <span class="text-sm font-bold text-white">Cài Đặt & Chỉnh Ảnh</span>
         </div>
         <div class="flex items-center gap-2">
             <a href="profile.html" class="text-xs bg-fbInput px-3 py-1.5 rounded-xl hover:bg-fbHover text-white font-bold">Trang Cá Nhân</a>
@@ -42,59 +42,60 @@
         </div>
     </header>
 
-    <!-- NỘI DUNG CÀI ĐẶT -->
     <div class="w-full flex flex-col items-center bg-fbBg py-8 px-4">
-        <div class="max-w-[600px] w-full bg-fbPanel rounded-2xl border border-fbHover p-6 sm:p-8 space-y-6 shadow-2xl">
+        <div class="max-w-[650px] w-full bg-fbPanel rounded-2xl border border-fbHover p-6 sm:p-8 space-y-6 shadow-2xl">
+            
             <div class="flex items-center gap-3 border-b border-fbHover pb-4">
                 <div class="w-12 h-12 rounded-full bg-fbBlue/10 flex items-center justify-center text-fbBlue text-xl border border-fbBlue/20">
-                    <i class="fa-solid fa-gear"></i>
+                    <i class="fa-solid fa-sliders"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-white">Tùy chỉnh tài khoản</h2>
-                    <p class="text-xs text-[#b0b3b8]">Quản lý thông tin cá nhân và bảo mật (Hỗ trợ Ảnh, GIF, Video ngắn)</p>
+                    <h2 class="text-xl font-bold text-white">Chỉnh sửa vị trí ảnh (Drag to Reposition)</h2>
+                    <p class="text-xs text-[#b0b3b8]">Kéo giữ ảnh bìa bên dưới để điều chỉnh góc nhìn đẹp nhất</p>
                 </div>
             </div>
 
-            <div class="space-y-5 text-xs">
-                <!-- Đổi Ảnh/Video Đại Diện -->
-                <div class="space-y-2">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / Video ngắn / GIF</label>
-                    <div class="flex items-center gap-4">
-                        <div id="settings-avatar-preview" class="w-16 h-16 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg">
-                            <i class="fa-solid fa-user"></i>
-                        </div>
-                        <input type="file" id="settings-avatar-input" accept="image/*,video/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fbBlue file:text-white cursor-pointer hover:file:opacity-90">
-                    </div>
+            <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Xem trước ảnh bìa (Kéo chuột/tay để chỉnh)</label>
+                    <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
+                    <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Đổi ảnh bìa mới</button>
                 </div>
-
-                <!-- Đổi Ảnh Bìa (Cover Photo) -->
-                <div class="space-y-2">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa mới (Cover Photo)</label>
-                    <div class="space-y-2">
-                        <div id="settings-cover-preview" class="w-full h-32 rounded-xl bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center text-[#b0b3b8] italic">
-                            Chưa chọn ảnh bìa
-                        </div>
-                        <input type="file" id="settings-cover-input" accept="image/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fbBlue file:text-white cursor-pointer hover:file:opacity-90">
-                    </div>
+                
+                <div id="cover-drag-container" class="w-full h-48 sm:h-60 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
+                    <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
+                    <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Đổi ảnh bìa mới" hoặc chọn ảnh có sẵn</span>
                 </div>
+            </div>
 
-                <!-- Đổi Tiểu sử (Bio) -->
-                <div class="space-y-2">
+            <!-- CHỌN AVATAR -->
+            <div class="space-y-2 pt-2 border-t border-fbHover">
+                <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn</label>
+                <div class="flex items-center gap-4">
+                    <div id="settings-avatar-preview" class="w-16 h-16 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <input type="file" id="settings-avatar-input" accept="image/*,video/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-3 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:bg-fbBlue file:text-white cursor-pointer">
+                </div>
+            </div>
+
+            <!-- BIO & PASS -->
+            <div class="space-y-4 pt-2 border-t border-fbHover">
+                <div>
                     <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Tiểu sử (Bio)</label>
-                    <input type="text" id="settings-bio-input" placeholder="Nhập tiểu sử ngắn của bạn..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-white focus:outline-none focus:border-fbBlue text-xs">
+                    <input type="text" id="settings-bio-input" placeholder="Nhập tiểu sử ngắn..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-white focus:outline-none text-xs mt-1">
                 </div>
-
-                <!-- Đổi Mật Khẩu SHA-256 -->
-                <div class="space-y-2 pt-2 border-t border-fbHover">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Mật khẩu mới (Mã hóa SHA-256)</label>
-                    <input type="password" id="settings-new-pass" placeholder="Nhập mật khẩu mới nếu muốn đổi..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-white focus:outline-none focus:border-fbBlue text-xs">
+                <div>
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Mật khẩu mới (SHA-256)</label>
+                    <input type="password" id="settings-new-pass" placeholder="Mật khẩu mới..." class="w-full bg-fbInput border border-fbHover rounded-xl p-3 text-white focus:outline-none text-xs mt-1">
                 </div>
-
-                <!-- Nút Lưu Thay Đổi -->
-                <button onclick="saveAppSettings()" class="w-full bg-fbBlue hover:opacity-90 py-3.5 rounded-xl font-bold text-white transition shadow-lg cursor-pointer text-sm">
-                    Lưu Thay Đổi
-                </button>
             </div>
+
+            <button onclick="saveAppSettings()" class="w-full bg-fbBlue hover:opacity-90 py-3.5 rounded-xl font-bold text-white transition shadow-lg cursor-pointer text-sm">
+                Lưu Thay Đổi
+            </button>
+
         </div>
     </div>
 
@@ -115,17 +116,24 @@
         const db = getFirestore(app);
 
         const loggedUser = localStorage.getItem("chat_user");
-        if (!loggedUser) {
-            alert("Vui lòng đăng nhập trước!");
-            window.location.href = "trangchu.html";
+        if (!loggedUser) window.location.href = "trangchu.html";
+
+        document.getElementById("settings-bio-input").value = localStorage.getItem("user_bio") || "";
+        
+        let coverPosY = parseInt(localStorage.getItem("user_cover_pos_y") || "0");
+        let currentCover = localStorage.getItem("user_cover") || "";
+        let currentAvatar = localStorage.getItem("user_avatar") || "";
+
+        const imgCover = document.getElementById("cover-drag-img");
+        const placeholderCover = document.getElementById("cover-placeholder");
+
+        if (currentCover) {
+            imgCover.src = currentCover;
+            imgCover.style.top = coverPosY + "px";
+            imgCover.classList.remove("hidden");
+            placeholderCover.classList.add("hidden");
         }
 
-        const currentBio = localStorage.getItem("user_bio") || "";
-        const currentAvatar = localStorage.getItem("user_avatar") || "";
-        const currentCover = localStorage.getItem("user_cover") || "";
-        
-        document.getElementById("settings-bio-input").value = currentBio;
-        
         if (currentAvatar) {
             if (currentAvatar.startsWith("data:video")) {
                 document.getElementById("settings-avatar-preview").innerHTML = `<video src="${currentAvatar}" class="w-full h-full object-cover" autoplay loop muted></video>`;
@@ -134,11 +142,62 @@
             }
         }
 
-        if (currentCover) {
-            document.getElementById("settings-cover-preview").innerHTML = `<img src="${currentCover}" class="w-full h-full object-cover">`;
-        }
+        // CHỨC NĂNG KÉO THẢ ẢNH BÌA (DRAG REPOSITION)
+        let isDragging = false;
+        let startY = 0;
+        let initialTop = 0;
 
-        // Xem trước Avatar (Hỗ trợ cả Video & Ảnh/GIF)
+        const dragContainer = document.getElementById("cover-drag-container");
+
+        const startDrag = (e) => {
+            if (!imgCover.src) return;
+            isDragging = true;
+            startY = e.pageY || e.touches[0].pageY;
+            initialTop = parseInt(imgCover.style.top || 0);
+        };
+
+        const onDrag = (e) => {
+            if (!isDragging) return;
+            const currentY = e.pageY || (e.touches && e.touches[0].pageY);
+            const deltaY = currentY - startY;
+            let newTop = initialTop + deltaY;
+
+            // Giới hạn không cho kéo vuột ra ngoài khung
+            const containerHeight = dragContainer.clientHeight;
+            const imgHeight = imgCover.clientHeight;
+            const minTop = containerHeight - imgHeight;
+
+            if (newTop > 0) newTop = 0;
+            if (minTop < 0 && newTop < minTop) newTop = minTop;
+
+            imgCover.style.top = newTop + "px";
+            coverPosY = newTop;
+        };
+
+        const stopDrag = () => { isDragging = false; };
+
+        dragContainer.addEventListener("mousedown", startDrag);
+        window.addEventListener("mousemove", onDrag);
+        window.addEventListener("mouseup", stopDrag);
+
+        dragContainer.addEventListener("touchstart", startDrag);
+        window.addEventListener("touchmove", onDrag);
+        window.addEventListener("touchend", stopDrag);
+
+        window.handleCoverSelect = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imgCover.src = e.target.result;
+                imgCover.style.top = "0px";
+                coverPosY = 0;
+                imgCover.classList.remove("hidden");
+                placeholderCover.classList.add("hidden");
+            };
+            reader.readAsDataURL(file);
+        };
+
         document.getElementById("settings-avatar-input").onchange = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -154,17 +213,6 @@
             reader.readAsDataURL(file);
         };
 
-        // Xem trước Ảnh bìa
-        document.getElementById("settings-cover-input").onchange = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                document.getElementById("settings-cover-preview").innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
-            };
-            reader.readAsDataURL(file);
-        };
-
         async function hashPassword(password) {
             const encoder = new TextEncoder();
             const data = encoder.encode(password);
@@ -176,45 +224,33 @@
             const bio = document.getElementById("settings-bio-input").value.trim();
             const pass = document.getElementById("settings-new-pass").value.trim();
             const avatarFile = document.getElementById("settings-avatar-input").files[0];
-            const coverFile = document.getElementById("settings-cover-input").files[0];
 
             if (bio) localStorage.setItem("user_bio", bio);
+            localStorage.setItem("user_cover_pos_y", coverPosY);
+
+            if (imgCover.src && imgCover.src !== window.location.href) {
+                localStorage.setItem("user_cover", imgCover.src);
+            }
 
             if (avatarFile) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     localStorage.setItem("user_avatar", e.target.result);
-                    await checkCoverAndFinalize(coverFile, pass);
+                    await finalizeSettings(pass);
                 };
                 reader.readAsDataURL(avatarFile);
                 return;
             }
 
-            await checkCoverAndFinalize(coverFile, pass);
-        };
-
-        async function checkCoverAndFinalize(coverFile, pass) {
-            if (coverFile) {
-                const reader = new FileReader();
-                reader.onload = async function(e) {
-                    localStorage.setItem("user_cover", e.target.result);
-                    await finalizeSettings(pass);
-                };
-                reader.readAsDataURL(coverFile);
-                return;
-            }
-
             await finalizeSettings(pass);
-        }
+        };
 
         async function finalizeSettings(pass) {
             if (pass) {
                 const hashed = await hashPassword(pass);
                 await setDoc(doc(db, "users", loggedUser), { password: hashed }, { merge: true });
-                alert("Đã lưu cài đặt và cập nhật mật khẩu mã hóa SHA-256 thành công!");
-            } else {
-                alert("Đã lưu cài đặt thành công!");
             }
+            alert("Đã lưu vị trí ảnh bìa và cài đặt thành công!");
             window.location.href = "profile.html";
         }
     </script>
