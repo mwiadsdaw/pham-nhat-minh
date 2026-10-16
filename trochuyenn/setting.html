@@ -51,23 +51,24 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold text-white">Tùy chỉnh Ảnh đại diện & Ảnh bìa</h2>
-                    <p class="text-xs text-[#b0b3b8]">Kéo thả ảnh bìa hoặc chọn vị trí hiển thị cho ảnh đại diện</p>
+                    <p class="text-xs text-[#b0b3b8]">Kéo thả ảnh bìa và căn chỉnh vị trí hiển thị chuẩn xác</p>
                 </div>
             </div>
 
-           <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA (ĐÃ ĐỒNG BỘ CHIỀU CAO VỚI PROFILE) -->
-<div class="space-y-2">
-    <div class="flex items-center justify-between">
-        <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa (Kéo giữ và dịch chuyển)</label>
-        <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
-        <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Tải ảnh bìa mới</button>
-    </div>
-    
-    <div id="cover-drag-container" class="w-full h-52 sm:h-72 md:h-80 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
-        <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
-        <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc dùng ảnh hiện tại</span>
-    </div>
-</div>
+            <!-- KHUNG KÉO THẢ CHỈNH ẢNH BÌA -->
+            <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa (Kéo giữ và dịch chuyển)</label>
+                    <input type="file" id="settings-cover-input" accept="image/*" class="hidden" onchange="handleCoverSelect(event)">
+                    <button onclick="document.getElementById('settings-cover-input').click()" class="text-xs text-fbBlue font-bold hover:underline cursor-pointer"><i class="fa-solid fa-upload"></i> Tải ảnh bìa mới</button>
+                </div>
+                
+                <div id="cover-drag-container" class="w-full h-52 sm:h-72 md:h-80 rounded-xl bg-black border border-fbHover relative overflow-hidden flex items-center justify-center select-none">
+                    <img id="cover-drag-img" src="" class="absolute w-full object-cover drag-cover hidden" style="top: 0px;" draggable="false">
+                    <span id="cover-placeholder" class="text-xs text-[#b0b3b8] italic">Bấm "Tải ảnh bìa mới" hoặc dùng ảnh hiện tại</span>
+                </div>
+            </div>
+
             <!-- CHỌN AVATAR & CĂN VỊ TRÍ -->
             <div class="space-y-3 pt-2 border-t border-fbHover">
                 <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn (<2s)</label>
@@ -133,7 +134,7 @@
         document.getElementById("settings-bio-input").value = localStorage.getItem("user_bio") || "";
         document.getElementById("settings-avatar-pos").value = localStorage.getItem("user_avatar_pos") || "center center";
         
-        let coverPosY = parseInt(localStorage.getItem("user_cover_pos_y") || "0");
+        let coverPercent = parseFloat(localStorage.getItem("user_cover_pos_percent") || "0");
         let currentCover = localStorage.getItem("user_cover") || "";
         let currentAvatar = localStorage.getItem("user_avatar") || "";
 
@@ -142,9 +143,24 @@
 
         if (currentCover) {
             imgCover.src = currentCover;
-            imgCover.style.top = coverPosY + "px";
             imgCover.classList.remove("hidden");
             placeholderCover.classList.add("hidden");
+            
+            // Khôi phục vị trí dựa trên % khi load ảnh vào khung
+            imgCover.onload = () => {
+                const containerHeight = dragContainer.clientHeight;
+                const imgHeight = imgCover.clientHeight;
+                const minTop = containerHeight - imgHeight;
+                const restoredTop = (coverPercent / 100) * minTop;
+                imgCover.style.top = (isNaN(restoredTop) ? 0 : restoredTop) + "px";
+            };
+            if (imgCover.complete) {
+                const containerHeight = dragContainer.clientHeight;
+                const imgHeight = imgCover.clientHeight;
+                const minTop = containerHeight - imgHeight;
+                const restoredTop = (coverPercent / 100) * minTop;
+                imgCover.style.top = (isNaN(restoredTop) ? 0 : restoredTop) + "px";
+            }
         }
 
         function updateAvatarPreview(src, isVideo = false) {
@@ -166,7 +182,7 @@
             }
         };
 
-        // KÉO THẢ ẢNH BÌA
+        // KÉO THẢ ẢNH BÌA TÍNH THEO %
         let isDragging = false;
         let startY = 0;
         let initialTop = 0;
@@ -194,7 +210,12 @@
             if (minTop < 0 && newTop < minTop) newTop = minTop;
 
             imgCover.style.top = newTop + "px";
-            coverPosY = newTop;
+            
+            if (minTop < 0) {
+                coverPercent = (newTop / minTop) * 100;
+            } else {
+                coverPercent = 0;
+            }
         };
 
         const stopDrag = () => { isDragging = false; };
@@ -214,7 +235,7 @@
             reader.onload = (e) => {
                 imgCover.src = e.target.result;
                 imgCover.style.top = "0px";
-                coverPosY = 0;
+                coverPercent = 0;
                 imgCover.classList.remove("hidden");
                 placeholderCover.classList.add("hidden");
             };
@@ -247,7 +268,7 @@
             const avPos = document.getElementById("settings-avatar-pos").value;
 
             if (bio) localStorage.setItem("user_bio", bio);
-            localStorage.setItem("user_cover_pos_y", coverPosY);
+            localStorage.setItem("user_cover_pos_percent", coverPercent);
             localStorage.setItem("user_avatar_pos", avPos);
 
             if (imgCover.src && imgCover.src !== window.location.href) {
@@ -263,7 +284,7 @@
                 await setDoc(doc(db, "users", loggedUser), { password: hashed }, { merge: true });
             }
 
-            alert("Đã lưu cài đặt thành công!");
+            alert("Đã lưu cài đặt và vị trí ảnh thành công!");
             window.location.href = "profile.html";
         };
     </script>
