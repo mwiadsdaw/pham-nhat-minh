@@ -51,19 +51,30 @@
                 </div>
                 <div>
                     <h2 class="text-xl font-bold text-white">Tùy chỉnh tài khoản</h2>
-                    <p class="text-xs text-[#b0b3b8]">Quản lý thông tin cá nhân và bảo mật hệ thống MinhNet</p>
+                    <p class="text-xs text-[#b0b3b8]">Quản lý thông tin cá nhân và bảo mật (Hỗ trợ Ảnh, GIF, Video ngắn)</p>
                 </div>
             </div>
 
             <div class="space-y-5 text-xs">
-                <!-- Đổi Ảnh Đại Diện -->
+                <!-- Đổi Ảnh/Video Đại Diện -->
                 <div class="space-y-2">
-                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện mới</label>
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / Video ngắn / GIF</label>
                     <div class="flex items-center gap-4">
                         <div id="settings-avatar-preview" class="w-16 h-16 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg">
                             <i class="fa-solid fa-user"></i>
                         </div>
-                        <input type="file" id="settings-avatar-input" accept="image/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fbBlue file:text-white cursor-pointer hover:file:opacity-90">
+                        <input type="file" id="settings-avatar-input" accept="image/*,video/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fbBlue file:text-white cursor-pointer hover:file:opacity-90">
+                    </div>
+                </div>
+
+                <!-- Đổi Ảnh Bìa (Cover Photo) -->
+                <div class="space-y-2">
+                    <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh bìa mới (Cover Photo)</label>
+                    <div class="space-y-2">
+                        <div id="settings-cover-preview" class="w-full h-32 rounded-xl bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center text-[#b0b3b8] italic">
+                            Chưa chọn ảnh bìa
+                        </div>
+                        <input type="file" id="settings-cover-input" accept="image/*" class="w-full bg-fbInput border border-fbHover rounded-xl p-2.5 text-white text-xs file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-fbBlue file:text-white cursor-pointer hover:file:opacity-90">
                     </div>
                 </div>
 
@@ -109,22 +120,47 @@
             window.location.href = "trangchu.html";
         }
 
-        // Khởi tạo hiển thị dữ liệu cũ nếu có
         const currentBio = localStorage.getItem("user_bio") || "";
         const currentAvatar = localStorage.getItem("user_avatar") || "";
+        const currentCover = localStorage.getItem("user_cover") || "";
         
         document.getElementById("settings-bio-input").value = currentBio;
+        
         if (currentAvatar) {
-            document.getElementById("settings-avatar-preview").innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+            if (currentAvatar.startsWith("data:video")) {
+                document.getElementById("settings-avatar-preview").innerHTML = `<video src="${currentAvatar}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+            } else {
+                document.getElementById("settings-avatar-preview").innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+            }
         }
 
-        // Xem trước ảnh khi chọn file mới
+        if (currentCover) {
+            document.getElementById("settings-cover-preview").innerHTML = `<img src="${currentCover}" class="w-full h-full object-cover">`;
+        }
+
+        // Xem trước Avatar (Hỗ trợ cả Video & Ảnh/GIF)
         document.getElementById("settings-avatar-input").onchange = (event) => {
             const file = event.target.files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                document.getElementById("settings-avatar-preview").innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
+                const res = e.target.result;
+                if (file.type.startsWith("video")) {
+                    document.getElementById("settings-avatar-preview").innerHTML = `<video src="${res}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+                } else {
+                    document.getElementById("settings-avatar-preview").innerHTML = `<img src="${res}" class="w-full h-full object-cover">`;
+                }
+            };
+            reader.readAsDataURL(file);
+        };
+
+        // Xem trước Ảnh bìa
+        document.getElementById("settings-cover-input").onchange = (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                document.getElementById("settings-cover-preview").innerHTML = `<img src="${e.target.result}" class="w-full h-full object-cover">`;
             };
             reader.readAsDataURL(file);
         };
@@ -140,23 +176,36 @@
             const bio = document.getElementById("settings-bio-input").value.trim();
             const pass = document.getElementById("settings-new-pass").value.trim();
             const avatarFile = document.getElementById("settings-avatar-input").files[0];
+            const coverFile = document.getElementById("settings-cover-input").files[0];
 
-            if (bio) {
-                localStorage.setItem("user_bio", bio);
-            }
+            if (bio) localStorage.setItem("user_bio", bio);
 
             if (avatarFile) {
                 const reader = new FileReader();
                 reader.onload = async function(e) {
                     localStorage.setItem("user_avatar", e.target.result);
-                    await finalizeSettings(pass);
+                    await checkCoverAndFinalize(coverFile, pass);
                 };
                 reader.readAsDataURL(avatarFile);
                 return;
             }
 
-            await finalizeSettings(pass);
+            await checkCoverAndFinalize(coverFile, pass);
         };
+
+        async function checkCoverAndFinalize(coverFile, pass) {
+            if (coverFile) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    localStorage.setItem("user_cover", e.target.result);
+                    await finalizeSettings(pass);
+                };
+                reader.readAsDataURL(coverFile);
+                return;
+            }
+
+            await finalizeSettings(pass);
+        }
 
         async function finalizeSettings(pass) {
             if (pass) {
