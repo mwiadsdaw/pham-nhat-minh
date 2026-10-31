@@ -30,17 +30,11 @@
 </head>
 <body class="bg-fbBg text-fbText min-h-screen flex flex-col overflow-x-hidden pb-14">
 
-    <!-- HEADER TOP -->
+    <!-- HEADER TOP (Đã xóa 2 nút Cài đặt và Về Bảng Tin) -->
     <header class="h-14 bg-fbPanel border-b border-gray-200 px-4 flex items-center justify-between sticky top-0 z-40 shrink-0 shadow-sm">
         <div class="flex items-center gap-3">
             <a href="trangchu.html" class="text-fbBlue text-2xl hover:opacity-85 transition" title="Quay lại Bảng tin"><i class="fa-solid fa-arrow-left"></i></a>
             <span class="text-sm font-bold text-fbText">Trang Cá Nhân</span>
-        </div>
-        <div class="flex items-center gap-2">
-            <a href="setting.html" class="text-xs bg-fbHover px-3 py-1.5 rounded-lg hover:bg-gray-300 text-fbText font-bold flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-gear text-fbBlue"></i> Cài đặt
-            </a>
-            <a href="trangchu.html" class="text-fbBlue font-bold text-xs bg-fbHover px-3 py-1.5 rounded-lg hover:bg-gray-300">Về Bảng Tin</a>
         </div>
     </header>
 
@@ -77,10 +71,10 @@
                 <div id="profile-action-btn" class="flex items-center gap-2 mb-2 w-full md:w-auto justify-center shrink-0 z-20"></div>
             </div>
 
-            <!-- Thanh Tabs Nav -->
+            <!-- Thanh Tabs Nav (Đã đổi Bài viết -> Tất cả) -->
             <div class="px-4 sm:px-8 flex items-center justify-between text-xs font-bold text-fbSubText">
                 <div class="flex items-center gap-1 overflow-x-auto">
-                    <button id="tab-timeline" onclick="switchMainTab('timeline')" class="py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold">Bài viết</button>
+                    <button id="tab-timeline" onclick="switchMainTab('timeline')" class="py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold">Tất cả</button>
                     <button id="tab-about" onclick="switchMainTab('about')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Giới thiệu</button>
                     <button id="tab-friends" onclick="switchMainTab('friends')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Bạn bè</button>
                     <button id="tab-photos" onclick="switchMainTab('photos')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Ảnh</button>
@@ -91,7 +85,7 @@
             </div>
         </div>
 
-        <!-- BỐ CỤC CHÍNH (Thay đổi linh hoạt theo Tab) -->
+        <!-- BỐ CỤC CHÍNH -->
         <div id="main-view-container" class="w-full max-w-[1090px] p-2 sm:p-4 mt-2"></div>
 
     </div>
@@ -115,11 +109,11 @@
         const urlParams = new URLSearchParams(window.location.search);
         const loggedUser = localStorage.getItem("chat_user");
         const targetUser = urlParams.get('profile') || loggedUser;
-        let currentSk = urlParams.get('sk') || '';
 
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let userCoverBase64 = localStorage.getItem("user_cover") || "";
         let coverPercent = localStorage.getItem("user_cover_percent") || "50";
+        let userBirthday = localStorage.getItem("user_birthday") || "xx/xx/xxxx";
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -156,7 +150,6 @@
             `;
         }
 
-        // CÁC MỤC TRONG MENU GIỚI THIỆU
         const aboutSections = [
             { id: 'about', label: 'Giới thiệu' },
             { id: 'directory_personal_details', label: 'Thông tin cá nhân' },
@@ -171,7 +164,6 @@
             { id: 'directory_details', label: 'Chi tiết về bạn' }
         ];
 
-        // QUẢN LÝ CHUYỂN TAB VÀ ĐỔI URL (PUSHSTATE)
         window.switchMainTab = function(tabName, subSk = '') {
             const newParams = new URLSearchParams(window.location.search);
             if (tabName === 'about') {
@@ -226,7 +218,7 @@
             }
         }
 
-        // INTERFACE BÀI VIẾT (TIMELINE)
+        // TAB TẤT CẢ (TIMELINE): Đã thêm thông tin ngày sinh
         function renderTimelineView(container) {
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
@@ -241,6 +233,10 @@
                                 <div class="flex items-center gap-3">
                                     <i class="fa-solid fa-graduation-cap text-gray-500 text-sm w-4 text-center"></i>
                                     <span>Học sinh tại <strong class="text-fbText">THPT Sóc Sơn</strong></span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-cake-candles text-gray-500 text-sm w-4 text-center"></i>
+                                    <span>Sinh ngày <strong class="text-fbText">${userBirthday}</strong></span>
                                 </div>
                             </div>
                             <button onclick="switchMainTab('about')" class="w-full bg-fbHover hover:bg-gray-300 py-2 rounded-lg text-xs font-bold text-fbText">Chỉnh sửa tiểu sử</button>
@@ -273,7 +269,7 @@
             loadFirestorePosts();
         }
 
-        // INTERFACE GIỚI THIỆU (ABOUT) WITH SIDEBAR
+        // TAB GIỚI THIỆU
         function renderAboutView(container, activeSk) {
             const currentSub = activeSk || 'about';
 
@@ -303,11 +299,7 @@
                     <div class="space-y-4 text-xs">
                         <div>
                             <p class="font-bold text-fbSubText mb-1">Vị trí</p>
-                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-location-dot text-base text-gray-500"></i> Tỉnh/thành phố hoặc thị trấn hiện tại</div>
-                        </div>
-                        <div>
-                            <p class="font-bold text-fbSubText mb-1">Quê quán</p>
-                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-house text-base text-gray-500"></i> Quê quán</div>
+                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-location-dot text-base text-gray-500"></i> Đông Xuân, Hà Nội</div>
                         </div>
                         <hr class="border-gray-200">
                         <div>
@@ -316,79 +308,11 @@
                                 <div class="flex items-center gap-2.5">
                                     <i class="fa-solid fa-cake-candles text-base text-gray-500"></i>
                                     <div>
-                                        <p class="font-bold text-fbText">24 tháng 12</p>
-                                        <p class="text-[11px] text-fbSubText">1995</p>
+                                        <p class="font-bold text-fbText">${userBirthday}</p>
                                     </div>
                                 </div>
                                 <i class="fa-solid fa-lock text-gray-400"></i>
                             </div>
-                        </div>
-                        <hr class="border-gray-200">
-                        <div>
-                            <p class="font-bold text-fbSubText mb-1">Giới tính</p>
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2.5"><i class="fa-solid fa-user text-base text-gray-500"></i> <span class="font-bold text-fbText">Nam</span></div>
-                                <i class="fa-solid fa-lock text-gray-400"></i>
-                            </div>
-                        </div>
-                        <div>
-                            <p class="font-bold text-fbSubText mb-1">Danh xưng</p>
-                            <div class="flex items-center gap-2.5"><i class="fa-solid fa-comment-dots text-base text-gray-500"></i> <span class="font-bold text-fbText">anh ấy</span></div>
-                        </div>
-                    </div>
-                `;
-            } else if (currentSub === 'directory_work') {
-                rightContentHTML = `
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-bold text-fbText mb-2">Công việc</h4>
-                        <div class="flex items-center gap-3 text-xs text-fbSubText">
-                            <i class="fa-solid fa-briefcase text-lg text-gray-500"></i>
-                            <span>Kinh nghiệm làm việc</span>
-                        </div>
-                    </div>
-                `;
-            } else if (currentSub === 'directory_education') {
-                rightContentHTML = `
-                    <div class="space-y-4 text-xs">
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-2">Đại học</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-graduation-cap text-lg text-gray-500"></i> Trường cao đẳng/đại học</div>
-                        </div>
-                        <hr class="border-gray-200">
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-2">Trường trung học</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-school text-lg text-gray-500"></i> Trường trung học phổ thông</div>
-                        </div>
-                    </div>
-                `;
-            } else if (currentSub === 'directory_activites') {
-                rightContentHTML = `
-                    <div class="space-y-3">
-                        <h4 class="text-sm font-bold text-fbText mb-2">Sở thích</h4>
-                        <div class="flex items-center gap-3 text-xs text-fbSubText">
-                            <i class="fa-solid fa-[#1877f2] fa-icons text-lg text-gray-500"></i>
-                            <span>Sở thích</span>
-                        </div>
-                    </div>
-                `;
-            } else if (currentSub === 'directory_interests') {
-                rightContentHTML = `
-                    <div class="space-y-4 text-xs">
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-1">Âm nhạc</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-music text-base text-gray-500"></i> Nhạc</div>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-1">Chương trình TV</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-tv text-base text-gray-500"></i> Chương trình TV</div>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-1">Phim</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-film text-base text-gray-500"></i> Phim</div>
-                        </div>
-                        <div>
-                            <h4 class="text-sm font-bold text-fbText mb-1">Game</h4>
-                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-gamepad text-base text-gray-500"></i> Game</div>
                         </div>
                     </div>
                 `;
@@ -452,7 +376,6 @@
             });
         }
 
-        // Khởi chạy khi load trang
         renderPageContent();
     </script>
 </body>
