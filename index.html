@@ -133,7 +133,7 @@
             </button>
         </div>
 
-        <!-- Mobile Menu Dropdown -->
+        <!-- Mobile Menu Dropdown (Chuẩn 5 mục đồng bộ) -->
         <div id="mobile-menu" class="hidden md:hidden glass-panel border-t border-slate-800 px-6 py-5 flex flex-col gap-4 text-slate-200 text-base font-semibold shadow-2xl transition-all">
             <a href="#about" class="mobile-link active:text-cyan-400 py-1.5 flex items-center gap-3 transition hover:translate-x-1"><i class="fa-solid fa-user-gear text-cyan-400 w-5 text-center"></i> Giới thiệu</a>
             <a href="/hoctap/" class="mobile-link active:text-cyan-400 py-1.5 flex items-center gap-3 transition hover:translate-x-1"><i class="fa-solid fa-graduation-cap text-purple-400 w-5 text-center"></i> Học tập</a>
@@ -165,7 +165,7 @@
                 </h1>
 
                 <p class="text-slate-300 text-sm sm:text-lg max-w-2xl mx-auto lg:mx-0 font-light leading-relaxed">
-                    Đam mê phát triển Web, nghiên cứu thuật toán Tin học (C++, Python), đồng thời thổi hồn qua những giai điệu Piano và Guitar đầy cảm xúc. Luôn không ngừng nỗ lực hoàn thiện bản thân mỗi ngày trên con đường chinh phục tri thức công nghệ.
+                    Đam mê phát triển Web, nghiên cứu thuật toán Tin học (C++, Python), đồng thời thổi hồn qua những giai điệu Piano và Guitar đầy cảm xúc. Mình luôn không ngừng học hỏi, rèn luyện tư duy logic và tìm tòi những công nghệ mới để ứng dụng vào thực tiễn cuộc sống.
                 </p>
             </div>
 
@@ -187,70 +187,103 @@
         </div>
     </section>
 
-    <!-- ==================== GIỚI THIỆU BẢN THÂN & GÓC HỌC TẬP (Đã tách riêng & thêm chi tiết chữ) ==================== -->
+    <!-- ==================== GIỚI THIỆU BẢN THÂN & GÓC HỌC TẬP (ĐÃ TÁCH BIỆT VÀ MỞ RỘNG CHI TIẾT) ==================== -->
     <section id="about" class="py-16 sm:py-24 px-4 sm:px-6 relative">
-        <div class="max-w-7xl mx-auto space-y-8">
-            <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-16 reveal">
+        <div class="max-w-5xl mx-auto space-y-12">
+            
+            <!-- Tiêu đề chung -->
+            <div class="text-center max-w-2xl mx-auto reveal">
                 <h2 class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-cyan-400 mb-2">Hồ sơ cá nhân</h2>
                 <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Về Bản Thân Mình</h3>
                 <div class="w-12 sm:w-16 h-1 bg-gradient-to-r from-cyan-400 to-purple-500 mx-auto mt-3 rounded-full"></div>
             </div>
 
-            <!-- 1. Khối Giới Thiệu Bản Thân Chi Tiết (Full-width mở rộng nhiều chữ) -->
-            <div class="glass-panel rounded-2xl sm:rounded-3xl p-6 sm:p-10 border border-slate-700/60 space-y-6 shadow-xl reveal">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-lg">
-                        <i class="fa-solid fa-user-gear"></i>
+            <!-- PHẦN 1: GIỚI THIỆU BẢN THÂN (RỘNG FULL, CHI TIẾT SÂU SẮC) -->
+            <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-12 border border-slate-700/60 space-y-6 shadow-2xl reveal">
+                <div class="flex items-center gap-3.5 border-b border-slate-800 pb-4">
+                    <div class="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-xl shadow-inner">
+                        <i class="fa-solid fa-user-astronaut"></i>
                     </div>
-                    <h4 class="text-xl sm:text-2xl font-bold text-slate-100">Giới Thiệu Bản Thân</h4>
+                    <div>
+                        <h4 class="text-xl sm:text-2xl font-bold text-slate-100">Khám Phá Câu Chuyện Bản Thân</h4>
+                        <p class="text-xs text-slate-400">Định hướng tương lai, đam mê và phong cách sống</p>
+                    </div>
                 </div>
 
-                <div class="space-y-4 text-slate-300 text-sm sm:text-base leading-relaxed font-light">
+                <div class="space-y-4 text-slate-300 leading-relaxed font-light text-sm sm:text-base">
                     <p>
-                        Xin chào tất cả mọi người! Mình tên đầy đủ là <strong class="text-white font-semibold">Phạm Nhật Minh</strong>, hiện đang là học sinh theo học tại lớp <span class="text-cyan-400 font-medium">10A2</span> trường <span class="text-cyan-400 font-medium">THPT Sóc Sơn</span>, Hà Nội. 
+                        Xin chào tất cả mọi người! Mình là <strong class="text-white font-semibold">Phạm Nhật Minh</strong>, hiện đang là học sinh theo học tại lớp <span class="text-cyan-400 font-medium">10A2</span> trường <span class="text-cyan-400 font-medium">THPT Sóc Sơn</span>, Hà Nội. Cuộc sống học đường của mình gắn liền với những con số, dòng mã nguồn lập trình và những giai điệu âm nhạc dung dị nhưng đầy cuốn hút.
                     </p>
                     <p>
-                        Bên cạnh việc luôn hoàn thành tốt các nhiệm vụ học tập văn hóa trên lớp, mình dành phần lớn thời gian rảnh rỗi để theo đuổi niềm đam mê công nghệ. Mình tự học lập trình Web, nghiên cứu cấu trúc dữ liệu và giải quyết các bài toán thuật toán nâng cao bằng hai ngôn ngữ chủ đạo là <span class="text-purple-400 font-mono font-medium">C++</span> và <span class="text-purple-400 font-mono font-medium">Python</span>. 
+                        Với tư duy hướng về tự nhiên và kỹ thuật, mình dành phần lớn thời gian rảnh rỗi để nghiên cứu sâu về lập trình Web Front-end/Back-end, giải quyết các bài toán cấu trúc dữ liệu và thuật toán tối ưu bằng hai ngôn ngữ chủ lực là <span class="text-purple-400 font-mono font-semibold">C++</span> và <span class="text-purple-400 font-mono font-semibold">Python</span>. Đối với mình, công nghệ không chỉ là những dòng code khô khan mà là công cụ mạnh mẽ để hiện thực hóa các ý tưởng sáng tạo giúp ích cho cuộc sống.
                     </p>
                     <p>
-                        Thông qua trang web cá nhân này, mình mong muốn xây dựng một không gian số riêng biệt để lưu trữ các kiến thức đã tích lũy, chia sẻ tài liệu học tập, các sản phẩm code tự phát triển, cũng như kết nối và giao lưu cùng những bạn bè có cùng chung chí hướng và sở thích công nghệ.
+                        Bên cạnh mảng khoa học máy tính, mình còn nuôi dưỡng tâm hồn qua âm nhạc với khả năng chơi thuần thục các nhạc cụ như Guitar và Piano, cùng sở thích tự tay tinh chỉnh, thiết kế các sản phẩm cá nhân để tạo nên dấu ấn riêng biệt không trộn lẫn.
                     </p>
                 </div>
 
-                <div class="pt-4 border-t border-slate-800 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm text-slate-300">
-                    <div class="flex items-center gap-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-800 hover:border-cyan-500/40 transition">
-                        <i class="fa-solid fa-location-dot text-cyan-400 text-base"></i>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-800">
+                    <div class="flex items-center gap-3.5 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 hover:border-cyan-500/40 transition">
+                        <div class="w-10 h-10 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-location-dot"></i>
+                        </div>
                         <div>
-                            <div class="text-[10px] text-slate-400 uppercase font-semibold">Địa bàn sinh sống</div>
-                            <div class="font-medium text-slate-200">Sóc Sơn, Hà Nội</div>
+                            <div class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Khu vực sinh sống</div>
+                            <div class="text-xs sm:text-sm font-bold text-slate-200">Sóc Sơn, Hà Nội, Việt Nam</div>
                         </div>
                     </div>
-                    <div class="flex items-center gap-3 bg-slate-900/60 p-3.5 rounded-xl border border-slate-800 hover:border-purple-500/40 transition">
-                        <i class="fa-solid fa-school text-purple-400 text-base"></i>
+                    <div class="flex items-center gap-3.5 bg-slate-900/60 p-4 rounded-2xl border border-slate-800/80 hover:border-purple-500/40 transition">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 text-lg flex-shrink-0">
+                            <i class="fa-solid fa-school"></i>
+                        </div>
                         <div>
-                            <div class="text-[10px] text-slate-400 uppercase font-semibold">Đơn vị học tập</div>
-                            <div class="font-medium text-slate-200">THPT Sóc Sơn (Lớp 10A2)</div>
+                            <div class="text-[11px] text-slate-400 font-semibold uppercase tracking-wider">Đơn vị học tập</div>
+                            <div class="text-xs sm:text-sm font-bold text-slate-200">THPT Sóc Sơn - Lớp 10A2</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. Khối Góc Học Tập & Phát Triển (Được tách riêng hoàn toàn bên dưới) -->
-            <div class="glass-panel glass-panel-hover rounded-2xl sm:rounded-3xl p-6 sm:p-10 border border-slate-700/60 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl reveal bg-gradient-to-r from-slate-900/90 to-purple-950/30">
-                <div class="space-y-3 text-center md:text-left flex-1">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-400 text-xs font-semibold">
-                        <i class="fa-solid fa-graduation-cap"></i> Khám phá tri thức
+            <!-- PHẦN 2: GÓC HỌC TẬP & PHÁT TRIỂN (TÁCH RIÊNG HOÀN TOÀN, NỘI DUNG ĐỒ SỘ HƠN) -->
+            <div class="glass-panel glass-panel-hover rounded-3xl p-8 sm:p-12 border border-purple-500/30 space-y-6 shadow-2xl bg-gradient-to-br from-slate-900/90 via-purple-950/20 to-slate-950 reveal">
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 border-b border-slate-800 pb-6">
+                    <div class="flex items-center gap-3.5">
+                        <div class="w-12 h-12 rounded-2xl bg-purple-500/10 border border-purple-500/30 flex items-center justify-center text-purple-400 text-xl shadow-inner">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-xl sm:text-2xl font-bold text-slate-100">Góc Học Tập & Phát Triển Chuyên Sâu</h4>
+                            <p class="text-xs text-slate-400">Kho lưu trữ tài liệu, kế hoạch ôn luyện và hệ thống bài giảng</p>
+                        </div>
                     </div>
-                    <h4 class="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">Góc Học Tập & Phát Triển</h4>
-                    <p class="text-slate-300 text-xs sm:text-sm leading-relaxed font-light max-w-2xl">
-                        Nơi tổng hợp toàn bộ tài liệu ôn tập, bài giảng chuyên đề môn học, mẹo lập trình và các kế hoạch phát triển cá nhân được biên soạn chi tiết phục vụ cho hành trình tự học hiệu quả.
+                    <a href="/hoctap/" class="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-cyan-600 text-white font-extrabold text-xs sm:text-sm shadow-lg shadow-purple-600/25 hover:scale-105 transition-all">
+                        <span>Truy cập trang Học tập</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="space-y-4 text-slate-300 leading-relaxed font-light text-sm sm:text-base">
+                    <p>
+                        Nhận thức tầm quan trọng của việc tự học và tích lũy kiến thức bền vững, mình đã xây dựng và phát triển <strong class="text-purple-300 font-medium">Góc Học Tập & Phát Triển</strong> như một không gian trực tuyến chuyên biệt. Nơi đây không đơn thuần lưu trữ tài liệu cá nhân mà còn là hệ thống quản lý tri thức phục vụ cho hành trình chinh phục các kỳ thi quan trọng.
+                    </p>
+                    <p>
+                        Tại đây, bạn có thể dễ dàng tìm thấy các bài giảng chi tiết, hệ thống hóa kiến thức từ cơ bản đến nâng cao các môn học phổ thông, các chuyên đề luyện thi học sinh giỏi Tin học, mẹo ghi nhớ hiệu quả cũng như các tài nguyên mã nguồn mở được chia sẻ minh bạch nhằm lan tỏa tinh thần học tập tích cực đến cộng đồng học sinh.
                     </p>
                 </div>
-                <div class="w-full md:w-auto flex-shrink-0">
-                    <a href="/hoctap/" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 hover:opacity-95 text-white font-bold text-xs sm:text-sm shadow-lg shadow-cyan-500/25 transition-all hover:scale-105">
-                        <span>Truy cập trang Học tập</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
-                    </a>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="text-cyan-400 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-book-open"></i> Tài Liệu Môn Học</div>
+                        <p class="text-xs text-slate-400">Tổng hợp kiến thức trọng tâm Toán, Lý, Hóa, Tin học và Anh ngữ.</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="text-purple-400 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-code"></i> Thuật Toán & Code</div>
+                        <p class="text-xs text-slate-400">Chia sẻ các đoạn mã nguồn C++, Python tối ưu và các giải pháp lập trình.</p>
+                    </div>
+                    <div class="bg-slate-900/80 p-4 rounded-2xl border border-slate-800 space-y-1.5">
+                        <div class="text-pink-400 font-bold text-sm flex items-center gap-2"><i class="fa-solid fa-bullseye"></i> Kế Hoạch Ôn Thi</div>
+                        <p class="text-xs text-slate-400">Lộ trình bám sát chương trình phổ thông vàịnh hướng luyện thi dài hạn.</p>
+                    </div>
                 </div>
             </div>
 
@@ -274,31 +307,6 @@
                     </div>
                     <h4 class="text-xl sm:text-3xl font-extrabold text-white">Nơi Chia Sẻ Âm Nhạc & Trò Chuyện</h4>
                     <p class="text-slate-300 text-xs sm:text-base font-light leading-relaxed max-w-xl">
-                        Nơi mình đăng tải các video cover Guitar & Piano đầy cảm xúc. Mọi người có thể xem video, để lại cảm nhận và cùng thảo luận, giao lưu thoải mái với cộng đồng!
+                        Nơi mình đăng tải các video cover Guitar & Piano đầy cảm xúc. Mọi người có thể ghé thăm, thưởng thức giai điệu, để lại cảm nhận và cùng nhau bàn luận, giao lưu thoải mái!
                     </p>
-                    <div class="pt-2">
-                        <a href="https://pminh83.name.vn/gocamnhac.html" class="inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-extrabold text-xs sm:text-sm shadow-xl shadow-pink-600/25 hover:scale-105 transition-all">
-                            <i class="fa-solid fa-music"></i> Ghé Thăm Phòng Nhạc <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ==================== TRÒ CHUYỆN ==================== -->
-    <section id="chatting" class="py-16 sm:py-24 px-4 sm:px-6 relative">
-        <div class="max-w-7xl mx-auto">
-            <div class="text-center max-w-2xl mx-auto mb-10 sm:mb-16 reveal">
-                <h2 class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-pink-400 mb-2">Cộng đồng & Giao lưu</h2>
-                <h3 class="text-2xl sm:text-4xl font-extrabold tracking-tight">Phòng Trò Chuyện Trực Tuyến</h3>
-                <div class="w-12 sm:w-16 h-1 bg-gradient-to-r from-pink-400 to-purple-500 mx-auto mt-3 rounded-full"></div>
-            </div>
-
-            <div class="max-w-3xl mx-auto glass-panel glass-panel-hover rounded-2xl sm:rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-700/60 text-center space-y-4 sm:space-y-6 shadow-2xl reveal">
-                <div class="w-14 h-14 sm:w-20 sm:h-20 rounded-2xl bg-pink-500/10 border border-pink-500/30 flex items-center justify-center text-pink-400 text-2xl sm:text-3xl mx-auto shadow-lg">
-                    <i class="fa-solid fa-comments animate-bounce" style="animation-duration: 3s;"></i>
-                </div>
-                <h4 class="text-xl sm:text-3xl font-bold text-slate-100">Nhắn Tin & Kết Nối</h4>
-                <p class="text-slate-300 text-xs sm:text
+                    <div class="pt-2
