@@ -80,120 +80,19 @@
             <!-- Thanh Tabs Nav -->
             <div class="px-4 sm:px-8 flex items-center justify-between text-xs font-bold text-fbSubText">
                 <div class="flex items-center gap-1 overflow-x-auto">
-                    <button class="py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold">Bài viết</button>
-                    <button class="py-3 px-4 hover:bg-fbHover rounded-md transition">Giới thiệu</button>
-                    <button class="py-3 px-4 hover:bg-fbHover rounded-md transition">Bạn bè</button>
-                    <button class="py-3 px-4 hover:bg-fbHover rounded-md transition">Ảnh</button>
-                    <button class="py-3 px-4 hover:bg-fbHover rounded-md transition">Reels</button>
+                    <button id="tab-timeline" onclick="switchMainTab('timeline')" class="py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold">Bài viết</button>
+                    <button id="tab-about" onclick="switchMainTab('about')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Giới thiệu</button>
+                    <button id="tab-friends" onclick="switchMainTab('friends')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Bạn bè</button>
+                    <button id="tab-photos" onclick="switchMainTab('photos')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Ảnh</button>
+                    <button id="tab-reels" onclick="switchMainTab('reels')" class="py-3 px-4 hover:bg-fbHover rounded-md transition">Reels</button>
                     <button class="py-3 px-4 hover:bg-fbHover rounded-md transition">Xem thêm <i class="fa-solid fa-caret-down"></i></button>
                 </div>
                 <button class="p-2 hover:bg-fbHover rounded-md"><i class="fa-solid fa-ellipsis"></i></button>
             </div>
         </div>
 
-        <!-- BỐ CỤC 2 CỘT (Cột trái: Thông tin/Bạn bè - Cột phải: Đăng bài/Bài viết) -->
-        <div class="w-full max-w-[1090px] p-2 sm:p-4 grid grid-cols-1 md:grid-cols-5 gap-4 mt-2">
-            
-            <!-- CỘT TRÁI -->
-            <div class="md:col-span-2 space-y-4">
-                
-                <!-- Thông tin cá nhân -->
-                <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
-                    <h3 class="text-base font-bold text-fbText">Thông tin cá nhân</h3>
-                    <div class="space-y-3 text-xs text-fbSubText">
-                        <div class="flex items-center gap-3">
-                            <i class="fa-solid fa-cake-candles text-gray-500 text-sm w-4 text-center"></i>
-                            <span>24 tháng 12, 1995</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Tin nổi bật -->
-                <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
-                    <h3 class="text-base font-bold text-fbText">Tin nổi bật</h3>
-                    <button class="w-full bg-fbHover hover:bg-gray-300 py-2 rounded-lg text-xs font-bold text-fbText">Thêm tin nổi bật</button>
-                </div>
-
-                <!-- Lưới Bạn bè -->
-                <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h3 class="text-base font-bold text-fbText">Bạn bè</h3>
-                            <p class="text-xs text-fbSubText">119 người bạn</p>
-                        </div>
-                        <a href="#" class="text-xs text-fbBlue font-semibold hover:bg-blue-50 p-1.5 rounded-md">Xem tất cả bạn bè</a>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-2 pt-1">
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=1" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Nguyễn Minh Tuấn</p>
-                            <p class="text-[10px] text-fbSubText truncate">8 bạn chung</p>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=2" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Lê Bảo An</p>
-                            <p class="text-[10px] text-fbSubText truncate">12 bạn chung</p>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=3" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Nguyễn Trọng Tú</p>
-                            <p class="text-[10px] text-fbSubText truncate">3 bạn chung</p>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=4" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Nguyễn Dương Đông</p>
-                            <p class="text-[10px] text-fbSubText truncate">24 bạn chung</p>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=5" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Bùi Vũ</p>
-                            <p class="text-[10px] text-fbSubText truncate">20 bạn chung</p>
-                        </div>
-                        <div class="space-y-1">
-                            <div class="aspect-square bg-gray-200 rounded-lg overflow-hidden border border-gray-100"><img src="https://picsum.photos/200?random=6" class="w-full h-full object-cover"></div>
-                            <p class="text-[11px] font-bold text-fbText truncate">Trần Công Sơn</p>
-                            <p class="text-[10px] text-fbSubText truncate">8 bạn chung</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- CỘT PHẢI -->
-            <div class="md:col-span-3 space-y-4">
-                
-                <!-- Box Tạo bài viết -->
-                <div class="bg-fbPanel p-3.5 rounded-xl border border-gray-200 shadow-sm space-y-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0">
-                            <i class="fa-solid fa-user text-gray-400 text-xl flex items-center justify-center h-full"></i>
-                        </div>
-                        <input type="text" placeholder="Bạn đang nghĩ gì?" class="w-full bg-fbInput hover:bg-gray-200 px-4 py-2.5 rounded-full text-xs outline-none cursor-pointer">
-                    </div>
-                    <hr class="border-gray-100">
-                    <div class="flex items-center justify-between text-xs font-bold text-fbSubText px-2">
-                        <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-3 rounded-lg"><i class="fa-solid fa-video text-red-500 text-base"></i> Video trực tiếp</button>
-                        <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-3 rounded-lg"><i class="fa-solid fa-images text-green-500 text-base"></i> Ảnh/video</button>
-                        <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-3 rounded-lg"><i class="fa-solid fa-flag text-blue-500 text-base"></i> Cột mốc</button>
-                    </div>
-                </div>
-
-                <!-- Thanh quản lý bài viết -->
-                <div class="bg-fbPanel p-3 rounded-xl border border-gray-200 flex items-center justify-between shadow-sm text-xs font-bold text-fbText">
-                    <h3 class="text-sm font-bold">Bài viết</h3>
-                    <div class="flex items-center gap-2">
-                        <button class="bg-fbHover hover:bg-gray-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5"><i class="fa-solid fa-sliders"></i> Bộ lọc</button>
-                        <button class="bg-fbHover hover:bg-gray-300 px-3 py-1.5 rounded-lg flex items-center gap-1.5"><i class="fa-solid fa-gear"></i> Quản lý bài viết</button>
-                    </div>
-                </div>
-
-                <!-- Danh sách bài viết Firestore -->
-                <div id="profile-posts-container" class="space-y-4"></div>
-
-            </div>
-
-        </div>
+        <!-- BỐ CỤC CHÍNH (Thay đổi linh hoạt theo Tab) -->
+        <div id="main-view-container" class="w-full max-w-[1090px] p-2 sm:p-4 mt-2"></div>
 
     </div>
 
@@ -216,6 +115,8 @@
         const urlParams = new URLSearchParams(window.location.search);
         const loggedUser = localStorage.getItem("chat_user");
         const targetUser = urlParams.get('profile') || loggedUser;
+        let currentSk = urlParams.get('sk') || '';
+
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let userCoverBase64 = localStorage.getItem("user_cover") || "";
         let coverPercent = localStorage.getItem("user_cover_percent") || "50";
@@ -255,50 +156,304 @@
             `;
         }
 
-        // Render Bài viết dạng Light Card Facebook
-        const q = query(collection(db, "posts"));
-        onSnapshot(q, (snap) => {
-            const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
-                .filter(p => p.author === targetUser)
-                .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-            
-            const container = document.getElementById("profile-posts-container");
-            if (userPosts.length === 0) {
-                container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-gray-200 text-center text-xs text-fbSubText italic">Chưa có bài viết nào.</div>`;
+        // CÁC MỤC TRONG MENU GIỚI THIỆU
+        const aboutSections = [
+            { id: 'about', label: 'Giới thiệu' },
+            { id: 'directory_personal_details', label: 'Thông tin cá nhân' },
+            { id: 'directory_work', label: 'Công việc' },
+            { id: 'directory_education', label: 'Trình độ học vấn' },
+            { id: 'directory_activites', label: 'Sở thích' },
+            { id: 'directory_interests', label: 'Mối quan tâm' },
+            { id: 'directory_travel', label: 'Du lịch' },
+            { id: 'directory_links', label: 'Liên kết' },
+            { id: 'directory_contact', label: 'Thông tin liên hệ' },
+            { id: 'directory_name', label: 'Tên' },
+            { id: 'directory_details', label: 'Chi tiết về bạn' }
+        ];
+
+        // QUẢN LÝ CHUYỂN TAB VÀ ĐỔI URL (PUSHSTATE)
+        window.switchMainTab = function(tabName, subSk = '') {
+            const newParams = new URLSearchParams(window.location.search);
+            if (tabName === 'about') {
+                newParams.set('sk', subSk || 'about');
+            } else if (tabName === 'friends') {
+                newParams.set('sk', 'friends');
+            } else if (tabName === 'photos') {
+                newParams.set('sk', 'photos');
             } else {
-                container.innerHTML = userPosts.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-gray-200 p-4 space-y-3 shadow-sm">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center font-bold text-xs">
-                                    ${p.author ? p.author.charAt(0).toUpperCase() : 'U'}
+                newParams.delete('sk');
+            }
+            
+            const newUrl = `${window.location.pathname}?${newParams.toString()}`;
+            window.history.pushState({ path: newUrl }, '', newUrl);
+            renderPageContent();
+        };
+
+        window.onpopstate = function() {
+            renderPageContent();
+        };
+
+        function updateTabStyles(activeTab) {
+            ['timeline', 'about', 'friends', 'photos', 'reels'].forEach(tab => {
+                const btn = document.getElementById(`tab-${tab}`);
+                if (btn) {
+                    if (tab === activeTab) {
+                        btn.className = "py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold";
+                    } else {
+                        btn.className = "py-3 px-4 hover:bg-fbHover rounded-md transition font-bold";
+                    }
+                }
+            });
+        }
+
+        function renderPageContent() {
+            const params = new URLSearchParams(window.location.search);
+            const sk = params.get('sk') || '';
+            const container = document.getElementById("main-view-container");
+
+            if (sk.startsWith('directory_') || sk === 'about') {
+                updateTabStyles('about');
+                renderAboutView(container, sk);
+            } else if (sk === 'friends') {
+                updateTabStyles('friends');
+                container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-gray-200 text-center font-bold text-sm">Danh sách Bạn bè</div>`;
+            } else if (sk === 'photos') {
+                updateTabStyles('photos');
+                container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-gray-200 text-center font-bold text-sm">Thư viện Ảnh</div>`;
+            } else {
+                updateTabStyles('timeline');
+                renderTimelineView(container);
+            }
+        }
+
+        // INTERFACE BÀI VIẾT (TIMELINE)
+        function renderTimelineView(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <div class="md:col-span-2 space-y-4">
+                        <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                            <h3 class="text-base font-bold text-fbText">Giới thiệu</h3>
+                            <div class="space-y-3 text-xs text-fbSubText">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-house text-gray-500 text-sm w-4 text-center"></i>
+                                    <span>Sống tại <strong class="text-fbText">Đông Xuân, Hà Nội</strong></span>
                                 </div>
-                                <div>
-                                    <h4 class="text-xs font-bold text-fbText">${escapeHTML(p.author === 'phamnhatminh' ? 'Phạm Nhật Minh' : p.author)}</h4>
-                                    <p class="text-[10px] text-fbSubText">Vừa xong <i class="fa-solid fa-earth-americas"></i></p>
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-graduation-cap text-gray-500 text-sm w-4 text-center"></i>
+                                    <span>Học sinh tại <strong class="text-fbText">THPT Sóc Sơn</strong></span>
                                 </div>
                             </div>
-                            <button class="text-fbSubText p-1.5 hover:bg-fbHover rounded-full"><i class="fa-solid fa-ellipsis"></i></button>
+                            <button onclick="switchMainTab('about')" class="w-full bg-fbHover hover:bg-gray-300 py-2 rounded-lg text-xs font-bold text-fbText">Chỉnh sửa tiểu sử</button>
                         </div>
 
-                        ${p.title ? `<p class="text-xs text-fbText break-words leading-relaxed">${escapeHTML(p.title)}</p>` : ''}
-                        
-                        ${p.media ? `
-                            <div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center -mx-4">
-                                <img src="${p.media}" class="w-full object-cover">
+                        <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <h3 class="text-base font-bold text-fbText">Bạn bè</h3>
+                                    <p class="text-xs text-fbSubText">119 người bạn</p>
+                                </div>
+                                <button onclick="switchMainTab('friends')" class="text-xs text-fbBlue font-semibold hover:bg-blue-50 p-1.5 rounded-md">Xem tất cả bạn bè</button>
                             </div>
-                        ` : ''}
-
-                        <!-- Action Like/Comment/Share -->
-                        <div class="pt-2 border-t border-gray-100 flex items-center justify-between text-xs font-semibold text-fbSubText px-2">
-                            <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-4 rounded-md w-1/3 justify-center"><i class="fa-regular fa-thumbs-up text-sm"></i> Thích</button>
-                            <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-4 rounded-md w-1/3 justify-center"><i class="fa-regular fa-comment text-sm"></i> Bình luận</button>
-                            <button class="flex items-center gap-2 hover:bg-fbHover py-1.5 px-4 rounded-md w-1/3 justify-center"><i class="fa-regular fa-share-from-square text-sm"></i> Chia sẻ</button>
                         </div>
                     </div>
-                `).join("");
+
+                    <div class="md:col-span-3 space-y-4">
+                        <div class="bg-fbPanel p-3.5 rounded-xl border border-gray-200 shadow-sm space-y-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
+                                    <i class="fa-solid fa-user text-gray-400 text-xl"></i>
+                                </div>
+                                <input type="text" placeholder="Bạn đang nghĩ gì?" class="w-full bg-fbInput hover:bg-gray-200 px-4 py-2.5 rounded-full text-xs outline-none cursor-pointer">
+                            </div>
+                        </div>
+                        <div id="profile-posts-container" class="space-y-4"></div>
+                    </div>
+                </div>
+            `;
+            loadFirestorePosts();
+        }
+
+        // INTERFACE GIỚI THIỆU (ABOUT) WITH SIDEBAR
+        function renderAboutView(container, activeSk) {
+            const currentSub = activeSk || 'about';
+
+            let rightContentHTML = '';
+            if (currentSub === 'about') {
+                rightContentHTML = `
+                    <div class="space-y-4">
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-2">Tiểu sử</h4>
+                            <div class="flex items-center gap-3 text-xs text-fbSubText">
+                                <i class="fa-solid fa-hand-wave text-lg"></i>
+                                <span>Giới thiệu về bạn</span>
+                            </div>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-2">Chi tiết đã ghim</h4>
+                            <div class="flex items-center gap-3 text-xs text-fbSubText">
+                                <i class="fa-solid fa-thumbtack text-lg"></i>
+                                <span>Chi tiết đã ghim</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentSub === 'directory_personal_details') {
+                rightContentHTML = `
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <p class="font-bold text-fbSubText mb-1">Vị trí</p>
+                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-location-dot text-base text-gray-500"></i> Tỉnh/thành phố hoặc thị trấn hiện tại</div>
+                        </div>
+                        <div>
+                            <p class="font-bold text-fbSubText mb-1">Quê quán</p>
+                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-house text-base text-gray-500"></i> Quê quán</div>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div>
+                            <p class="font-bold text-fbSubText mb-1">Sinh nhật</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <i class="fa-solid fa-cake-candles text-base text-gray-500"></i>
+                                    <div>
+                                        <p class="font-bold text-fbText">24 tháng 12</p>
+                                        <p class="text-[11px] text-fbSubText">1995</p>
+                                    </div>
+                                </div>
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div>
+                            <p class="font-bold text-fbSubText mb-1">Giới tính</p>
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5"><i class="fa-solid fa-user text-base text-gray-500"></i> <span class="font-bold text-fbText">Nam</span></div>
+                                <i class="fa-solid fa-lock text-gray-400"></i>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="font-bold text-fbSubText mb-1">Danh xưng</p>
+                            <div class="flex items-center gap-2.5"><i class="fa-solid fa-comment-dots text-base text-gray-500"></i> <span class="font-bold text-fbText">anh ấy</span></div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentSub === 'directory_work') {
+                rightContentHTML = `
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-fbText mb-2">Công việc</h4>
+                        <div class="flex items-center gap-3 text-xs text-fbSubText">
+                            <i class="fa-solid fa-briefcase text-lg text-gray-500"></i>
+                            <span>Kinh nghiệm làm việc</span>
+                        </div>
+                    </div>
+                `;
+            } else if (currentSub === 'directory_education') {
+                rightContentHTML = `
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-2">Đại học</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-graduation-cap text-lg text-gray-500"></i> Trường cao đẳng/đại học</div>
+                        </div>
+                        <hr class="border-gray-200">
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-2">Trường trung học</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-school text-lg text-gray-500"></i> Trường trung học phổ thông</div>
+                        </div>
+                    </div>
+                `;
+            } else if (currentSub === 'directory_activites') {
+                rightContentHTML = `
+                    <div class="space-y-3">
+                        <h4 class="text-sm font-bold text-fbText mb-2">Sở thích</h4>
+                        <div class="flex items-center gap-3 text-xs text-fbSubText">
+                            <i class="fa-solid fa-[#1877f2] fa-icons text-lg text-gray-500"></i>
+                            <span>Sở thích</span>
+                        </div>
+                    </div>
+                `;
+            } else if (currentSub === 'directory_interests') {
+                rightContentHTML = `
+                    <div class="space-y-4 text-xs">
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-1">Âm nhạc</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-music text-base text-gray-500"></i> Nhạc</div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-1">Chương trình TV</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-tv text-base text-gray-500"></i> Chương trình TV</div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-1">Phim</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-film text-base text-gray-500"></i> Phim</div>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-bold text-fbText mb-1">Game</h4>
+                            <div class="flex items-center gap-3 text-fbSubText"><i class="fa-solid fa-gamepad text-base text-gray-500"></i> Game</div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                rightContentHTML = `
+                    <div class="text-xs text-fbSubText italic">
+                        Đang hiển thị nội dung cho mục: <strong class="text-fbText">${currentSub}</strong>
+                    </div>
+                `;
             }
-        });
+
+            const sidebarHTML = aboutSections.map(sec => `
+                <button onclick="switchMainTab('about', '${sec.id}')" class="w-full text-left px-3 py-2 rounded-lg text-xs font-semibold ${sec.id === currentSub ? 'bg-blue-50 text-fbBlue font-bold' : 'hover:bg-fbHover text-fbText'} transition">
+                    ${sec.label}
+                </button>
+            `).join('');
+
+            container.innerHTML = `
+                <div class="bg-fbPanel rounded-xl border border-gray-200 shadow-sm p-4 grid grid-cols-1 md:grid-cols-3 gap-4 min-h-[420px]">
+                    <div class="md:col-span-1 border-r border-gray-200 pr-2 space-y-1">
+                        <h3 class="text-lg font-extrabold text-fbText px-3 mb-2">Giới thiệu</h3>
+                        ${sidebarHTML}
+                    </div>
+                    <div class="md:col-span-2 pl-2 pt-1">
+                        ${rightContentHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function loadFirestorePosts() {
+            const q = query(collection(db, "posts"));
+            onSnapshot(q, (snap) => {
+                const userPosts = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+                    .filter(p => p.author === targetUser)
+                    .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                
+                const container = document.getElementById("profile-posts-container");
+                if (!container) return;
+                if (userPosts.length === 0) {
+                    container.innerHTML = `<div class="bg-fbPanel p-6 rounded-xl border border-gray-200 text-center text-xs text-fbSubText italic">Chưa có bài viết nào.</div>`;
+                } else {
+                    container.innerHTML = userPosts.map(p => `
+                        <div class="bg-fbPanel rounded-xl border border-gray-200 p-4 space-y-3 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center font-bold text-xs">
+                                        ${p.author ? p.author.charAt(0).toUpperCase() : 'U'}
+                                    </div>
+                                    <div>
+                                        <h4 class="text-xs font-bold text-fbText">${escapeHTML(p.author === 'phamnhatminh' ? 'Phạm Nhật Minh' : p.author)}</h4>
+                                        <p class="text-[10px] text-fbSubText">Vừa xong <i class="fa-solid fa-earth-americas"></i></p>
+                                    </div>
+                                </div>
+                            </div>
+                            ${p.title ? `<p class="text-xs text-fbText break-words leading-relaxed">${escapeHTML(p.title)}</p>` : ''}
+                            ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[400px] flex items-center justify-center -mx-4"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
+                        </div>
+                    `).join("");
+                }
+            });
+        }
+
+        // Khởi chạy khi load trang
+        renderPageContent();
     </script>
 </body>
 </html>
