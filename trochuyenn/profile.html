@@ -161,7 +161,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, query, onSnapshot, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -176,22 +176,22 @@
         const db = getFirestore(app);
 
         const urlParams = new URLSearchParams(window.location.search);
-        const loggedUser = localStorage.getItem("chat_user");
+        const loggedUser = localStorage.getItem("chat_user") || "okebro";
         const targetUser = urlParams.get('profile') || loggedUser;
 
-        let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
-        let userCoverBase64 = localStorage.getItem("user_cover") || "";
-        let coverPercent = localStorage.getItem("user_cover_percent") || "50";
-
-        // TẢI DỮ LIỆU THÔNG TIN CÁ NHÂN TỪ LOCALSTORAGE
-        let userBio = localStorage.getItem("user_bio") || "Chưa có tiểu sử";
-        let userLocation = localStorage.getItem("user_location") || "Đông Xuân, Hà Nội";
-        let userHometown = localStorage.getItem("user_hometown") || "Sóc Sơn, Hà Nội";
-        let userSchool = localStorage.getItem("user_school") || "THPT Sóc Sơn";
-        let userWork = localStorage.getItem("user_work") || "Học sinh";
-        let userBirthday = localStorage.getItem("user_birthday") || "xx/xx/xxxx";
-        let userGender = localStorage.getItem("user_gender") || "Nam";
-        let userHobbies = localStorage.getItem("user_hobbies") || "Chưa thêm sở thích nào";
+        let userData = {
+            avatar: "",
+            cover: "",
+            coverPercent: "50",
+            bio: "Chưa có tiểu sử",
+            location: "Đông Xuân, Hà Nội",
+            hometown: "Sóc Sơn, Hà Nội",
+            school: "THPT Sóc Sơn",
+            work: "Học sinh",
+            birthday: "xx/xx/xxxx",
+            gender: "Nam",
+            hobbies: "Chưa thêm sở thích nào"
+        };
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -200,21 +200,29 @@
 
         document.getElementById("profile-username").innerText = targetUser === 'phamnhatminh' ? 'Phạm Nhật Minh' : targetUser;
 
+        onSnapshot(doc(db, "users", targetUser), (docSnap) => {
+            if (docSnap.exists()) {
+                userData = { ...userData, ...docSnap.data() };
+            }
+            renderAvatar();
+            renderCover();
+            renderPageContent();
+        });
+
         function renderAvatar() {
             const box = document.getElementById("profile-avatar-box");
-            if (userAvatarBase64) {
-                box.innerHTML = `<img src="${userAvatarBase64}" class="w-full h-full object-cover">`;
+            if (userData.avatar) {
+                box.innerHTML = `<img src="${userData.avatar}" class="w-full h-full object-cover">`;
             } else {
                 box.innerHTML = `<i class="fa-solid fa-user"></i>`;
             }
         }
-        renderAvatar();
 
         function renderCover() {
             const box = document.getElementById("profile-cover-box");
-            if (userCoverBase64) {
+            if (userData.cover) {
                 box.innerHTML = `
-                    <img src="${userCoverBase64}" class="w-full h-full object-cover" style="object-position: center ${coverPercent}%;">
+                    <img src="${userData.cover}" class="w-full h-full object-cover" style="object-position: center ${userData.coverPercent}%;">
                     <button onclick="document.getElementById('cover-input-file').click()" class="absolute bottom-4 right-4 bg-white hover:bg-gray-100 text-fbText text-xs font-semibold px-3 py-1.5 rounded-md shadow flex items-center gap-2 border border-gray-200 z-10 cursor-pointer">
                         <i class="fa-solid fa-camera"></i> Chỉnh sửa ảnh bìa
                     </button>
@@ -222,7 +230,6 @@
                 `;
             }
         }
-        renderCover();
 
         window.toggleAvatarMenu = function(e) {
             e.stopPropagation();
@@ -235,40 +242,37 @@
             if (menu) menu.classList.add("hidden");
         });
 
-        window.handleAvatarUpload = function(e) {
+        window.handleAvatarUpload = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(uploadEvent) {
-                userAvatarBase64 = uploadEvent.target.result;
-                localStorage.setItem("user_avatar", userAvatarBase64);
-                renderAvatar();
+            reader.onload = async function(uploadEvent) {
+                userData.avatar = uploadEvent.target.result;
+                await setDoc(doc(db, "users", targetUser), { avatar: userData.avatar }, { merge: true });
             };
             reader.readAsDataURL(file);
         };
 
-        window.handleCoverUpload = function(e) {
+        window.handleCoverUpload = async function(e) {
             const file = e.target.files[0];
             if (!file) return;
             const reader = new FileReader();
-            reader.onload = function(uploadEvent) {
-                userCoverBase64 = uploadEvent.target.result;
-                localStorage.setItem("user_cover", userCoverBase64);
-                renderCover();
+            reader.onload = async function(uploadEvent) {
+                userData.cover = uploadEvent.target.result;
+                await setDoc(doc(db, "users", targetUser), { cover: userData.cover }, { merge: true });
             };
             reader.readAsDataURL(file);
         };
 
-        // BẬT / TẮT POPUP CHỈNH SỬA
         window.openEditModal = function() {
-            document.getElementById("edit-bio").value = userBio === "Chưa có tiểu sử" ? "" : userBio;
-            document.getElementById("edit-location").value = userLocation;
-            document.getElementById("edit-hometown").value = userHometown;
-            document.getElementById("edit-school").value = userSchool;
-            document.getElementById("edit-work").value = userWork;
-            document.getElementById("edit-birthday").value = userBirthday === "xx/xx/xxxx" ? "" : userBirthday;
-            document.getElementById("edit-gender").value = userGender;
-            document.getElementById("edit-hobbies").value = userHobbies === "Chưa thêm sở thích nào" ? "" : userHobbies;
+            document.getElementById("edit-bio").value = userData.bio === "Chưa có tiểu sử" ? "" : userData.bio;
+            document.getElementById("edit-location").value = userData.location;
+            document.getElementById("edit-hometown").value = userData.hometown;
+            document.getElementById("edit-school").value = userData.school;
+            document.getElementById("edit-work").value = userData.work;
+            document.getElementById("edit-birthday").value = userData.birthday === "xx/xx/xxxx" ? "" : userData.birthday;
+            document.getElementById("edit-gender").value = userData.gender;
+            document.getElementById("edit-hobbies").value = userData.hobbies === "Chưa thêm sở thích nào" ? "" : userData.hobbies;
             
             document.getElementById("edit-profile-modal").classList.remove("hidden");
         };
@@ -277,28 +281,20 @@
             document.getElementById("edit-profile-modal").classList.add("hidden");
         };
 
-        // LƯU CÁC THÔNG TIN VÀO LOCALSTORAGE VÀ CẬP NHẬT GIAO DIỆN KHÔNG CẦN F5
-        window.saveProfileInfo = function() {
-            userBio = document.getElementById("edit-bio").value.trim() || "Chưa có tiểu sử";
-            userLocation = document.getElementById("edit-location").value.trim() || "Đông Xuân, Hà Nội";
-            userHometown = document.getElementById("edit-hometown").value.trim() || "Sóc Sơn, Hà Nội";
-            userSchool = document.getElementById("edit-school").value.trim() || "THPT Sóc Sơn";
-            userWork = document.getElementById("edit-work").value.trim() || "Học sinh";
-            userBirthday = document.getElementById("edit-birthday").value.trim() || "xx/xx/xxxx";
-            userGender = document.getElementById("edit-gender").value;
-            userHobbies = document.getElementById("edit-hobbies").value.trim() || "Chưa thêm sở thích nào";
+        window.saveProfileInfo = async function() {
+            const updatePayload = {
+                bio: document.getElementById("edit-bio").value.trim() || "Chưa có tiểu sử",
+                location: document.getElementById("edit-location").value.trim() || "Đông Xuân, Hà Nội",
+                hometown: document.getElementById("edit-hometown").value.trim() || "Sóc Sơn, Hà Nội",
+                school: document.getElementById("edit-school").value.trim() || "THPT Sóc Sơn",
+                work: document.getElementById("edit-work").value.trim() || "Học sinh",
+                birthday: document.getElementById("edit-birthday").value.trim() || "xx/xx/xxxx",
+                gender: document.getElementById("edit-gender").value,
+                hobbies: document.getElementById("edit-hobbies").value.trim() || "Chưa thêm sở thích nào"
+            };
 
-            localStorage.setItem("user_bio", userBio);
-            localStorage.setItem("user_location", userLocation);
-            localStorage.setItem("user_hometown", userHometown);
-            localStorage.setItem("user_school", userSchool);
-            localStorage.setItem("user_work", userWork);
-            localStorage.setItem("user_birthday", userBirthday);
-            localStorage.setItem("user_gender", userGender);
-            localStorage.setItem("user_hobbies", userHobbies);
-
+            await setDoc(doc(db, "users", targetUser), updatePayload, { merge: true });
             closeEditModal();
-            renderPageContent();
         };
 
         if (targetUser === loggedUser) {
@@ -380,26 +376,25 @@
             }
         }
 
-        // TAB TẤT CẢ (TIMELINE)
         function renderTimelineView(container) {
             container.innerHTML = `
                 <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
                     <div class="md:col-span-2 space-y-4">
                         <div class="bg-fbPanel p-4 rounded-xl border border-gray-200 space-y-3 shadow-sm">
                             <h3 class="text-base font-bold text-fbText">Giới thiệu</h3>
-                            <p class="text-xs text-fbSubText italic -mt-1">${escapeHTML(userBio)}</p>
+                            <p class="text-xs text-fbSubText italic -mt-1">${escapeHTML(userData.bio)}</p>
                             <div class="space-y-3 text-xs text-fbSubText pt-1 border-t border-gray-100">
                                 <div class="flex items-center gap-3">
                                     <i class="fa-solid fa-house text-gray-500 text-sm w-4 text-center"></i>
-                                    <span>Sống tại <strong class="text-fbText">${escapeHTML(userLocation)}</strong></span>
+                                    <span>Sống tại <strong class="text-fbText">${escapeHTML(userData.location)}</strong></span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <i class="fa-solid fa-graduation-cap text-gray-500 text-sm w-4 text-center"></i>
-                                    <span>Học sinh tại <strong class="text-fbText">${escapeHTML(userSchool)}</strong></span>
+                                    <span>Học sinh tại <strong class="text-fbText">${escapeHTML(userData.school)}</strong></span>
                                 </div>
                                 <div class="flex items-center gap-3">
                                     <i class="fa-solid fa-cake-candles text-gray-500 text-sm w-4 text-center"></i>
-                                    <span>Sinh ngày <strong class="text-fbText">${escapeHTML(userBirthday)}</strong></span>
+                                    <span>Sinh ngày <strong class="text-fbText">${escapeHTML(userData.birthday)}</strong></span>
                                 </div>
                             </div>
                             <button onclick="openEditModal()" class="w-full bg-fbHover hover:bg-gray-300 py-2 rounded-lg text-xs font-bold text-fbText">Chỉnh sửa tiểu sử</button>
@@ -441,7 +436,6 @@
             loadFirestorePosts();
         }
 
-        // TAB GIỚI THIỆU - HIỂN THỊ ĐỘNG CÁC THÔNG TIN ĐÃ CHỈNH SỬA
         function renderAboutView(container, activeSk) {
             const currentSub = activeSk || 'about';
 
@@ -453,7 +447,7 @@
                             <h4 class="text-sm font-bold text-fbText mb-2">Tiểu sử</h4>
                             <div class="flex items-center gap-3 text-xs text-fbSubText">
                                 <i class="fa-solid fa-hand-wave text-lg"></i>
-                                <span>${escapeHTML(userBio)}</span>
+                                <span>${escapeHTML(userData.bio)}</span>
                             </div>
                         </div>
                         <hr class="border-gray-200">
@@ -461,7 +455,7 @@
                             <h4 class="text-sm font-bold text-fbText mb-2">Chi tiết đã ghim</h4>
                             <div class="flex items-center gap-3 text-xs text-fbSubText">
                                 <i class="fa-solid fa-thumbtack text-lg"></i>
-                                <span>${escapeHTML(userLocation)}</span>
+                                <span>${escapeHTML(userData.location)}</span>
                             </div>
                         </div>
                     </div>
@@ -471,12 +465,12 @@
                     <div class="space-y-4 text-xs">
                         <div>
                             <p class="font-bold text-fbSubText mb-1">Vị trí</p>
-                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-location-dot text-base text-gray-500"></i> ${escapeHTML(userLocation)}</div>
+                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-location-dot text-base text-gray-500"></i> ${escapeHTML(userData.location)}</div>
                         </div>
                         <hr class="border-gray-200">
                         <div>
                             <p class="font-bold text-fbSubText mb-1">Quê quán</p>
-                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-house text-base text-gray-500"></i> ${escapeHTML(userHometown)}</div>
+                            <div class="flex items-center gap-2.5 text-fbText font-semibold"><i class="fa-solid fa-house text-base text-gray-500"></i> ${escapeHTML(userData.hometown)}</div>
                         </div>
                         <hr class="border-gray-200">
                         <div>
@@ -485,7 +479,7 @@
                                 <div class="flex items-center gap-2.5">
                                     <i class="fa-solid fa-cake-candles text-base text-gray-500"></i>
                                     <div>
-                                        <p class="font-bold text-fbText">${escapeHTML(userBirthday)}</p>
+                                        <p class="font-bold text-fbText">${escapeHTML(userData.birthday)}</p>
                                     </div>
                                 </div>
                                 <i class="fa-solid fa-lock text-gray-400"></i>
@@ -495,7 +489,7 @@
                         <div>
                             <p class="font-bold text-fbSubText mb-1">Giới tính</p>
                             <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2.5"><i class="fa-solid fa-user text-base text-gray-500"></i> <span class="font-bold text-fbText">${escapeHTML(userGender)}</span></div>
+                                <div class="flex items-center gap-2.5"><i class="fa-solid fa-user text-base text-gray-500"></i> <span class="font-bold text-fbText">${escapeHTML(userData.gender)}</span></div>
                                 <i class="fa-solid fa-lock text-gray-400"></i>
                             </div>
                         </div>
@@ -507,7 +501,7 @@
                         <h4 class="text-sm font-bold text-fbText mb-2">Công việc</h4>
                         <div class="flex items-center gap-3 text-xs text-fbSubText">
                             <i class="fa-solid fa-briefcase text-lg text-gray-500"></i>
-                            <span class="font-bold text-fbText">${escapeHTML(userWork)}</span>
+                            <span class="font-bold text-fbText">${escapeHTML(userData.work)}</span>
                         </div>
                     </div>
                 `;
@@ -516,7 +510,7 @@
                     <div class="space-y-4 text-xs">
                         <div>
                             <h4 class="text-sm font-bold text-fbText mb-2">Trường trung học</h4>
-                            <div class="flex items-center gap-3 text-fbText font-semibold"><i class="fa-solid fa-school text-lg text-gray-500"></i> ${escapeHTML(userSchool)}</div>
+                            <div class="flex items-center gap-3 text-fbText font-semibold"><i class="fa-solid fa-school text-lg text-gray-500"></i> ${escapeHTML(userData.school)}</div>
                         </div>
                     </div>
                 `;
@@ -526,7 +520,7 @@
                         <h4 class="text-sm font-bold text-fbText mb-2">Sở thích</h4>
                         <div class="flex items-center gap-3 text-xs text-fbText font-semibold">
                             <i class="fa-solid fa-heart text-lg text-gray-500"></i>
-                            <span>${escapeHTML(userHobbies)}</span>
+                            <span>${escapeHTML(userData.hobbies)}</span>
                         </div>
                     </div>
                 `;
@@ -589,7 +583,7 @@
                         <h4 class="text-sm font-bold text-fbText mb-2">Chi tiết về bạn</h4>
                         <div class="flex items-center gap-3 text-xs text-fbSubText">
                             <i class="fa-solid fa-user-gear text-lg text-gray-500"></i>
-                            <span>${escapeHTML(userBio)}</span>
+                            <span>${escapeHTML(userData.bio)}</span>
                         </div>
                     </div>
                 `;
@@ -631,7 +625,7 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-2.5">
                                     <div class="w-9 h-9 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center font-bold text-xs">
-                                        ${p.author ? p.author.charAt(0).toUpperCase() : 'U'}
+                                        ${userData.avatar ? `<img src="${userData.avatar}" class="w-full h-full object-cover">` : (p.author ? p.author.charAt(0).toUpperCase() : 'U')}
                                     </div>
                                     <div>
                                         <h4 class="text-xs font-bold text-fbText">${escapeHTML(p.author === 'phamnhatminh' ? 'Phạm Nhật Minh' : p.author)}</h4>
@@ -646,8 +640,6 @@
                 }
             });
         }
-
-        renderPageContent();
     </script>
 </body>
 </html>
