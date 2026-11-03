@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cài Đặt Tài Khoản - MinhNet</title>
+    <title>Cài Đặt & Kéo Thả Ảnh Bìa - MinhNet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -34,10 +34,10 @@
     <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
         <div class="flex items-center gap-3">
             <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-85 transition" title="Quay lại Bảng tin"><i class="fa-solid fa-arrow-left"></i></a>
-            <span class="text-sm font-bold text-white">Cài Đặt & Kéo Thả Ảnh Bìa</span>
+            <span class="text-sm font-bold text-white">Cài Đặt & Đồng Bộ Cloud</span>
         </div>
         <div class="flex items-center gap-2">
-            <a href="profile.html" class="text-xs bg-fbInput px-3 py-1.5 rounded-xl hover:bg-fbHover text-white font-bold">Trang Cá Nhân</a>
+            <a id="nav-profile-link" href="profile.html" class="text-xs bg-fbInput px-3 py-1.5 rounded-xl hover:bg-fbHover text-white font-bold">Trang Cá Nhân</a>
             <a href="trangchu.html" class="text-fbBlue font-bold text-xs bg-fbInput px-3 py-1.5 rounded-xl hover:bg-fbHover">Về Bảng Tin</a>
         </div>
     </header>
@@ -47,11 +47,11 @@
             
             <div class="flex items-center gap-3 border-b border-fbHover pb-4">
                 <div class="w-12 h-12 rounded-full bg-fbBlue/10 flex items-center justify-center text-fbBlue text-xl border border-fbBlue/20">
-                    <i class="fa-solid fa-arrows-up-down"></i>
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
                 </div>
                 <div>
-                    <h2 class="text-xl font-bold text-white">Kéo thả tùy chỉnh Ảnh Bìa</h2>
-                    <p class="text-xs text-[#b0b3b8]">Bấm giữ và kéo lên/xuống trực tiếp trên khung hình để canh góc</p>
+                    <h2 class="text-xl font-bold text-white">Cài đặt tài khoản & Đồng bộ</h2>
+                    <p class="text-xs text-[#b0b3b8]">Tùy chỉnh ảnh bìa, avatar, bio và đồng bộ trực tiếp lên Firebase</p>
                 </div>
             </div>
 
@@ -71,7 +71,7 @@
 
             <!-- CHỌN AVATAR -->
             <div class="space-y-3 pt-2 border-t border-fbHover">
-                <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn (<2s)</label>
+                <label class="font-semibold text-[#b0b3b8] uppercase text-[11px]">Ảnh đại diện / GIF / Video ngắn</label>
                 <div class="flex items-center gap-4">
                     <div id="settings-avatar-preview" class="w-16 h-16 rounded-full bg-fbHover border border-fbHover overflow-hidden flex items-center justify-center shrink-0 font-bold text-lg shadow">
                         <i class="fa-solid fa-user"></i>
@@ -93,7 +93,7 @@
             </div>
 
             <button onclick="saveAppSettings()" class="w-full bg-fbBlue hover:opacity-90 py-3.5 rounded-xl font-bold text-white transition shadow-lg cursor-pointer text-sm">
-                Lưu Thay Đổi
+                Lưu Thay Đổi & Đồng Bộ Cloud
             </button>
 
         </div>
@@ -101,7 +101,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -118,35 +118,57 @@
         const loggedUser = localStorage.getItem("chat_user");
         if (!loggedUser) window.location.href = "trangchu.html";
 
-        document.getElementById("settings-bio-input").value = localStorage.getItem("user_bio") || "";
-        
-        let coverPosYPercent = parseFloat(localStorage.getItem("user_cover_percent") || "50");
-        let currentCover = localStorage.getItem("user_cover") || "";
-        let currentAvatar = localStorage.getItem("user_avatar") || "";
+        document.getElementById("nav-profile-link").href = `profile.html?profile=${loggedUser}`;
+
+        let coverPosYPercent = 50;
+        let currentCover = "";
+        let currentAvatar = "";
+        let tempAvatarBase64 = "";
 
         const imgCover = document.getElementById("cover-drag-img");
         const placeholderCover = document.getElementById("cover-placeholder");
 
-        if (currentCover) {
-            imgCover.src = currentCover;
-            imgCover.style.objectPosition = `center ${coverPosYPercent}%`;
-            imgCover.classList.remove("hidden");
-            placeholderCover.classList.add("hidden");
-        }
-
-        if (currentAvatar) {
-            if (currentAvatar.startsWith("data:video")) {
-                document.getElementById("settings-avatar-preview").innerHTML = `<video src="${currentAvatar}" class="w-full h-full object-cover" autoplay loop muted></video>`;
-            } else {
-                document.getElementById("settings-avatar-preview").innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+        // Lấy dữ liệu từ Firestore lên giao diện cài đặt
+        async function loadUserData() {
+            try {
+                const ref = doc(db, "users", loggedUser);
+                const snap = await getDoc(ref);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    
+                    if (data.bio) {
+                        document.getElementById("settings-bio-input").value = data.bio;
+                    }
+                    if (data.coverPercent !== undefined) {
+                        coverPosYPercent = data.coverPercent;
+                    }
+                    if (data.cover) {
+                        currentCover = data.cover;
+                        imgCover.src = currentCover;
+                        imgCover.style.objectPosition = `center ${coverPosYPercent}%`;
+                        imgCover.classList.remove("hidden");
+                        placeholderCover.classList.add("hidden");
+                    }
+                    if (data.avatar) {
+                        currentAvatar = data.avatar;
+                        if (currentAvatar.startsWith("data:video") || currentAvatar.includes("video/")) {
+                            document.getElementById("settings-avatar-preview").innerHTML = `<video src="${currentAvatar}" class="w-full h-full object-cover" autoplay loop muted></video>`;
+                        } else {
+                            document.getElementById("settings-avatar-preview").innerHTML = `<img src="${currentAvatar}" class="w-full h-full object-cover">`;
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error("Lỗi tải dữ liệu cloud:", err);
             }
         }
 
-        // CƠ CHẾ KÉO THẢ TÍNH THEO PHẦN TRĂM (%) SẠCH SẼ, KHÔNG LO LỆCH KHUNG
+        loadUserData();
+
+        // KÉO THẢ ẢNH BÌA
         let isDragging = false;
         let startY = 0;
         let startPercent = 50;
-
         const dragContainer = document.getElementById("cover-drag-container");
 
         const startDrag = (e) => {
@@ -161,7 +183,6 @@
             const currentY = e.pageY || (e.touches && e.touches[0].pageY);
             const deltaY = currentY - startY;
             
-            // Dịch chuyển phần trăm theo độ cao kéo chuột
             let newPercent = startPercent - (deltaY / 2);
             if (newPercent < 0) newPercent = 0;
             if (newPercent > 100) newPercent = 100;
@@ -185,7 +206,8 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = (e) => {
-                imgCover.src = e.target.result;
+                currentCover = e.target.result;
+                imgCover.src = currentCover;
                 coverPosYPercent = 50;
                 imgCover.style.objectPosition = `center 50%`;
                 imgCover.classList.remove("hidden");
@@ -194,7 +216,6 @@
             reader.readAsDataURL(file);
         };
 
-        let tempAvatarBase64 = "";
         document.getElementById("settings-avatar-input").onchange = (event) => {
             const file = event.target.files[0];
             if (!file) return;
@@ -217,28 +238,38 @@
             return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
+        // LƯU VÀ ĐỒNG BỘ LÊN FIRESTORE
         window.saveAppSettings = async () => {
             const bio = document.getElementById("settings-bio-input").value.trim();
             const pass = document.getElementById("settings-new-pass").value.trim();
 
-            if (bio) localStorage.setItem("user_bio", bio);
-            localStorage.setItem("user_cover_percent", coverPosYPercent);
+            const payload = {
+                bio: bio || "Chưa có tiểu sử",
+                coverPercent: coverPosYPercent
+            };
 
-            if (imgCover.src && !imgCover.classList.contains("hidden")) {
-                localStorage.setItem("user_cover", imgCover.src);
+            if (currentCover) {
+                payload.cover = currentCover;
             }
 
             if (tempAvatarBase64) {
+                payload.avatar = tempAvatarBase64;
+                localStorage.setItem("chat_avatar", tempAvatarBase64); // Đồng bộ nhanh localStorage
                 localStorage.setItem("user_avatar", tempAvatarBase64);
             }
 
             if (pass) {
-                const hashed = await hashPassword(pass);
-                await setDoc(doc(db, "users", loggedUser), { password: hashed }, { merge: true });
+                payload.password = await hashPassword(pass);
             }
 
-            alert("Đã lưu vị trí ảnh bìa thành công!");
-            window.location.href = "profile.html";
+            try {
+                await setDoc(doc(db, "users", loggedUser), payload, { merge: true });
+                alert("Đã lưu và đồng bộ cloud thành công!");
+                window.location.href = `profile.html?profile=${loggedUser}`;
+            } catch (err) {
+                console.error("Lỗi khi lưu:", err);
+                alert("Có lỗi xảy ra khi lưu lên hệ thống.");
+            }
         };
     </script>
 </body>
