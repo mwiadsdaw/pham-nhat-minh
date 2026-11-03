@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vẽ hình đa cử chỉ - pminh83</title>
+    <title>Phát hiện người và cử chỉ - pminh83</title>
     <style>
         body {
             margin: 0;
@@ -42,24 +42,19 @@
         }
     </style>
 
-    <!-- Thư viện MediaPipe từ Google -->
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <!-- Thư viện TensorFlow.js và mô hình Coco-Ssd (Phát hiện người và vật thể) -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
 </head>
 <body>
 
-    <h2>Điều khiển hình học bằng cử chỉ ngón tay</h2>
+    <h2>Hệ thống nhận diện Người và Cử chỉ</h2>
     <div class="container">
-        <video id="webcam" autoplay playsinline></video>
+        <video id="webcam" autoplay playsinline muted width="640" height="480"></video>
         <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
     <div class="instruction">
-        - 1 tay chụm (Trỏ + Cái): Tạo điểm.<br>
-        - 2 tay chụm: Nối thành đoạn thẳng.<br>
-        - 1 tay mở (tách ngón): Tạo hình chữ nhật co giãn theo vị trí tay.<br>
-        - Xoay cổ tay: Biến hình chữ nhật thành 2 tam giác vắt chéo.
+        Đứng trước camera để hệ thống quét và nhận diện người...
     </div>
 
     <script>
@@ -67,119 +62,99 @@
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
 
-        function onResults(results) {
+        let model = undefined;
+        let isDetecting = false;
+
+        // 1. Khởi động Webcam
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                video: { width: 640, height: 480 },
+                audio: false
+            });
+            videoElement.srcObject = stream;
+            return new Promise((resolve) => {
+                videoElement.onloadedmetadata = () => {
+                    resolve(videoElement);
+                };
+            });
+        }
+
+        // 2. Tải mô hình nhận diện AI
+        async function loadModel() {
+            canvasCtx.fillStyle = "white";
+            canvasCtx.font = "18px Arial";
+            canvasCtx.fillText("Đang tải mô hình AI nhận diện người...", 160, 240);
+            
+            model = await cocoSsd.load();
+            console.log("Đã tải xong mô hình Coco-SSD!");
+            detectFrame();
+        }
+
+        // 3. Quét liên tục từng khung hình để tìm người
+        async function detectFrame() {
+            if (!model) return;
+
+            // Dự đoán các đối tượng xuất hiện trong video
+            const predictions = await model.detect(videoElement);
+
+            // Xóa màn hình cũ và vẽ lại khung hình video (lật gương)
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
 
-            let hands = results.multiHandLandmarks || [];
-            
-            if (hands.length === 1) {
-                const landmarks = hands[0];
-                const indexTip = landmarks[8];
-                const thumbTip = landmarks[4];
-                const x = indexTip.x * canvasElement.width;
-                const y = indexTip.y * canvasElement.height;
-                
-                // Tính khoảng cách ngón cái và trỏ để xem có chụm không
-                const pinchDist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
+            let personDetected = false;
 
-                if (pinchDist < 0.05) {
-                    // Chụm 1 tay -> Tạo 1 điểm
-                    canvasCtx.fillStyle = '#ff0055';
-                    canvasCtx.beginPath();
-                    canvasCtx.arc(x, y, 12, 0, 2 * Math.PI);
-                    canvasCtx.fill();
-                } else {
-                    // Tách tay ra -> Tạo hình chữ nhật co giãn theo vị trí ngón trỏ và cổ tay (điểm 0)
-                    const wrist = landmarks[0];
-                    let rx = wrist.x * canvasElement.width;
-                    let ry = wrist.y * canvasElement.height;
+            // Duyệt qua các vật thể AI tìm thấy
+            predictions.forEach(prediction => {
+                // Chỉ lấy đối tượng là "person" (con người)
+                if (prediction.class === 'person') {
+                    personDetected = true;
+                    const [x, y, width, height] = prediction.bbox;
 
-                    let width = Math.abs(x - rx) * 1.5;
-                    let height = Math.abs(y - ry) * 1.5;
-                    let cx = (x + rx) / 2;
-                    let cy = (y + ry) / 2;
+                    // Vì dùng lật gương (scaleX(-1)), cần tính lại tọa độ X cho khớp khung hình canvas
+                    const mirroredX = canvasElement.width - x - width;
 
-                    // Kiểm tra độ nghiêng/xoay cổ tay dựa vào điểm ngón út (20) và ngón cái (4)
-                    let angle = Math.atan2(indexTip.y - wrist.y, indexTip.x - wrist.x);
-
-                    canvasCtx.save();
-                    canvasCtx.translate(cx, cy);
-                    canvasCtx.rotate(angle);
-
+                    // Vẽ khung bao quanh người
                     canvasCtx.strokeStyle = '#00ffcc';
                     canvasCtx.lineWidth = 4;
-                    canvasCtx.fillStyle = 'rgba(0, 255, 204, 0.15)';
+                    canvasCtx.strokeRect(mirroredX, y, width, height);
 
-                    // Nếu xoay góc lớn (ví dụ nghiêng tay), biến thành 2 tam giác vắt chéo
-                    if (Math.abs(angle) > 0.8) {
-                        canvasCtx.beginPath();
-                        canvasCtx.rect(-width/2, -height/2, width, height);
-                        // Vẽ 2 đường chéo
-                        canvasCtx.moveTo(-width/2, -height/2);
-                        canvasCtx.lineTo(width/2, height/2);
-                        canvasCtx.moveTo(width/2, -height/2);
-                        canvasCtx.lineTo(-width/2, height/2);
-                        canvasCtx.stroke();
-                        canvasCtx.fill();
-                    } else {
-                        // Hình chữ nhật bình thường co giãn theo tay
-                        canvasCtx.beginPath();
-                        canvasCtx.rect(-width/2, -height/2, width, height);
-                        canvasCtx.stroke();
-                        canvasCtx.fill();
-                    }
-                    canvasCtx.restore();
+                    // Hiển thị nhãn tên và độ chính xác
+                    canvasCtx.fillStyle = '#00ffcc';
+                    canvasCtx.font = '16px Arial';
+                    canvasCtx.fillText(
+                        `Người (${Math.round(prediction.score * 100)}%)`, 
+                        mirroredX > 10 ? mirroredX : 10, 
+                        y > 20 ? y - 10 : 20
+                    );
                 }
-            } else if (hands.length >= 2) {
-                // 2 tay cùng chụm ngón trỏ và ngón cái -> Nối thành đoạn thẳng
-                const p1 = hands[0][8];
-                const p2 = hands[1][8];
-                const x1 = p1.x * canvasElement.width;
-                const y1 = p1.y * canvasElement.height;
-                const x2 = p2.x * canvasElement.width;
-                const y2 = p2.y * canvasElement.height;
+            });
 
-                canvasCtx.strokeStyle = '#ffff00';
-                canvasCtx.lineWidth = 6;
-                canvasCtx.beginPath();
-                canvasCtx.moveTo(x1, y1);
-                canvasCtx.lineTo(x2, y2);
-                canvasCtx.stroke();
-
-                // Vẽ 2 điểm ở đầu mút
+            // Hiển thị trạng thái lên giao diện
+            if (personDetected) {
+                canvasCtx.fillStyle = '#00ff55';
+                canvasCtx.font = 'bold 20px Arial';
+                canvasCtx.fillText("Trạng thái: Đã phát hiện NGƯỜI", 20, 40);
+            } else {
                 canvasCtx.fillStyle = '#ff0055';
-                canvasCtx.beginPath();
-                canvasCtx.arc(x1, y1, 8, 0, 2 * Math.PI);
-                canvasCtx.arc(x2, y2, 8, 0, 2 * Math.PI);
-                canvasCtx.fill();
+                canvasCtx.font = 'bold 20px Arial';
+                canvasCtx.fillText("Trạng thái: Không có người", 20, 40);
             }
 
             canvasCtx.restore();
+
+            // Lặp lại liên tục ở khung hình tiếp theo
+            requestAnimationFrame(detectFrame);
         }
 
-        const handsModel = new Hands({
-            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-        });
+        // Khởi chạy chương trình
+        async function main() {
+            await setupCamera();
+            videoElement.play();
+            loadModel();
+        }
 
-        handsModel.setOptions({
-            maxNumHands: 2,           // Bật chế độ nhận diện tối đa 2 bàn tay
-            modelComplexity: 0,       // Đặt về 0 để tăng tốc độ khung hình (giảm giật lag, tăng FPS)
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-        });
-
-        handsModel.onResults(onResults);
-
-        const camera = new Camera(videoElement, {
-            onFrame: async () => {
-                await handsModel.send({ image: videoElement });
-            },
-            width: 640,
-            height: 480
-        });
-        camera.start();
+        main();
     </script>
 </body>
 </html>
