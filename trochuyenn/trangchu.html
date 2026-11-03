@@ -80,23 +80,51 @@
         <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
             <div class="flex items-center gap-2 sm:gap-3">
                 <a href="../index.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Về trang chủ Portfolio"><i class="fa-solid fa-house"></i></a>
-                <div class="bg-fbInput rounded-full px-3 py-2 hidden sm:flex items-center gap-2 w-[180px] md:w-[240px]">
-                    <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
-                    <input type="text" placeholder="Tìm kiếm trên MinhNet" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                
+                <!-- Thanh tìm kiếm có Dropdown & Lịch sử tìm kiếm -->
+                <div class="relative">
+                    <div class="bg-fbInput rounded-full px-3 py-2 flex items-center gap-2 w-[180px] sm:w-[220px] md:w-[260px]">
+                        <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
+                        <input type="text" id="search-input" placeholder="Tìm kiếm người dùng..." onfocus="showSearchDropdown()" oninput="handleSearchInput(event)" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                    </div>
+
+                    <!-- Dropdown danh sách kết quả & lịch sử -->
+                    <div id="search-dropdown" class="hidden absolute top-12 left-0 w-[280px] sm:w-[320px] bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 text-xs space-y-2">
+                        <div class="flex items-center justify-between border-b border-fbHover pb-2">
+                            <span class="font-bold text-[#b0b3b8]">Tìm kiếm gần đây</span>
+                            <button onclick="clearSearchHistory()" class="text-fbBlue hover:underline text-[11px] font-semibold">Xóa lịch sử</button>
+                        </div>
+                        <div id="search-results-list" class="space-y-1 max-h-[280px] overflow-y-auto"></div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Navbar Desktop -->
+            <!-- Navbar Desktop: Thêm nút Bạn bè ở giữa -->
             <div class="hidden md:flex items-center gap-1 sm:gap-4">
-                <button onclick="switchMainTab('home')" id="nav-home" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-users"></i></button>
-                <button onclick="switchMainTab('reels')" id="nav-reels" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-clapperboard"></i></button>
-                <button onclick="location.href='friends.html'" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer"><i class="fa-solid fa-user-group"></i></button>
+                <button onclick="switchMainTab('home')" id="nav-home" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer" title="Trang chủ"><i class="fa-solid fa-users"></i></button>
+                <button onclick="switchMainTab('reels')" id="nav-reels" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer" title="Reels"><i class="fa-solid fa-clapperboard"></i></button>
+                <a href="friends.html" id="nav-friends" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] hover:text-white text-lg sm:text-xl rounded-lg hover:bg-fbHover transition cursor-pointer" title="Bạn bè"><i class="fa-solid fa-user-group"></i></a>
             </div>
 
-            <div class="flex items-center gap-2 sm:gap-3 justify-end">
+            <!-- Bên phải: Admin badge, Notification, Profile, Logout -->
+            <div class="flex items-center gap-2 sm:gap-3 justify-end relative">
                 <div id="admin-badge" class="hidden bg-red-500/20 text-red-400 border border-red-500/30 text-[10px] px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full font-bold">
                     Admin
                 </div>
+
+                <!-- Popup & Nút Notification -->
+                <div class="relative">
+                    <button onclick="toggleNotificationMenu(event)" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer relative" title="Thông báo">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                    </button>
+
+                    <div id="notif-dropdown" class="hidden absolute right-0 top-12 w-[300px] sm:w-[340px] bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 space-y-2">
+                        <h4 class="text-sm font-bold text-white border-b border-fbHover pb-2">Thông báo</h4>
+                        <div id="notif-list" class="space-y-2 max-h-[300px] overflow-y-auto"></div>
+                    </div>
+                </div>
+
                 <div class="flex items-center gap-2 cursor-pointer hover:bg-fbHover p-1.5 rounded-full" onclick="openProfile(window.myUser)">
                     <div id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center font-bold text-xs text-white overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
@@ -112,7 +140,7 @@
         <!-- BODY CHÍNH -->
         <div class="flex-1 flex overflow-hidden relative">
 
-            <!-- CỘT TRÁI CHUNG (Desktop) -->
+            <!-- CỘT TRÁI CHUNG (Đã loại bỏ cài đặt ở cột trái) -->
             <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
                 <div onclick="openProfile(window.myUser)" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
                     <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
@@ -128,10 +156,10 @@
                     <i class="fa-solid fa-clapperboard text-purple-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Thước phim (Reels)</span>
                 </div>
-                <div onclick="location.href='friends.html'" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
+                <a href="friends.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-[#e4e6eb]">
                     <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bạn bè</span>
-                </div>
+                </a>
                 <div id="admin-menu-btn" onclick="openAdminModal()" class="hidden flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition text-yellow-400">
                     <i class="fa-solid fa-shield-halved text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Kiểm duyệt bài viết</span>
@@ -210,28 +238,23 @@
                 <div id="reels-container" class="h-full w-full max-w-[450px] flex flex-col snap-y snap-mandatory overflow-y-scroll relative"></div>
             </div>
 
-            <!-- TAB 3: TRANG CÁ NHÂN (STYLE FACEBOOK 1:1) -->
+            <!-- TAB 3: TRANG CÁ NHÂN -->
             <div id="tab-profile-page" class="hidden flex-1 overflow-y-auto">
                 <div class="w-full flex flex-col items-center bg-fbBg pb-20">
                     
-                    <!-- Khung Banner & Avatar Header -->
                     <div class="w-full max-w-[1050px] bg-fbPanel border-b border-fbHover relative">
-                        <!-- Ảnh bìa (Cover) -->
                         <div class="w-full h-48 sm:h-72 md:h-80 bg-gradient-to-r from-slate-900 via-gray-800 to-zinc-900 relative rounded-b-xl overflow-hidden">
                             <button class="absolute bottom-3 right-3 bg-white/10 hover:bg-white/20 backdrop-blur-md text-white text-xs font-semibold px-3 py-1.5 rounded-lg flex items-center gap-2 cursor-pointer transition">
                                 <i class="fa-solid fa-camera"></i> Thêm ảnh bìa
                             </button>
                         </div>
 
-                        <!-- Header thông tin chính -->
                         <div class="px-4 sm:px-8 pb-4 relative flex flex-col md:flex-row items-center md:items-end justify-between gap-4 -mt-16 sm:-mt-20">
-                            <!-- Avatar + Name -->
                             <div class="flex flex-col md:flex-row items-center md:items-end gap-4 text-center md:text-left">
                                 <div class="relative group">
                                     <div id="profile-avatar-box" class="w-32 h-32 sm:w-40 sm:h-40 rounded-full border-4 border-fbPanel bg-fbHover flex items-center justify-center text-5xl font-bold text-white overflow-hidden shadow-2xl relative">
                                         <i class="fa-solid fa-user"></i>
                                     </div>
-                                    <!-- Bong bóng chia sẻ suy nghĩ -->
                                     <div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-fbHover text-[11px] text-slate-200 px-3 py-1 rounded-2xl border border-slate-600 shadow-md whitespace-nowrap">
                                         Chia sẻ suy nghĩ...
                                     </div>
@@ -243,11 +266,9 @@
                                 </div>
                             </div>
 
-                            <!-- Nút hành động -->
                             <div id="profile-action-btn" class="flex items-center gap-2 mb-2 w-full md:w-auto justify-center"></div>
                         </div>
 
-                        <!-- Menu Tabs cá nhân -->
                         <div class="px-4 sm:px-8 border-t border-fbHover flex items-center gap-1 sm:gap-2 overflow-x-auto text-xs sm:text-sm font-semibold text-[#b0b3b8]">
                             <button class="py-3 px-3 sm:px-4 text-fbBlue border-b-4 border-fbBlue font-bold">Tất cả</button>
                             <button class="py-3 px-3 sm:px-4 hover:bg-fbHover rounded-lg">Giới thiệu</button>
@@ -258,12 +279,8 @@
                         </div>
                     </div>
 
-                    <!-- Bố cục 2 Cột bên dưới Header (Desktop: 2 cột | Mobile: 1 cột) -->
                     <div class="w-full max-w-[1050px] p-2 sm:p-4 grid grid-cols-1 md:grid-cols-5 gap-4">
-                        
-                        <!-- CỘT TRÁI (2 Cột): Thông tin & Tin nổi bật -->
                         <div class="md:col-span-2 space-y-4">
-                            <!-- Box Thông tin cá nhân -->
                             <div class="bg-fbPanel p-4 rounded-xl border border-fbHover space-y-3 shadow">
                                 <div class="flex items-center justify-between">
                                     <h3 class="text-base font-bold text-white">Thông tin cá nhân</h3>
@@ -286,16 +303,13 @@
                                 <button class="w-full bg-fbHover hover:bg-[#4e4f50] py-2 rounded-xl text-xs font-bold text-white transition">Chỉnh sửa chi tiết</button>
                             </div>
 
-                            <!-- Box Tin nổi bật -->
                             <div class="bg-fbPanel p-4 rounded-xl border border-fbHover space-y-3 shadow">
                                 <h3 class="text-base font-bold text-white">Tin nổi bật</h3>
                                 <button class="w-full bg-fbHover hover:bg-[#4e4f50] py-2.5 rounded-xl text-xs font-bold text-white transition">Thêm tin nổi bật</button>
                             </div>
                         </div>
 
-                        <!-- CỘT PHẢI (3 Cột): Bài viết cá nhân -->
                         <div class="md:col-span-3 space-y-4">
-                            <!-- Khung đăng bài nhanh -->
                             <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
                                 <div class="flex items-center gap-3">
                                     <div id="profile-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
@@ -305,7 +319,6 @@
                                 </div>
                             </div>
 
-                            <!-- Bar quản lý bài viết -->
                             <div class="bg-fbPanel p-3 rounded-xl border border-fbHover flex items-center justify-between shadow">
                                 <h3 class="text-sm font-bold text-white">Bài viết</h3>
                                 <div class="flex gap-2">
@@ -314,7 +327,6 @@
                                 </div>
                             </div>
 
-                            <!-- Container chứa danh sách bài viết -->
                             <div id="profile-posts-container" class="space-y-4"></div>
                         </div>
 
@@ -337,10 +349,10 @@
             <i class="fa-solid fa-clapperboard text-base"></i>
             <span class="text-[10px] font-semibold">Reels</span>
         </button>
-        <button onclick="location.href='friends.html'" id="mobile-nav-friends" class="flex flex-col items-center justify-center text-[#b0b3b8] flex-1 py-1 cursor-pointer">
+        <a href="friends.html" id="mobile-nav-friends" class="flex flex-col items-center justify-center text-[#b0b3b8] flex-1 py-1 cursor-pointer">
             <i class="fa-solid fa-user-group text-base"></i>
             <span class="text-[10px] font-semibold">Bạn bè</span>
-        </button>
+        </a>
         <button onclick="openProfile(window.myUser)" id="mobile-nav-profile" class="flex flex-col items-center justify-center text-[#b0b3b8] flex-1 py-1 cursor-pointer">
             <i class="fa-solid fa-circle-user text-base"></i>
             <span class="text-[10px] font-semibold">Cá nhân</span>
@@ -424,6 +436,7 @@
         let activeChatUser = null;
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let uploadedFileBase64 = "";
+        let allUsersData = [];
 
         const NOTIFICATION_HIDE_DURATION = 2 * 60 * 60 * 1000; 
 
@@ -490,7 +503,7 @@
             if(snap.exists()) return alert("Tài khoản đã tồn tại!");
             
             const hashedPass = await hashPassword(p);
-            await setDoc(ref, { username: u, password: hashedPass, avatar: "", bio: "" });
+            await setDoc(ref, { username: u, password: hashedPass, avatar: "", bio: "", friends: [], pendingRequests: [], searchHistory: [] });
             alert("Đăng ký thành công!");
         };
 
@@ -528,6 +541,8 @@
 
             checkSystemNotification();
             loadFeedPosts();
+            fetchAllUsersData();
+            listenNotifications();
             
             const urlParams = new URLSearchParams(window.location.search);
             const profileUser = urlParams.get('profile');
@@ -540,6 +555,138 @@
             }
 
             updateAvatarUI();
+        }
+
+        /* --- LẤY DỮ LIỆU NGƯỜI DÙNG CHUNG --- */
+        function fetchAllUsersData() {
+            onSnapshot(collection(db, "users"), (snap) => {
+                allUsersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+            });
+        }
+
+        /* --- TÌM KIẾM NGƯỜI DÙNG & LỊCH SỬ TÌM KIẾM --- */
+        window.showSearchDropdown = () => {
+            document.getElementById("search-dropdown").classList.remove("hidden");
+            renderSearchHistoryOrResults("");
+        };
+
+        window.handleSearchInput = (e) => {
+            renderSearchHistoryOrResults(e.target.value.trim().toLowerCase());
+        };
+
+        async function renderSearchHistoryOrResults(keyword) {
+            const list = document.getElementById("search-results-list");
+            const myDoc = await getDoc(doc(db, "users", window.myUser));
+            const myData = myDoc.exists() ? myDoc.data() : {};
+            const history = myData.searchHistory || [];
+
+            if (!keyword) {
+                if (history.length === 0) {
+                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không có lịch sử tìm kiếm gần đây</p>`;
+                    return;
+                }
+                list.innerHTML = history.map(item => `
+                    <div class="flex items-center justify-between p-2 hover:bg-fbHover rounded-xl cursor-pointer" onclick="selectSearchUser('${escapeHTML(item)}')">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid fa-clock-rotate-left text-[#b0b3b8]"></i>
+                            <span class="font-semibold text-white">${escapeHTML(item)}</span>
+                        </div>
+                        <button onclick="event.stopPropagation(); removeSearchHistoryItem('${escapeHTML(item)}')" class="text-[#b0b3b8] hover:text-red-400 p-1"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                `).join("");
+            } else {
+                const filtered = allUsersData.filter(u => u.id !== window.myUser && u.id.toLowerCase().includes(keyword));
+                if (filtered.length === 0) {
+                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không tìm thấy người dùng</p>`;
+                    return;
+                }
+                list.innerHTML = filtered.map(u => `
+                    <div onclick="selectSearchUser('${escapeHTML(u.id)}')" class="flex items-center justify-between p-2 hover:bg-fbHover rounded-xl cursor-pointer">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden">
+                                ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-user"></i>'}
+                            </div>
+                            <span class="font-bold text-white">${escapeHTML(u.username || u.id)}</span>
+                        </div>
+                        <a href="profile.html?profile=${escapeHTML(u.id)}" class="text-xs bg-fbBlue px-2.5 py-1 rounded-lg text-white font-bold">Xem hồ sơ</a>
+                    </div>
+                `).join("");
+            }
+        }
+
+        window.selectSearchUser = async (targetUser) => {
+            const userRef = doc(db, "users", window.myUser);
+            const snap = await getDoc(userRef);
+            let history = snap.exists() && snap.data().searchHistory ? snap.data().searchHistory : [];
+            if (!history.includes(targetUser)) {
+                history.unshift(targetUser);
+                await setDoc(userRef, { searchHistory: history }, { merge: true });
+            }
+            window.location.href = `profile.html?profile=${targetUser}`;
+        };
+
+        window.removeSearchHistoryItem = async (item) => {
+            const userRef = doc(db, "users", window.myUser);
+            const snap = await getDoc(userRef);
+            if (snap.exists()) {
+                let history = snap.data().searchHistory || [];
+                history = history.filter(h => h !== item);
+                await setDoc(userRef, { searchHistory: history }, { merge: true });
+                renderSearchHistoryOrResults("");
+            }
+        };
+
+        window.clearSearchHistory = async () => {
+            await setDoc(doc(db, "users", window.myUser), { searchHistory: [] }, { merge: true });
+            renderSearchHistoryOrResults("");
+        };
+
+        document.addEventListener("click", (e) => {
+            const dropdown = document.getElementById("search-dropdown");
+            const input = document.getElementById("search-input");
+            if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
+                dropdown.classList.add("hidden");
+            }
+        });
+
+        /* --- THÔNG BÁO NOTIFICATION --- */
+        window.toggleNotificationMenu = (e) => {
+            e.stopPropagation();
+            document.getElementById("notif-dropdown").classList.toggle("hidden");
+        };
+
+        function listenNotifications() {
+            onSnapshot(doc(db, "users", window.myUser), (snap) => {
+                if(!snap.exists()) return;
+                const notifs = snap.data().notifications || [];
+                const badge = document.getElementById("notif-badge");
+                const unread = notifs.filter(n => !n.read).length;
+
+                if(unread > 0) {
+                    badge.innerText = unread;
+                    badge.classList.remove("hidden");
+                } else {
+                    badge.classList.add("hidden");
+                }
+
+                const container = document.getElementById("notif-list");
+                if(notifs.length === 0) {
+                    container.innerHTML = `<p class="text-center text-xs text-[#b0b3b8] py-2">Không có thông báo mới</p>`;
+                    return;
+                }
+
+                container.innerHTML = notifs.map(n => `
+                    <div onclick="location.href='friends.html'" class="p-2 rounded-xl hover:bg-fbHover cursor-pointer flex items-center gap-3 text-xs ${n.read ? 'opacity-70' : 'font-bold bg-fbHover/40'}">
+                        <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white shrink-0">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white">${escapeHTML(n.text)}</p>
+                            <span class="text-[10px] text-[#b0b3b8]">Bấm để đi tới giao diện Bạn bè</span>
+                        </div>
+                    </div>
+                `).join("");
+            });
         }
 
         window.onpopstate = () => {
