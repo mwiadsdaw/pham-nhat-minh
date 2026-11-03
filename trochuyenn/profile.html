@@ -24,6 +24,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #18191a; color: #e4e6eb; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3a3b3c; border-radius: 3px; }
     </style>
 </head>
 <body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14">
@@ -51,10 +54,11 @@
             <!-- Avatar & Thông tin -->
             <div class="px-4 sm:px-8 pb-4 relative flex flex-col md:flex-row items-center md:items-end justify-between gap-4 border-b border-fbHover">
                 <div class="flex flex-col md:flex-row items-center md:items-end gap-5 text-center md:text-left -mt-16 sm:-mt-20 z-20 w-full md:w-auto">
-                    <div class="relative shrink-0">
-                        <div id="profile-avatar-box" class="w-36 h-36 sm:w-40 sm:h-40 rounded-full border-4 border-fbPanel bg-fbHover flex items-center justify-center text-5xl font-bold text-gray-400 overflow-hidden shadow-md">
+                    <div class="relative shrink-0 group">
+                        <div id="profile-avatar-box" class="w-36 h-36 sm:w-40 sm:h-40 rounded-full border-4 border-fbPanel bg-fbHover flex items-center justify-center text-5xl font-bold text-gray-400 overflow-hidden shadow-md cursor-pointer">
                             <i class="fa-solid fa-user"></i>
                         </div>
+                        <input type="file" id="avatar-input-file" class="hidden" accept="image/*" onchange="handleAvatarUpload(event)">
                     </div>
 
                     <div class="space-y-1 mb-2">
@@ -66,10 +70,27 @@
                 <!-- Nút Hành Động Kết Bạn / Sửa Trang Cá Nhân -->
                 <div id="profile-action-btn" class="flex items-center gap-2 mb-2 w-full md:w-auto justify-center shrink-0 z-20"></div>
             </div>
+
+            <!-- Thanh Tabs Nav -->
+            <div class="px-4 sm:px-8 flex items-center justify-between text-xs font-bold text-[#b0b3b8]">
+                <div class="flex items-center gap-1 overflow-x-auto">
+                    <button class="py-3 px-4 text-fbBlue border-b-2 border-fbBlue font-bold">Bài viết</button>
+                    <a href="friends.html" class="py-3 px-4 hover:bg-fbHover rounded-md transition text-[#b0b3b8]">Bạn bè</a>
+                </div>
+            </div>
         </div>
 
-        <div id="main-view-container" class="w-full max-w-[1090px] p-2 sm:p-4 mt-2">
-            <div id="profile-posts-container" class="space-y-4 max-w-[600px] mx-auto"></div>
+        <!-- BỐ CỤC CHÍNH -->
+        <div class="w-full max-w-[1090px] p-2 sm:p-4 mt-2 grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="md:col-span-1 space-y-4">
+                <div class="bg-fbPanel p-4 rounded-xl border border-fbHover space-y-3 shadow-sm">
+                    <h3 class="text-base font-bold text-white">Giới thiệu</h3>
+                    <p id="profile-bio" class="text-xs text-[#b0b3b8] italic">Chưa có tiểu sử</p>
+                </div>
+            </div>
+            <div class="md:col-span-2 space-y-4">
+                <div id="profile-posts-container" class="space-y-4"></div>
+            </div>
         </div>
     </div>
 
@@ -93,6 +114,10 @@
         const loggedUser = localStorage.getItem("chat_user");
         const targetUser = urlParams.get('profile') || loggedUser;
 
+        if(!loggedUser) {
+            window.location.href = "trangchu.html";
+        }
+
         function escapeHTML(str) {
             if (!str) return '';
             return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag));
@@ -109,18 +134,27 @@
                 if(data.avatar) {
                     document.getElementById("profile-avatar-box").innerHTML = `<img src="${data.avatar}" class="w-full h-full object-cover">`;
                 }
+                if(data.cover) {
+                    document.getElementById("profile-cover-box").innerHTML = `<img src="${data.cover}" class="w-full h-full object-cover">`;
+                }
+                if(data.bio) {
+                    document.getElementById("profile-bio").innerText = data.bio;
+                }
                 const friends = data.friends || [];
                 document.getElementById("profile-friends-count").innerText = `${friends.length} người bạn`;
             }
 
-            renderActionButtons(userSnap.data(), meSnap.data());
+            renderActionButtons(userSnap.data() || {}, meSnap.data() || {});
             loadPosts();
         }
 
         function renderActionButtons(targetData = {}, meData = {}) {
             const actionBox = document.getElementById("profile-action-btn");
             if (targetUser === loggedUser) {
-                actionBox.innerHTML = `<button class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white"><i class="fa-solid fa-pen"></i> Trang cá nhân của bạn</button>`;
+                actionBox.innerHTML = `
+                    <button onclick="document.getElementById('avatar-input-file').click()" class="bg-fbHover hover:bg-[#4e4f50] px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-camera"></i> Đổi ảnh đại diện</button>
+                    <button onclick="document.getElementById('cover-input-file').click()" class="bg-fbHover hover:bg-[#4e4f50] px-4 py-2 rounded-xl text-xs font-bold text-white flex items-center gap-1.5"><i class="fa-solid fa-image"></i> Đổi ảnh bìa</button>
+                `;
                 document.getElementById("btn-cover-edit").classList.remove("hidden");
                 return;
             }
@@ -139,6 +173,31 @@
                 actionBox.innerHTML = `<button onclick="sendRequest()" class="bg-fbBlue px-4 py-2 rounded-xl text-xs font-bold text-white"><i class="fa-solid fa-user-plus"></i> Thêm bạn bè</button>`;
             }
         }
+
+        window.handleAvatarUpload = async function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                const base64 = uploadEvent.target.result;
+                await setDoc(doc(db, "users", loggedUser), { avatar: base64 }, { merge: true });
+                localStorage.setItem("user_avatar", base64);
+                loadProfile();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        window.handleCoverUpload = async function(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(uploadEvent) {
+                const base64 = uploadEvent.target.result;
+                await setDoc(doc(db, "users", loggedUser), { cover: base64 }, { merge: true });
+                loadProfile();
+            };
+            reader.readAsDataURL(file);
+        };
 
         window.sendRequest = async function() {
             await updateDoc(doc(db, "users", targetUser), { friendRequests: arrayUnion(loggedUser) });
