@@ -29,14 +29,14 @@
         ::-webkit-scrollbar-thumb { background: #3a3b3c; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14 lg:pb-0">
 
     <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-[#18191a] flex items-center justify-center p-4">
         <div class="bg-fbPanel p-6 sm:p-8 rounded-2xl max-w-md w-full border border-fbHover shadow-2xl space-y-5">
             <div class="text-center space-y-2">
                 <div class="w-16 h-16 bg-fbBlue/10 rounded-full flex items-center justify-center text-fbBlue text-3xl mx-auto border border-fbBlue/20">
-                    <i class="fa-solid fa-newspaper"></i>
+                    <i class="fa-solid fa-house"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-white">Đăng Nhập MinhNet</h2>
                 <p class="text-xs text-[#b0b3b8]">Hệ thống mạng xã hội cá nhân bảo mật</p>
@@ -60,23 +60,22 @@
 
     <!-- GIAO DIỆN CHÍNH -->
     <div id="app-container" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
-        
         <!-- HEADER TOP -->
         <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
-            <!-- Bên trái: Logo + Ô tìm kiếm -->
-            <div class="flex items-center gap-2 sm:gap-3 relative">
+            <div class="flex items-center gap-2 sm:gap-3">
                 <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Trang chủ"><i class="fa-solid fa-house"></i></a>
                 
+                <!-- Ô tìm kiếm người dùng khác để gửi lời mời kết bạn & Lịch sử tìm kiếm -->
                 <div class="relative">
-                    <div class="bg-fbInput rounded-full px-3 py-2 flex items-center gap-2 w-[180px] sm:w-[220px] md:w-[260px]">
+                    <div class="bg-fbInput rounded-full px-3 py-2 flex items-center gap-2 w-[180px] md:w-[240px]">
                         <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
                         <input type="text" id="search-input" placeholder="Tìm kiếm người dùng..." onfocus="showSearchDropdown()" oninput="handleSearchInput(event)" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
                     </div>
 
-                    <!-- Dropdown kết quả & Lịch sử tìm kiếm -->
+                    <!-- Dropdown kết quả tìm kiếm và lịch sử -->
                     <div id="search-dropdown" class="hidden absolute top-12 left-0 w-[280px] sm:w-[320px] bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 text-xs space-y-2">
                         <div class="flex items-center justify-between border-b border-fbHover pb-2">
-                            <span class="font-bold text-[#b0b3b8]">Tìm kiếm gần đây</span>
+                            <span class="font-bold text-[#b0b3b8]">Lịch sử tìm kiếm</span>
                             <button onclick="clearSearchHistory()" class="text-fbBlue hover:underline text-[11px] font-semibold">Xóa lịch sử</button>
                         </div>
                         <div id="search-results-list" class="space-y-1 max-h-[280px] overflow-y-auto"></div>
@@ -84,21 +83,14 @@
                 </div>
             </div>
 
-            <!-- Ở giữa: Nút Bảng Feed & Nút Bạn Bè -->
-            <div class="flex items-center gap-2 sm:gap-4">
-                <a href="trangchu.html" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-xl rounded-lg hover:bg-fbHover transition" title="Bảng tin">
-                    <i class="fa-solid fa-newspaper"></i>
-                </a>
-                <a href="friends.html" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] hover:text-white text-xl rounded-lg hover:bg-fbHover transition relative" title="Bạn bè">
-                    <i class="fa-solid fa-user-group"></i>
-                    <span id="friend-badge" class="hidden absolute top-2 right-3 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-                </a>
+            <!-- Nút Friend ở giữa -->
+            <div class="flex items-center gap-3">
+                <a href="trangchu.html" class="text-fbBlue text-xl px-4 py-2 rounded-xl bg-fbHover transition" title="Trang chủ"><i class="fa-solid fa-house"></i></a>
+                <a href="friends.html" class="text-[#b0b3b8] hover:text-white text-xl px-4 py-2 rounded-xl hover:bg-fbHover transition" title="Bạn bè"><i class="fa-solid fa-user-group"></i></a>
             </div>
 
-            <!-- Bên phải: Thông báo & Profile & Cài đặt & Logout -->
-            <div class="flex items-center gap-2 sm:gap-3 justify-end relative">
-                
-                <!-- Nút Thông báo -->
+            <div class="flex items-center gap-2 sm:gap-3 justify-end">
+                <!-- Nút Thông báo (Notification) -->
                 <div class="relative">
                     <button onclick="toggleNotificationMenu(event)" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer relative" title="Thông báo">
                         <i class="fa-solid fa-bell text-sm"></i>
@@ -118,7 +110,7 @@
                     </div>
                     <span id="header-username" class="text-xs font-bold text-white hidden md:block">---</span>
                 </a>
-
+                
                 <!-- Nút Cài đặt -->
                 <a href="setting.html" title="Cài đặt tài khoản" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
                     <i class="fa-solid fa-gear text-xs"></i>
@@ -132,7 +124,7 @@
 
         <!-- BODY CHÍNH -->
         <div class="flex-1 flex overflow-hidden relative">
-            <!-- Cột trái (Đã bỏ cài đặt ở cột trái theo yêu cầu) -->
+            <!-- CỘT TRÁI (ĐÃ BỎ CÀI ĐẶT Ở CỘT TRÁI THEO YÊU CẦU) -->
             <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
                 <a id="sidebar-profile-link" href="profile.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
                     <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
@@ -140,21 +132,21 @@
                     </div>
                     <span id="sidebar-username" class="text-xs font-bold text-white truncate">---</span>
                 </a>
-                <a href="trangchu.html" class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
                     <i class="fa-solid fa-newspaper text-fbBlue text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bảng feed</span>
-                </a>
+                </div>
+                <!-- Nút Bạn bè ở cột trái -->
                 <a href="friends.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover text-[#e4e6eb] transition">
                     <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bạn bè</span>
                 </a>
             </div>
 
-            <!-- Feed trung tâm -->
             <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
                 <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
                     
-                    <!-- Khung đăng bài -->
+                    <!-- KHUNG ĐĂNG BÀI -->
                     <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
                         <div class="flex items-center gap-3">
                             <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
@@ -179,7 +171,7 @@
                         </div>
                     </div>
 
-                    <!-- Feed bài viết -->
+                    <!-- Danh sách bài viết -->
                     <div id="feed-posts-container" class="space-y-4 w-full"></div>
                 </div>
             </div>
@@ -205,7 +197,7 @@
         window.myUser = localStorage.getItem("chat_user");
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let uploadedFileBase64 = "";
-        let allUsers = [];
+        let allUsersData = [];
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -265,8 +257,8 @@
 
             updateAvatarUI();
             loadFeedPosts();
-            listenNotifications();
             fetchAllUsers();
+            listenNotifications();
         }
 
         function updateAvatarUI() {
@@ -281,14 +273,14 @@
             }
         }
 
-        /* TÌM KIẾM & LỊCH SỬ TÌM KIẾM */
         async function fetchAllUsers() {
             onSnapshot(collection(db, "users"), (snap) => {
-                allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                allUsersData = snap.docs.map(d => ({ id: d.id, ...d.data() }));
             });
         }
 
-        window.showSearchDropdown = async () => {
+        /* --- TÌM KIẾM NGƯỜI DÙNG & LỊCH SỬ --- */
+        window.showSearchDropdown = () => {
             document.getElementById("search-dropdown").classList.remove("hidden");
             renderSearchHistoryOrResults("");
         };
@@ -305,7 +297,7 @@
 
             if (!keyword) {
                 if (history.length === 0) {
-                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không có lịch sử tìm kiếm gần đây</p>`;
+                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không có lịch sử tìm kiếm</p>`;
                     return;
                 }
                 list.innerHTML = history.map(item => `
@@ -318,7 +310,7 @@
                     </div>
                 `).join("");
             } else {
-                const filtered = allUsers.filter(u => u.id !== window.myUser && u.id.toLowerCase().includes(keyword));
+                const filtered = allUsersData.filter(u => u.id !== window.myUser && u.id.toLowerCase().includes(keyword));
                 if (filtered.length === 0) {
                     list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không tìm thấy người dùng</p>`;
                     return;
@@ -331,7 +323,7 @@
                             </div>
                             <span class="font-bold text-white">${escapeHTML(u.username || u.id)}</span>
                         </div>
-                        <a href="profile.html?profile=${escapeHTML(u.id)}" class="text-xs bg-fbBlue px-2.5 py-1 rounded-lg text-white font-bold hover:opacity-90">Xem hồ sơ</a>
+                        <a href="profile.html?profile=${escapeHTML(u.id)}" class="text-xs bg-fbBlue px-2.5 py-1 rounded-lg text-white font-bold">Xem hồ sơ</a>
                     </div>
                 `).join("");
             }
@@ -372,7 +364,7 @@
             }
         });
 
-        /* THÔNG BÁO NOTIFICATION */
+        /* --- THÔNG BÁO NOTIFICATION --- */
         window.toggleNotificationMenu = (e) => {
             e.stopPropagation();
             document.getElementById("notif-dropdown").classList.toggle("hidden");
@@ -382,41 +374,37 @@
             onSnapshot(doc(db, "users", window.myUser), (snap) => {
                 if(!snap.exists()) return;
                 const notifs = snap.data().notifications || [];
-                const notifBadge = document.getElementById("notif-badge");
+                const badge = document.getElementById("notif-badge");
                 const unread = notifs.filter(n => !n.read).length;
 
                 if(unread > 0) {
-                    notifBadge.innerText = unread;
-                    notifBadge.classList.remove("hidden");
+                    badge.innerText = unread;
+                    badge.classList.remove("hidden");
                 } else {
-                    notifBadge.classList.add("hidden");
+                    badge.classList.add("hidden");
                 }
 
                 const container = document.getElementById("notif-list");
-                if (notifs.length === 0) {
+                if(notifs.length === 0) {
                     container.innerHTML = `<p class="text-center text-xs text-[#b0b3b8] py-2">Không có thông báo mới</p>`;
                     return;
                 }
 
                 container.innerHTML = notifs.map(n => `
-                    <div onclick="clickNotif('${escapeHTML(n.from)}')" class="p-2 rounded-xl hover:bg-fbHover cursor-pointer flex items-center gap-3 text-xs ${n.read ? 'opacity-70' : 'font-bold bg-fbHover/40'}">
+                    <div onclick="location.href='friends.html'" class="p-2 rounded-xl hover:bg-fbHover cursor-pointer flex items-center gap-3 text-xs ${n.read ? 'opacity-70' : 'font-bold bg-fbHover/40'}">
                         <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white shrink-0">
                             <i class="fa-solid fa-user-plus"></i>
                         </div>
                         <div class="flex-1">
                             <p class="text-white">${escapeHTML(n.text)}</p>
-                            <span class="text-[10px] text-[#b0b3b8]">Bấm để đi tới giao diện Bạn bè</span>
+                            <span class="text-[10px] text-[#b0b3b8]">Bấm để đi tới phần bạn bè</span>
                         </div>
                     </div>
                 `).join("");
             });
         }
 
-        window.clickNotif = (fromUser) => {
-            window.location.href = "friends.html";
-        };
-
-        /* ĐĂNG BÀI FEED */
+        /* --- BÀI VIẾT FEED --- */
         window.handleLocalFileSelect = (event) => {
             const file = event.target.files[0];
             if(!file) return;
