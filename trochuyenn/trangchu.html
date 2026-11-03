@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhNet | Trang Chủ</title>
+    <title>MinhNet | Bảng Tin</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -29,9 +29,9 @@
         ::-webkit-scrollbar-thumb { background: #3a3b3c; border-radius: 3px; }
     </style>
 </head>
-<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14 lg:pb-0">
 
-    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (SHA-256) -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-[#18191a] flex items-center justify-center p-4">
         <div class="bg-fbPanel p-6 sm:p-8 rounded-2xl max-w-md w-full border border-fbHover shadow-2xl space-y-5">
             <div class="text-center space-y-2">
@@ -60,63 +60,27 @@
 
     <!-- GIAO DIỆN CHÍNH -->
     <div id="app-container" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
-        
         <!-- HEADER TOP -->
         <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
-            <!-- Bên trái: Logo + Ô tìm kiếm -->
-            <div class="flex items-center gap-2 sm:gap-3 relative">
-                <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Trang chủ"><i class="fa-solid fa-house"></i></a>
-                
-                <div class="relative">
-                    <div class="bg-fbInput rounded-full px-3 py-2 flex items-center gap-2 w-[180px] sm:w-[220px] md:w-[260px]">
-                        <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
-                        <input type="text" id="search-input" placeholder="Tìm kiếm người dùng..." onfocus="showSearchDropdown()" oninput="handleSearchInput(event)" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
-                    </div>
-
-                    <!-- Dropdown kết quả & Lịch sử tìm kiếm -->
-                    <div id="search-dropdown" class="hidden absolute top-12 left-0 w-[280px] sm:w-[320px] bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 text-xs space-y-2">
-                        <div class="flex items-center justify-between border-b border-fbHover pb-2">
-                            <span class="font-bold text-[#b0b3b8]">Tìm kiếm</span>
-                            <button onclick="clearSearchHistory()" class="text-fbBlue hover:underline text-[11px] font-semibold">Xóa lịch sử</button>
-                        </div>
-                        <div id="search-results-list" class="space-y-1 max-h-[280px] overflow-y-auto"></div>
-                    </div>
+            <div class="flex items-center gap-2 sm:gap-3">
+                <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Bảng tin"><i class="fa-solid fa-house"></i></a>
+                <div class="bg-fbInput rounded-full px-3 py-2 hidden sm:flex items-center gap-2 w-[180px] md:w-[240px]">
+                    <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
+                    <input type="text" placeholder="Tìm kiếm trên MinhNet" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
                 </div>
             </div>
 
-            <!-- Ở giữa: Nút Bảng Feed & Nút Bạn Bè -->
-            <div class="flex items-center gap-2 sm:gap-4">
-                <a href="trangchu.html" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-fbBlue text-fbBlue text-xl rounded-lg hover:bg-fbHover transition" title="Bảng tin">
-                    <i class="fa-solid fa-newspaper"></i>
-                </a>
-                <a href="friend.html" class="h-12 px-4 sm:px-6 flex items-center justify-center border-b-4 border-transparent text-[#b0b3b8] hover:text-white text-xl rounded-lg hover:bg-fbHover transition relative" title="Bạn bè">
-                    <i class="fa-solid fa-user-group"></i>
-                    <span id="friend-badge" class="hidden absolute top-2 right-3 w-2.5 h-2.5 bg-red-500 rounded-full"></span>
-                </a>
-            </div>
-
-            <!-- Bên phải: Thông báo & Profile & Logout -->
-            <div class="flex items-center gap-2 sm:gap-3 justify-end relative">
-                
-                <!-- Nút Thông báo -->
-                <div class="relative">
-                    <button onclick="toggleNotificationMenu(event)" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer relative">
-                        <i class="fa-solid fa-bell text-sm"></i>
-                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
-                    </button>
-
-                    <!-- Popup Thông báo -->
-                    <div id="notif-dropdown" class="hidden absolute right-0 top-12 w-[300px] sm:w-[340px] bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 space-y-2">
-                        <h4 class="text-sm font-bold text-white border-b border-fbHover pb-2">Thông báo</h4>
-                        <div id="notif-list" class="space-y-2 max-h-[300px] overflow-y-auto"></div>
-                    </div>
-                </div>
-
+            <div class="flex items-center gap-2 sm:gap-3 justify-end">
                 <a id="header-profile-link" href="profile.html" class="flex items-center gap-2 cursor-pointer hover:bg-fbHover p-1.5 rounded-full">
                     <div id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center font-bold text-xs text-white overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <span id="header-username" class="text-xs font-bold text-white hidden md:block">---</span>
+                </a>
+                
+                <!-- Nút chuyển sang trang Cài đặt riêng biệt -->
+                <a href="setting.html" title="Cài đặt tài khoản" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
+                    <i class="fa-solid fa-gear text-xs"></i>
                 </a>
 
                 <button id="btn-logout" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
@@ -127,7 +91,6 @@
 
         <!-- BODY CHÍNH -->
         <div class="flex-1 flex overflow-hidden relative">
-            <!-- Cột trái (Đã loại bỏ Cài đặt) -->
             <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
                 <a id="sidebar-profile-link" href="profile.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
                     <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
@@ -135,21 +98,21 @@
                     </div>
                     <span id="sidebar-username" class="text-xs font-bold text-white truncate">---</span>
                 </a>
-                <a href="trangchu.html" class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
-                    <i class="fa-solid fa-newspaper text-fbBlue text-lg w-6 text-center"></i>
+                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
+                    <i class="fa-solid fa-users text-fbBlue text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bảng feed</span>
-                </a>
-                <a href="friend.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover text-[#e4e6eb] transition">
-                    <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Bạn bè</span>
+                </div>
+                <!-- Thêm shortcut vào menu trái -->
+                <a href="setting.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover text-[#e4e6eb] transition">
+                    <i class="fa-solid fa-gear text-gray-400 text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Cài đặt</span>
                 </a>
             </div>
 
-            <!-- Feed trung tâm -->
             <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
                 <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
                     
-                    <!-- Khung đăng bài -->
+                    <!-- KHUNG ĐĂNG BÀI -->
                     <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
                         <div class="flex items-center gap-3">
                             <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
@@ -174,7 +137,7 @@
                         </div>
                     </div>
 
-                    <!-- Feed bài viết -->
+                    <!-- Danh sách bài viết -->
                     <div id="feed-posts-container" class="space-y-4 w-full"></div>
                 </div>
             </div>
@@ -183,7 +146,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -200,7 +163,6 @@
         window.myUser = localStorage.getItem("chat_user");
         let userAvatarBase64 = localStorage.getItem("user_avatar") || "";
         let uploadedFileBase64 = "";
-        let allUsers = [];
 
         function escapeHTML(str) {
             if (!str) return '';
@@ -225,7 +187,7 @@
             if(snap.exists()) return alert("Tài khoản đã tồn tại!");
             
             const hashedPass = await hashPassword(p);
-            await setDoc(ref, { username: u, password: hashedPass, friends: [], pendingRequests: [], searchHistory: [] });
+            await setDoc(ref, { username: u, password: hashedPass });
             alert("Đăng ký thành công!");
         };
 
@@ -260,8 +222,6 @@
 
             updateAvatarUI();
             loadFeedPosts();
-            listenNotifications();
-            fetchAllUsers();
         }
 
         function updateAvatarUI() {
@@ -276,144 +236,6 @@
             }
         }
 
-        /* --- XỬ LÝ TÌM KIẾM & LỊCH SỬ TÌM KIẾM --- */
-        async function fetchAllUsers() {
-            onSnapshot(collection(db, "users"), (snap) => {
-                allUsers = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-            });
-        }
-
-        window.showSearchDropdown = async () => {
-            const dropdown = document.getElementById("search-dropdown");
-            dropdown.classList.remove("hidden");
-            renderSearchHistoryOrResults("");
-        };
-
-        window.handleSearchInput = (e) => {
-            const val = e.target.value.trim().toLowerCase();
-            renderSearchHistoryOrResults(val);
-        };
-
-        async function renderSearchHistoryOrResults(keyword) {
-            const list = document.getElementById("search-results-list");
-            const myDoc = await getDoc(doc(db, "users", window.myUser));
-            const myData = myDoc.exists() ? myDoc.data() : {};
-            const history = myData.searchHistory || [];
-
-            if (!keyword) {
-                if (history.length === 0) {
-                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không có lịch sử tìm kiếm</p>`;
-                    return;
-                }
-                list.innerHTML = history.map(item => `
-                    <div class="flex items-center justify-between p-2 hover:bg-fbHover rounded-xl cursor-pointer" onclick="selectSearchUser('${escapeHTML(item)}')">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-clock-rotate-left text-[#b0b3b8]"></i>
-                            <span class="font-semibold text-white">${escapeHTML(item)}</span>
-                        </div>
-                        <button onclick="event.stopPropagation(); removeSearchHistoryItem('${escapeHTML(item)}')" class="text-[#b0b3b8] hover:text-red-400 p-1"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-                `).join("");
-            } else {
-                const filtered = allUsers.filter(u => u.id !== window.myUser && u.id.toLowerCase().includes(keyword));
-                if (filtered.length === 0) {
-                    list.innerHTML = `<p class="text-center text-[#b0b3b8] py-2">Không tìm thấy người dùng</p>`;
-                    return;
-                }
-                list.innerHTML = filtered.map(u => `
-                    <div onclick="selectSearchUser('${escapeHTML(u.id)}')" class="flex items-center justify-between p-2 hover:bg-fbHover rounded-xl cursor-pointer">
-                        <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden">
-                                ${u.avatar ? `<img src="${u.avatar}" class="w-full h-full object-cover">` : '<i class="fa-solid fa-user"></i>'}
-                            </div>
-                            <span class="font-bold text-white">${escapeHTML(u.username || u.id)}</span>
-                        </div>
-                        <a href="profile.html?profile=${escapeHTML(u.id)}" class="text-xs bg-fbBlue px-2.5 py-1 rounded-lg text-white font-bold hover:opacity-90">Xem hồ sơ</a>
-                    </div>
-                `).join("");
-            }
-        }
-
-        window.selectSearchUser = async (targetUser) => {
-            const userRef = doc(db, "users", window.myUser);
-            const snap = await getDoc(userRef);
-            let history = snap.exists() && snap.data().searchHistory ? snap.data().searchHistory : [];
-            if (!history.includes(targetUser)) {
-                history.unshift(targetUser);
-                await setDoc(userRef, { searchHistory: history }, { merge: true });
-            }
-            window.location.href = `profile.html?profile=${targetUser}`;
-        };
-
-        window.removeSearchHistoryItem = async (item) => {
-            const userRef = doc(db, "users", window.myUser);
-            const snap = await getDoc(userRef);
-            if (snap.exists()) {
-                let history = snap.data().searchHistory || [];
-                history = history.filter(h => h !== item);
-                await setDoc(userRef, { searchHistory: history }, { merge: true });
-                renderSearchHistoryOrResults("");
-            }
-        };
-
-        window.clearSearchHistory = async () => {
-            await setDoc(doc(db, "users", window.myUser), { searchHistory: [] }, { merge: true });
-            renderSearchHistoryOrResults("");
-        };
-
-        document.addEventListener("click", (e) => {
-            const dropdown = document.getElementById("search-dropdown");
-            const input = document.getElementById("search-input");
-            if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
-                dropdown.classList.add("hidden");
-            }
-        });
-
-        /* --- XỬ LÝ THÔNG BÁO NOTIFICATION --- */
-        window.toggleNotificationMenu = (e) => {
-            e.stopPropagation();
-            document.getElementById("notif-dropdown").classList.toggle("hidden");
-        };
-
-        function listenNotifications() {
-            onSnapshot(doc(db, "users", window.myUser), (snap) => {
-                if(!snap.exists()) return;
-                const notifs = snap.data().notifications || [];
-                const notifBadge = document.getElementById("notif-badge");
-                const unread = notifs.filter(n => !n.read).length;
-
-                if(unread > 0) {
-                    notifBadge.innerText = unread;
-                    notifBadge.classList.remove("hidden");
-                } else {
-                    notifBadge.classList.add("hidden");
-                }
-
-                const container = document.getElementById("notif-list");
-                if (notifs.length === 0) {
-                    container.innerHTML = `<p class="text-center text-xs text-[#b0b3b8] py-2">Không có thông báo mới</p>`;
-                    return;
-                }
-
-                container.innerHTML = notifs.map(n => `
-                    <div onclick="clickNotif('${escapeHTML(n.from)}')" class="p-2 rounded-xl hover:bg-fbHover cursor-pointer flex items-center gap-3 text-xs ${n.read ? 'opacity-70' : 'font-bold bg-fbHover/40'}">
-                        <div class="w-8 h-8 rounded-full bg-fbBlue flex items-center justify-center text-white shrink-0">
-                            <i class="fa-solid fa-user-plus"></i>
-                        </div>
-                        <div class="flex-1">
-                            <p class="text-white">${escapeHTML(n.text)}</p>
-                            <span class="text-[10px] text-[#b0b3b8]">${n.type === 'friend_request' ? 'Bấm để tới giao diện Bạn bè' : 'Xem trang cá nhân'}</span>
-                        </div>
-                    </div>
-                `).join("");
-            });
-        }
-
-        window.clickNotif = (fromUser) => {
-            window.location.href = "friend.html";
-        };
-
-        /* --- BÀI VIẾT FEED --- */
         window.handleLocalFileSelect = (event) => {
             const file = event.target.files[0];
             if(!file) return;
@@ -453,16 +275,26 @@
             onSnapshot(q, (snap) => {
                 const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
                 docs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
-                document.getElementById("feed-posts-container").innerHTML = docs.map(p => `
-                    <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3 shadow">
-                        <a href="profile.html?profile=${escapeHTML(p.author)}" class="text-xs font-bold text-white hover:underline flex items-center gap-2">
-                            <i class="fa-solid fa-circle-user text-base text-fbBlue"></i>
-                            ${escapeHTML(p.author)}
-                        </a>
-                        ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
-                        ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
-                    </div>
-                `).join("");
+                
+                document.getElementById("feed-posts-container").innerHTML = docs.map(p => {
+                    let mediaHTML = '';
+                    if (p.media) {
+                        // Nhận diện thông minh nếu là video thì render thẻ video có controls, ngược lại render ảnh
+                        if (p.media.startsWith('data:video') || p.media.includes('video/')) {
+                            mediaHTML = `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><video src="${p.media}" controls class="w-full max-h-[350px] sm:max-h-[400px] object-contain"></video></div>`;
+                        } else {
+                            mediaHTML = `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>`;
+                        }
+                    }
+
+                    return `
+                        <div class="bg-fbPanel rounded-xl border border-fbHover p-4 space-y-3 shadow">
+                            <a href="profile.html?profile=${escapeHTML(p.author)}" class="text-xs font-bold text-white hover:underline">${escapeHTML(p.author)}</a>
+                            ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
+                            ${mediaHTML}
+                        </div>
+                    `;
+                }).join("");
             });
         }
     </script>
