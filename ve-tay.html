@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vẽ hình bằng ngón tay - pminh83</title>
+    <title>Vẽ hình đa cử chỉ - pminh83</title>
     <style>
         body {
             margin: 0;
@@ -16,7 +16,7 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-        h2 { margin-bottom: 10px; font-size: 1.2rem; text-align: center; }
+        h2 { margin-bottom: 5px; font-size: 1.1rem; text-align: center; }
         .container {
             position: relative;
             width: 640px;
@@ -34,9 +34,11 @@
             transform: scaleX(-1);
         }
         .instruction {
-            margin-top: 15px;
-            font-size: 0.9rem;
+            margin-top: 10px;
+            font-size: 0.85rem;
             color: #aaa;
+            text-align: center;
+            max-width: 640px;
         }
     </style>
 
@@ -48,88 +50,131 @@
 </head>
 <body>
 
-    <h2>Chụm ngón cái và ngón trỏ để vẽ</h2>
+    <h2>Điều khiển hình học bằng cử chỉ ngón tay</h2>
     <div class="container">
         <video id="webcam" autoplay playsinline></video>
         <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
-    <div class="instruction">Đưa tay trước camera, chụm 2 ngón tay lại để bắt đầu vẽ nét xanh!</div>
+    <div class="instruction">
+        - 1 tay chụm (Trỏ + Cái): Tạo điểm.<br>
+        - 2 tay chụm: Nối thành đoạn thẳng.<br>
+        - 1 tay mở (tách ngón): Tạo hình chữ nhật co giãn theo vị trí tay.<br>
+        - Xoay cổ tay: Biến hình chữ nhật thành 2 tam giác vắt chéo.
+    </div>
 
     <script>
         const videoElement = document.getElementById('webcam');
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
 
-        let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
-
-        const drawingCanvas = document.createElement('canvas');
-        drawingCanvas.width = 640;
-        drawingCanvas.height = 480;
-        const drawingCtx = drawingCanvas.getContext('2d');
-
         function onResults(results) {
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-            canvasCtx.drawImage(drawingCanvas, 0, 0);
 
-            if (results.multiHandLandmarks) {
-                for (const landmarks of results.multiHandLandmarks) {
-                    const indexFinger = landmarks[8];
-                    const thumb = landmarks[4];
+            let hands = results.multiHandLandmarks || [];
+            
+            if (hands.length === 1) {
+                const landmarks = hands[0];
+                const indexTip = landmarks[8];
+                const thumbTip = landmarks[4];
+                const x = indexTip.x * canvasElement.width;
+                const y = indexTip.y * canvasElement.height;
+                
+                // Tính khoảng cách ngón cái và trỏ để xem có chụm không
+                const pinchDist = Math.hypot(indexTip.x - thumbTip.x, indexTip.y - thumbTip.y);
 
-                    const x = indexFinger.x * canvasElement.width;
-                    const y = indexFinger.y * canvasElement.height;
+                if (pinchDist < 0.05) {
+                    // Chụm 1 tay -> Tạo 1 điểm
+                    canvasCtx.fillStyle = '#ff0055';
+                    canvasCtx.beginPath();
+                    canvasCtx.arc(x, y, 12, 0, 2 * Math.PI);
+                    canvasCtx.fill();
+                } else {
+                    // Tách tay ra -> Tạo hình chữ nhật co giãn theo vị trí ngón trỏ và cổ tay (điểm 0)
+                    const wrist = landmarks[0];
+                    let rx = wrist.x * canvasElement.width;
+                    let ry = wrist.y * canvasElement.height;
 
-                    const distance = Math.hypot(indexFinger.x - thumb.x, indexFinger.y - thumb.y);
+                    let width = Math.abs(x - rx) * 1.5;
+                    let height = Math.abs(y - ry) * 1.5;
+                    let cx = (x + rx) / 2;
+                    let cy = (y + ry) / 2;
 
-                    if (distance < 0.05) {
-                        if (!isDrawing) {
-                            isDrawing = true;
-                            lastX = x;
-                            lastY = y;
-                        } else {
-                            drawingCtx.strokeStyle = '#00ffcc';
-                            drawingCtx.lineWidth = 6;
-                            drawingCtx.lineCap = 'round';
-                            drawingCtx.beginPath();
-                            drawingCtx.moveTo(lastX, lastY);
-                            drawingCtx.lineTo(x, y);
-                            drawingCtx.stroke();
-                        }
-                        lastX = x;
-                        lastY = y;
+                    // Kiểm tra độ nghiêng/xoay cổ tay dựa vào điểm ngón út (20) và ngón cái (4)
+                    let angle = Math.atan2(indexTip.y - wrist.y, indexTip.x - wrist.x);
 
-                        canvasCtx.fillStyle = '#ff0055';
+                    canvasCtx.save();
+                    canvasCtx.translate(cx, cy);
+                    canvasCtx.rotate(angle);
+
+                    canvasCtx.strokeStyle = '#00ffcc';
+                    canvasCtx.lineWidth = 4;
+                    canvasCtx.fillStyle = 'rgba(0, 255, 204, 0.15)';
+
+                    // Nếu xoay góc lớn (ví dụ nghiêng tay), biến thành 2 tam giác vắt chéo
+                    if (Math.abs(angle) > 0.8) {
                         canvasCtx.beginPath();
-                        canvasCtx.arc(x, y, 8, 0, 2 * Math.PI);
+                        canvasCtx.rect(-width/2, -height/2, width, height);
+                        // Vẽ 2 đường chéo
+                        canvasCtx.moveTo(-width/2, -height/2);
+                        canvasCtx.lineTo(width/2, height/2);
+                        canvasCtx.moveTo(width/2, -height/2);
+                        canvasCtx.lineTo(-width/2, height/2);
+                        canvasCtx.stroke();
                         canvasCtx.fill();
                     } else {
-                        isDrawing = false;
+                        // Hình chữ nhật bình thường co giãn theo tay
+                        canvasCtx.beginPath();
+                        canvasCtx.rect(-width/2, -height/2, width, height);
+                        canvasCtx.stroke();
+                        canvasCtx.fill();
                     }
+                    canvasCtx.restore();
                 }
+            } else if (hands.length >= 2) {
+                // 2 tay cùng chụm ngón trỏ và ngón cái -> Nối thành đoạn thẳng
+                const p1 = hands[0][8];
+                const p2 = hands[1][8];
+                const x1 = p1.x * canvasElement.width;
+                const y1 = p1.y * canvasElement.height;
+                const x2 = p2.x * canvasElement.width;
+                const y2 = p2.y * canvasElement.height;
+
+                canvasCtx.strokeStyle = '#ffff00';
+                canvasCtx.lineWidth = 6;
+                canvasCtx.beginPath();
+                canvasCtx.moveTo(x1, y1);
+                canvasCtx.lineTo(x2, y2);
+                canvasCtx.stroke();
+
+                // Vẽ 2 điểm ở đầu mút
+                canvasCtx.fillStyle = '#ff0055';
+                canvasCtx.beginPath();
+                canvasCtx.arc(x1, y1, 8, 0, 2 * Math.PI);
+                canvasCtx.arc(x2, y2, 8, 0, 2 * Math.PI);
+                canvasCtx.fill();
             }
+
             canvasCtx.restore();
         }
 
-        const hands = new Hands({
+        const handsModel = new Hands({
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
 
-        hands.setOptions({
-            maxNumHands: 1,
-            modelComplexity: 1,
-            minDetectionConfidence: 0.6,
-            minTrackingConfidence: 0.6
+        handsModel.setOptions({
+            maxNumHands: 2,           // Bật chế độ nhận diện tối đa 2 bàn tay
+            modelComplexity: 0,       // Đặt về 0 để tăng tốc độ khung hình (giảm giật lag, tăng FPS)
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
         });
 
-        hands.onResults(onResults);
+        handsModel.onResults(onResults);
 
         const camera = new Camera(videoElement, {
             onFrame: async () => {
-                await hands.send({ image: videoElement });
+                await handsModel.send({ image: videoElement });
             },
             width: 640,
             height: 480
