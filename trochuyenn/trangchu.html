@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhNet | Bảng Tin</title>
+    <title>MinhNet | Trang Chủ</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,7 +31,7 @@
 </head>
 <body class="bg-fbBg text-[#e4e6eb] min-h-screen flex flex-col overflow-x-hidden pb-14 lg:pb-0">
 
-    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ (SHA-256) -->
+    <!-- KHUNG ĐĂNG NHẬP / ĐĂNG KÝ -->
     <div id="auth-container" class="fixed inset-0 z-50 bg-[#18191a] flex items-center justify-center p-4">
         <div class="bg-fbPanel p-6 sm:p-8 rounded-2xl max-w-md w-full border border-fbHover shadow-2xl space-y-5">
             <div class="text-center space-y-2">
@@ -62,25 +62,54 @@
     <div id="app-container" class="hidden flex-1 flex flex-col h-screen overflow-hidden">
         <!-- HEADER TOP -->
         <header class="h-14 bg-fbPanel border-b border-fbHover px-3 sm:px-4 flex items-center justify-between sticky top-0 z-40 shrink-0">
-            <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Góc Trái: Logo + Ô Tìm Kiếm người dùng & Lịch sử -->
+            <div class="flex items-center gap-2 sm:gap-3 relative">
                 <a href="trangchu.html" class="text-fbBlue text-2xl sm:text-3xl cursor-pointer hover:opacity-80 transition" title="Bảng tin"><i class="fa-solid fa-house"></i></a>
-                <div class="bg-fbInput rounded-full px-3 py-2 hidden sm:flex items-center gap-2 w-[180px] md:w-[240px]">
-                    <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
-                    <input type="text" placeholder="Tìm kiếm trên MinhNet" class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                
+                <div class="relative">
+                    <div class="bg-fbInput rounded-full px-3 py-2 flex items-center gap-2 w-[180px] sm:w-[240px]">
+                        <i class="fa-solid fa-search text-[#b0b3b8] text-xs"></i>
+                        <input type="text" id="search-input" onfocus="showSearchHistory()" oninput="handleSearchInput(event)" placeholder="Tìm kiếm người dùng..." class="bg-transparent text-xs text-white placeholder-[#b0b3b8] focus:outline-none w-full">
+                    </div>
+
+                    <!-- Dropdown Kết quả & Lịch sử Tìm kiếm -->
+                    <div id="search-dropdown" class="hidden absolute top-11 left-0 w-[260px] sm:w-[300px] bg-fbPanel border border-fbHover rounded-xl shadow-2xl p-2 z-50 max-h-80 overflow-y-auto">
+                        <div id="search-history-header" class="flex items-center justify-between px-2 py-1 text-[11px] font-bold text-[#b0b3b8] border-b border-fbHover mb-1">
+                            <span>LỊCH SỬ TÌM KIẾM</span>
+                            <button onclick="clearSearchHistory()" class="text-red-400 hover:underline cursor-pointer">Xóa lịch sử</button>
+                        </div>
+                        <div id="search-results-list" class="space-y-1"></div>
+                    </div>
                 </div>
             </div>
 
+            <!-- Ở giữa Header: Nút Bạn Bè & Trang Chủ -->
+            <div class="flex items-center gap-2 sm:gap-6">
+                <a href="trangchu.html" class="h-14 px-4 sm:px-8 flex items-center border-b-4 border-fbBlue text-fbBlue text-xl" title="Trang chủ"><i class="fa-solid fa-house"></i></a>
+                <a href="friends.html" class="h-14 px-4 sm:px-8 flex items-center border-b-4 border-transparent hover:bg-fbHover text-[#b0b3b8] hover:text-white text-xl transition" title="Bạn bè"><i class="fa-solid fa-user-group"></i></a>
+            </div>
+
+            <!-- Góc Phải: Thông báo & Profile & Đăng xuất -->
             <div class="flex items-center gap-2 sm:gap-3 justify-end">
+                <!-- Nút Thông Báo (Notifications) -->
+                <div class="relative">
+                    <button id="btn-notif-toggle" onclick="toggleNotifDropdown(event)" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-white transition cursor-pointer relative">
+                        <i class="fa-solid fa-bell text-sm"></i>
+                        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                    </button>
+
+                    <!-- Popup Thông báo -->
+                    <div id="notif-dropdown" class="hidden absolute right-0 top-11 w-80 sm:w-96 bg-fbPanel border border-fbHover rounded-2xl shadow-2xl p-3 z-50 max-h-96 overflow-y-auto space-y-2">
+                        <h3 class="text-sm font-bold text-white px-1">Thông báo</h3>
+                        <div id="notif-list" class="space-y-1"></div>
+                    </div>
+                </div>
+
                 <a id="header-profile-link" href="profile.html" class="flex items-center gap-2 cursor-pointer hover:bg-fbHover p-1.5 rounded-full">
                     <div id="header-avatar" class="w-8 h-8 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center font-bold text-xs text-white overflow-hidden shrink-0">
                         <i class="fa-solid fa-user"></i>
                     </div>
                     <span id="header-username" class="text-xs font-bold text-white hidden md:block">---</span>
-                </a>
-                
-                <!-- Nút chuyển sang trang Cài đặt riêng biệt -->
-                <a href="setting.html" title="Cài đặt tài khoản" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
-                    <i class="fa-solid fa-gear text-xs"></i>
                 </a>
 
                 <button id="btn-logout" title="Đăng xuất" class="w-9 h-9 rounded-full bg-fbInput hover:bg-fbHover flex items-center justify-center text-[#b0b3b8] transition cursor-pointer shrink-0">
@@ -91,6 +120,7 @@
 
         <!-- BODY CHÍNH -->
         <div class="flex-1 flex overflow-hidden relative">
+            <!-- Sidebar Cột Trái (Đã bỏ Cài đặt) -->
             <div class="w-[260px] hidden lg:flex flex-col p-3 space-y-1 overflow-y-auto border-r border-fbHover shrink-0">
                 <a id="sidebar-profile-link" href="profile.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover cursor-pointer transition">
                     <div id="sidebar-avatar" class="w-9 h-9 rounded-full bg-gradient-to-tr from-fbBlue to-purple-600 flex items-center justify-center text-white overflow-hidden font-bold shrink-0">
@@ -98,21 +128,21 @@
                     </div>
                     <span id="sidebar-username" class="text-xs font-bold text-white truncate">---</span>
                 </a>
-                <div class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
-                    <i class="fa-solid fa-users text-fbBlue text-lg w-6 text-center"></i>
+                <a href="trangchu.html" class="flex items-center gap-3 p-2.5 rounded-xl bg-fbHover text-[#e4e6eb]">
+                    <i class="fa-solid fa-newspaper text-fbBlue text-lg w-6 text-center"></i>
                     <span class="text-xs font-semibold">Bảng feed</span>
-                </div>
-                <!-- Thêm shortcut vào menu trái -->
-                <a href="setting.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover text-[#e4e6eb] transition">
-                    <i class="fa-solid fa-gear text-gray-400 text-lg w-6 text-center"></i>
-                    <span class="text-xs font-semibold">Cài đặt</span>
+                </a>
+                <a href="friends.html" class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-fbHover text-[#e4e6eb] transition">
+                    <i class="fa-solid fa-user-group text-cyan-400 text-lg w-6 text-center"></i>
+                    <span class="text-xs font-semibold">Bạn bè</span>
                 </a>
             </div>
 
+            <!-- Nội dung Feed chính -->
             <div class="flex-1 overflow-y-auto p-2 sm:p-4 flex flex-col items-center">
                 <div class="max-w-[600px] w-full space-y-4 pb-20 lg:pb-4">
                     
-                    <!-- KHUNG ĐĂNG BÀI -->
+                    <!-- Khung Đăng Bài -->
                     <div class="bg-fbPanel p-3 sm:p-4 rounded-xl border border-fbHover shadow space-y-3">
                         <div class="flex items-center gap-3">
                             <div id="create-post-avatar" class="w-10 h-10 rounded-full bg-fbHover flex items-center justify-center font-bold overflow-hidden shrink-0">
@@ -146,7 +176,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, addDoc, collection, query, onSnapshot, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
@@ -187,7 +217,7 @@
             if(snap.exists()) return alert("Tài khoản đã tồn tại!");
             
             const hashedPass = await hashPassword(p);
-            await setDoc(ref, { username: u, password: hashedPass });
+            await setDoc(ref, { username: u, password: hashedPass, friends: [], friendRequests: [] });
             alert("Đăng ký thành công!");
         };
 
@@ -222,6 +252,7 @@
 
             updateAvatarUI();
             loadFeedPosts();
+            listenNotifications();
         }
 
         function updateAvatarUI() {
@@ -280,6 +311,131 @@
                         <a href="profile.html?profile=${escapeHTML(p.author)}" class="text-xs font-bold text-white hover:underline">${escapeHTML(p.author)}</a>
                         ${p.title ? `<p class="text-xs text-slate-200 break-words">${escapeHTML(p.title)}</p>` : ''}
                         ${p.media ? `<div class="rounded-lg overflow-hidden bg-black max-h-[350px] sm:max-h-[400px] flex items-center justify-center"><img src="${p.media}" class="w-full object-cover"></div>` : ''}
+                    </div>
+                `).join("");
+            });
+        }
+
+        // TÌM KIẾM NGƯỜI DÙNG & LỊCH SỬ
+        function getSearchHistory() {
+            return JSON.parse(localStorage.getItem(`search_history_${window.myUser}`) || "[]");
+        }
+
+        window.showSearchHistory = function() {
+            const dropdown = document.getElementById("search-dropdown");
+            const list = document.getElementById("search-results-list");
+            const history = getSearchHistory();
+            dropdown.classList.remove("hidden");
+
+            if (history.length === 0) {
+                list.innerHTML = `<p class="text-xs text-[#b0b3b8] italic p-2 text-center">Chưa có lịch sử tìm kiếm</p>`;
+                return;
+            }
+
+            list.innerHTML = history.map(item => `
+                <div class="flex items-center justify-between p-2 hover:bg-fbHover rounded-xl cursor-pointer">
+                    <a href="profile.html?profile=${escapeHTML(item)}" class="flex items-center gap-2 text-xs font-bold text-white flex-1">
+                        <i class="fa-solid fa-clock text-[#b0b3b8]"></i>
+                        <span>${escapeHTML(item)}</span>
+                    </a>
+                </div>
+            `).join("");
+        };
+
+        window.handleSearchInput = async function(e) {
+            const val = e.target.value.trim().toLowerCase();
+            const dropdown = document.getElementById("search-dropdown");
+            const list = document.getElementById("search-results-list");
+
+            if (!val) {
+                showSearchHistory();
+                return;
+            }
+
+            dropdown.classList.remove("hidden");
+            const snap = await getDocs(collection(db, "users"));
+            const users = snap.docs.map(d => d.id).filter(u => u.includes(val) && u !== window.myUser);
+
+            if (users.length === 0) {
+                list.innerHTML = `<p class="text-xs text-[#b0b3b8] italic p-2 text-center">Không tìm thấy người dùng nào</p>`;
+                return;
+            }
+
+            list.innerHTML = users.map(u => `
+                <div onclick="saveAndGoToProfile('${escapeHTML(u)}')" class="p-2 hover:bg-fbHover rounded-xl cursor-pointer flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-full bg-fbBlue flex items-center justify-center text-xs font-bold text-white">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <span class="text-xs font-bold text-white">${escapeHTML(u)}</span>
+                </div>
+            `).join("");
+        };
+
+        window.saveAndGoToProfile = function(username) {
+            let history = getSearchHistory();
+            if (!history.includes(username)) {
+                history.unshift(username);
+                localStorage.setItem(`search_history_${window.myUser}`, JSON.stringify(history.slice(0, 10)));
+            }
+            window.location.href = `profile.html?profile=${username}`;
+        };
+
+        window.clearSearchHistory = function() {
+            localStorage.removeItem(`search_history_${window.myUser}`);
+            showSearchHistory();
+        };
+
+        window.addEventListener("click", (e) => {
+            const dropdown = document.getElementById("search-dropdown");
+            const input = document.getElementById("search-input");
+            const notifDropdown = document.getElementById("notif-dropdown");
+            const notifBtn = document.getElementById("btn-notif-toggle");
+
+            if (dropdown && !dropdown.contains(e.target) && e.target !== input) {
+                dropdown.classList.add("hidden");
+            }
+            if (notifDropdown && !notifDropdown.contains(e.target) && !notifBtn.contains(e.target)) {
+                notifDropdown.classList.add("hidden");
+            }
+        });
+
+        // HỆ THỐNG THÔNG BÁO REALTIME
+        window.toggleNotifDropdown = function(e) {
+            e.stopPropagation();
+            document.getElementById("notif-dropdown").classList.toggle("hidden");
+        };
+
+        function listenNotifications() {
+            onSnapshot(collection(db, `users/${window.myUser}/notifications`), (snap) => {
+                const notifs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+                notifs.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+
+                const badge = document.getElementById("notif-badge");
+                const list = document.getElementById("notif-list");
+
+                if (notifs.length > 0) {
+                    badge.classList.remove("hidden");
+                    badge.innerText = notifs.length;
+                } else {
+                    badge.classList.add("hidden");
+                }
+
+                if (notifs.length === 0) {
+                    list.innerHTML = `<p class="text-xs text-[#b0b3b8] italic p-3 text-center">Không có thông báo mới</p>`;
+                    return;
+                }
+
+                list.innerHTML = notifs.map(n => `
+                    <div class="p-2.5 hover:bg-fbHover rounded-xl flex items-center justify-between gap-2 border-b border-fbHover/50">
+                        <a href="friends.html" class="flex-1 flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-fbBlue/20 text-fbBlue flex items-center justify-center shrink-0">
+                                <i class="fa-solid ${n.type === 'friend_request' ? 'fa-user-plus' : 'fa-user-check'}"></i>
+                            </div>
+                            <div class="text-xs">
+                                <p class="text-white font-semibold">${escapeHTML(n.text)}</p>
+                                <span class="text-[10px] text-[#b0b3b8]">Bấm để đi đến trang Bạn bè</span>
+                            </div>
+                        </a>
                     </div>
                 `).join("");
             });
