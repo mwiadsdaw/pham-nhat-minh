@@ -202,8 +202,16 @@
 
         onSnapshot(doc(db, "users", targetUser), (docSnap) => {
             if (docSnap.exists()) {
-                userData = { ...userData, ...docSnap.data() };
+                const data = docSnap.data();
+                userData = { ...userData, ...data };
             }
+            
+            // Đồng bộ dữ liệu nhanh từ localStorage nếu chưa có trong dữ liệu trực tuyến
+            const localAvatar = localStorage.getItem("chat_avatar");
+            if (localAvatar && !userData.avatar) {
+                userData.avatar = localAvatar;
+            }
+
             renderAvatar();
             renderCover();
             renderPageContent();
@@ -247,8 +255,15 @@
             if (!file) return;
             const reader = new FileReader();
             reader.onload = async function(uploadEvent) {
-                userData.avatar = uploadEvent.target.result;
-                await setDoc(doc(db, "users", targetUser), { avatar: userData.avatar }, { merge: true });
+                const base64Image = uploadEvent.target.result;
+                userData.avatar = base64Image;
+                
+                // Lưu đồng thời vào localStorage để trang chủ và các trang khác nhận diện tức thì
+                localStorage.setItem("chat_avatar", base64Image);
+
+                // Lưu lên Firestore
+                await setDoc(doc(db, "users", targetUser), { avatar: base64Image }, { merge: true });
+                renderAvatar();
             };
             reader.readAsDataURL(file);
         };
@@ -415,7 +430,7 @@
                         <div class="bg-fbPanel p-3.5 rounded-xl border border-gray-200 shadow-sm space-y-3">
                             <div class="flex items-center gap-2">
                                 <div class="w-10 h-10 rounded-full bg-gray-200 overflow-hidden shrink-0 flex items-center justify-center">
-                                    <i class="fa-solid fa-user text-gray-400 text-xl"></i>
+                                    ${userData.avatar ? `<img src="${userData.avatar}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-gray-400 text-xl"></i>`}
                                 </div>
                                 <input type="text" placeholder="Bạn đang nghĩ gì?" class="w-full bg-fbInput hover:bg-gray-200 px-4 py-2.5 rounded-full text-xs outline-none cursor-pointer">
                             </div>
