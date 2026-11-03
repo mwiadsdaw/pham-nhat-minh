@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phát hiện người và cử chỉ - pminh83</title>
+    <title>Đếm số lần đứng lên ngồi xuống - pminh83</title>
     <style>
         body {
             margin: 0;
@@ -16,7 +16,17 @@
             color: white;
             font-family: Arial, sans-serif;
         }
-        h2 { margin-bottom: 5px; font-size: 1.1rem; text-align: center; }
+        h2 { margin-bottom: 5px; font-size: 1.2rem; text-align: center; }
+        .counter-box {
+            font-size: 2rem;
+            color: #00ffcc;
+            font-weight: bold;
+            margin: 10px 0;
+            background: rgba(0,0,0,0.6);
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #00ffcc;
+        }
         .container {
             position: relative;
             width: 640px;
@@ -42,119 +52,110 @@
         }
     </style>
 
-    <!-- Thư viện TensorFlow.js và mô hình Coco-Ssd (Phát hiện người và vật thể) -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@3.11.0/dist/tf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.2/dist/coco-ssd.min.js"></script>
+    <!-- Thư viện MediaPipe Pose & Camera Utils -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/control_utils/control_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
 </head>
 <body>
 
-    <h2>Hệ thống nhận diện Người và Cử chỉ</h2>
+    <h2>AI Đếm Số Lần Đứng Lên / Ngồi Xuống</h2>
+    <div class="counter-box" id="counter">Số lần: 0</div>
+    
     <div class="container">
-        <video id="webcam" autoplay playsinline muted width="640" height="480"></video>
+        <video id="webcam" autoplay playsinline></video>
         <canvas id="output_canvas" width="640" height="480"></canvas>
     </div>
+    
     <div class="instruction">
-        Đứng trước camera để hệ thống quét và nhận diện người...
+        Đứng lùi lại sao cho camera thấy toàn thân (từ đầu gối đến đầu).<br>
+        Trạng thái hiện tại: <span id="status" style="color: yellow; font-weight: bold;">Đang chờ...</span>
     </div>
 
     <script>
         const videoElement = document.getElementById('webcam');
         const canvasElement = document.getElementById('output_canvas');
         const canvasCtx = canvasElement.getContext('2d');
+        const counterEl = document.getElementById('counter');
+        const statusEl = document.getElementById('status');
 
-        let model = undefined;
-        let isDetecting = false;
+        let count = 0;
+        let poseState = "STANDING"; // Trạng thái ban đầu: Đang đứng
 
-        // 1. Khởi động Webcam
-        async function setupCamera() {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: { width: 640, height: 480 },
-                audio: false
-            });
-            videoElement.srcObject = stream;
-            return new Promise((resolve) => {
-                videoElement.onloadedmetadata = () => {
-                    resolve(videoElement);
-                };
-            });
-        }
-
-        // 2. Tải mô hình nhận diện AI
-        async function loadModel() {
-            canvasCtx.fillStyle = "white";
-            canvasCtx.font = "18px Arial";
-            canvasCtx.fillText("Đang tải mô hình AI nhận diện người...", 160, 240);
-            
-            model = await cocoSsd.load();
-            console.log("Đã tải xong mô hình Coco-SSD!");
-            detectFrame();
-        }
-
-        // 3. Quét liên tục từng khung hình để tìm người
-        async function detectFrame() {
-            if (!model) return;
-
-            // Dự đoán các đối tượng xuất hiện trong video
-            const predictions = await model.detect(videoElement);
-
-            // Xóa màn hình cũ và vẽ lại khung hình video (lật gương)
+        function onResults(results) {
             canvasCtx.save();
             canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-            canvasCtx.drawImage(videoElement, 0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-            let personDetected = false;
+            if (results.poseLandmarks) {
+                const landmarks = results.poseLandmarks;
 
-            // Duyệt qua các vật thể AI tìm thấy
-            predictions.forEach(prediction => {
-                // Chỉ lấy đối tượng là "person" (con người)
-                if (prediction.class === 'person') {
-                    personDetected = true;
-                    const [x, y, width, height] = prediction.bbox;
+                // Lấy tọa độ hông (điểm 23 là hông trái, 24 là hông phải) hoặc trung bình hông
+                const leftHip = landmarks[23];
+                const rightHip = landmarks[24];
+                
+                // Lấy tọa độ đầu gối (25, 26) để làm mốc so sánh độ cao
+                const leftKnee = landmarks[25];
 
-                    // Vì dùng lật gương (scaleX(-1)), cần tính lại tọa độ X cho khớp khung hình canvas
-                    const mirroredX = canvasElement.width - x - width;
+                if (leftHip && rightHip && leftKnee) {
+                    // Tính độ cao trung bình của hông theo trục Y (Y càng nhỏ càng ở trên cao)
+                    const hipY = (leftHip.y + rightHip.y) / 2;
+                    const kneeY = leftKnee.y;
 
-                    // Vẽ khung bao quanh người
-                    canvasCtx.strokeStyle = '#00ffcc';
-                    canvasCtx.lineWidth = 4;
-                    canvasCtx.strokeRect(mirroredX, y, width, height);
+                    // Vẽ các điểm mốc cơ thể lên màn hình cho trực quan
+                    drawConnectors(canvasCtx, landmarks, POSE_CONNECTIONS, {color: '#00FF00', lineWidth: 2});
+                    drawLandmarks(canvasCtx, landmarks, {color: '#FF0000', lineWidth: 1});
 
-                    // Hiển thị nhãn tên và độ chính xác
-                    canvasCtx.fillStyle = '#00ffcc';
-                    canvasCtx.font = '16px Arial';
-                    canvasCtx.fillText(
-                        `Người (${Math.round(prediction.score * 100)}%)`, 
-                        mirroredX > 10 ? mirroredX : 10, 
-                        y > 20 ? y - 10 : 20
-                    );
+                    // Logic phát hiện Đứng lên / Ngồi xuống dựa vào vị trí tương đối giữa Hông và Đầu gối
+                    // Khi ngồi xuống, vị trí Y của hông sẽ tiến gần lại hoặc thấp hơn đầu gối tùy góc quay
+                    // Ở đây dùng ngưỡng chênh lệch Y đơn giản và ổn định
+                    if (hipY > kneeY - 0.05) {
+                        // Hông hạ thấp -> Đang ngồi xuống (Squat)
+                        poseState = "SITTING";
+                        statusEl.innerText = "Đang ngồi xuống 🔽";
+                        statusEl.style.color = "#ff5555";
+                    } else if (hipY < kneeY - 0.15 && poseState === "SITTING") {
+                        // Hông nâng cao hẳn lên -> Đã đứng thẳng dậy từ tư thế ngồi
+                        poseState = "STANDING";
+                        count++;
+                        counterEl.innerText = `Số lần: ${count}`;
+                        statusEl.innerText = "Đã đứng lên 🔼 (+1)";
+                        statusEl.style.color = "#55ff55";
+                    }
                 }
-            });
-
-            // Hiển thị trạng thái lên giao diện
-            if (personDetected) {
-                canvasCtx.fillStyle = '#00ff55';
-                canvasCtx.font = 'bold 20px Arial';
-                canvasCtx.fillText("Trạng thái: Đã phát hiện NGƯỜI", 20, 40);
             } else {
-                canvasCtx.fillStyle = '#ff0055';
-                canvasCtx.font = 'bold 20px Arial';
-                canvasCtx.fillText("Trạng thái: Không có người", 20, 40);
+                statusEl.innerText = "Không nhìn thấy toàn thân, hãy lùi ra xa!";
+                statusEl.style.color = "orange";
             }
 
             canvasCtx.restore();
-
-            // Lặp lại liên tục ở khung hình tiếp theo
-            requestAnimationFrame(detectFrame);
         }
 
-        // Khởi chạy chương trình
-        async function main() {
-            await setupCamera();
-            videoElement.play();
-            loadModel();
-        }
+        // Khởi tạo mô hình MediaPipe Pose
+        const pose = new Pose({
+            locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`
+        });
 
-        main();
+        pose.setOptions({
+            modelComplexity: 0, // Đặt về 0 để tối ưu tốc độ 60 FPS
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            minDetectionConfidence: 0.5,
+            minTrackingConfidence: 0.5
+        });
+
+        pose.onResults(onResults);
+
+        // Khởi động Camera với độ phân giải tối ưu tốc độ
+        const camera = new Camera(videoElement, {
+            onFrame: async () => {
+                await pose.send({ image: videoElement });
+            },
+            width: 640,
+            height: 480
+        });
+        camera.start();
     </script>
 </body>
 </html>
