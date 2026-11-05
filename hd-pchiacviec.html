@@ -60,6 +60,120 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between custom-scrollbar bg-[#0b0f19] text-gray-200">
 
+    <!-- USER SELECTION MODAL OVERLAY -->
+    <div id="userSelectModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md transition-opacity duration-300">
+        <div class="bg-gray-900 border border-gray-800 rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden transform transition-all scale-100 glow-box">
+            <div class="absolute -top-20 -right-20 w-40 h-40 bg-cyan-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-20 -left-20 w-40 h-40 bg-purple-500/20 rounded-full blur-3xl pointer-events-none"></div>
+
+            <div class="text-center space-y-2 mb-6">
+                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl bg-gradient-to-tr from-cyan-500 to-purple-600 text-white text-xl shadow-lg mb-2">
+                    <i class="fa-solid fa-user-check"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold text-white">Xác Nhận Danh Tính</h2>
+                <p class="text-xs text-gray-400">Vui lòng chọn đúng tên của bạn để bắt đầu làm việc & trao đổi chuyên đề</p>
+            </div>
+
+            <!-- Modal Body - Member Selection Grid -->
+            <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-1 custom-scrollbar">
+                <!-- Ban Slide -->
+                <div>
+                    <div class="text-xs font-bold uppercase tracking-wider text-cyan-400 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-powerpoint"></i> Ban Slide (5)
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectModalUser('Trang (Trưởng Ban Slide)')" class="modal-user-btn bg-gray-800/80 hover:bg-cyan-600/30 hover:border-cyan-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Trang (Leader)</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-cyan-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Tuấn Sơn')" class="modal-user-btn bg-gray-800/80 hover:bg-cyan-600/30 hover:border-cyan-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Tuấn Sơn</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-cyan-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Ngô Minh Hải')" class="modal-user-btn bg-gray-800/80 hover:bg-cyan-600/30 hover:border-cyan-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Ngô Minh Hải</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-cyan-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Mai Linh')" class="modal-user-btn bg-gray-800/80 hover:bg-cyan-600/30 hover:border-cyan-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Mai Linh</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-cyan-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Trần Minh')" class="modal-user-btn bg-gray-800/80 hover:bg-cyan-600/30 hover:border-cyan-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group col-span-2">
+                            <span>Trần Minh</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-cyan-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ban Quiz Game -->
+                <div>
+                    <div class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-gamepad"></i> Ban Quiz Game (5)
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectModalUser('Phạm Minh (Leader Quiz)')" class="modal-user-btn bg-gray-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Phạm Minh (Leader)</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-purple-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Lâm')" class="modal-user-btn bg-gray-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Lâm</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-purple-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Hải')" class="modal-user-btn bg-gray-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Hải</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-purple-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Quân')" class="modal-user-btn bg-gray-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Quân</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-purple-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Tuệ')" class="modal-user-btn bg-gray-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group col-span-2">
+                            <span>Tuệ</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-purple-400"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Ban Video & Visual LED -->
+                <div>
+                    <div class="text-xs font-bold uppercase tracking-wider text-pink-400 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-video"></i> Ban Video & Visual LED (7)
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <button onclick="selectModalUser('Gia Minh')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Gia Minh</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Hoàng Long')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Hoàng Long</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Kiệt')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Kiệt</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Nam Phong')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Nam Phong</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('An Danh')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>An Danh</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Bảo Long')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group">
+                            <span>Bảo Long</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                        <button onclick="selectModalUser('Đức Trọng')" class="modal-user-btn bg-gray-800/80 hover:bg-pink-600/30 hover:border-pink-500 border border-gray-700/60 p-2.5 rounded-xl text-xs font-semibold text-gray-200 text-left flex items-center justify-between transition group col-span-2">
+                            <span>Đức Trọng</span>
+                            <i class="fa-solid fa-chevron-right text-[10px] text-gray-500 group-hover:text-pink-400"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- HEADER / NAVIGATION -->
     <header class="sticky top-0 z-50 backdrop-blur-md bg-[#0b0f19]/80 border-b border-gray-800/80 px-4 lg:px-8 py-3 transition-all">
         <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
@@ -82,36 +196,16 @@
                 </div>
             </a>
 
-            <!-- Selector Danh Tính Cá Nhân -->
+            <!-- Trạng thái Đăng Nhập & Nút Đổi Tài Khoản -->
             <div class="flex items-center space-x-3 bg-gray-900/90 border border-gray-700/60 rounded-full px-4 py-1.5 shadow-inner">
-                <i class="fa-solid fa-user-gear text-cyan-400 text-sm"></i>
-                <label for="currentUserSelect" class="text-xs font-medium text-gray-300 hidden sm:inline">Bạn là:</label>
-                <select id="currentUserSelect" onchange="changeCurrentUser()" 
-                        class="bg-transparent text-sm font-semibold text-cyan-300 focus:outline-none cursor-pointer pr-2">
-                    <optgroup label="Ban Slide" class="bg-gray-900 text-gray-200">
-                        <option value="Trang (Trưởng Ban Slide)">Trang (Trưởng Ban Slide)</option>
-                        <option value="Tuấn Sơn">Tuấn Sơn</option>
-                        <option value="Ngô Minh Hải">Ngô Minh Hải</option>
-                        <option value="Mai Linh">Mai Linh</option>
-                        <option value="Trần Minh">Trần Minh</option>
-                    </optgroup>
-                    <optgroup label="Ban Quiz Game" class="bg-gray-900 text-gray-200">
-                        <option value="Phạm Minh (Leader Quiz)">Phạm Minh (Leader Quiz)</option>
-                        <option value="Lâm">Lâm</option>
-                        <option value="Hải">Hải</option>
-                        <option value="Quân">Quân</option>
-                        <option value="Tuệ">Tuệ</option>
-                    </optgroup>
-                    <optgroup label="Ban Video (Visual LED)" class="bg-gray-900 text-gray-200">
-                        <option value="Gia Minh">Gia Minh</option>
-                        <option value="Hoàng Long">Hoàng Long</option>
-                        <option value="Kiệt">Kiệt</option>
-                        <option value="Nam Phong">Nam Phong</option>
-                        <option value="An Danh">An Danh</option>
-                        <option value="Bảo Long">Bảo Long</option>
-                        <option value="Đức Trọng">Đức Trọng</option>
-                    </optgroup>
-                </select>
+                <i class="fa-solid fa-user-circle text-cyan-400 text-base"></i>
+                <div class="text-xs font-semibold text-gray-200">
+                    <span class="text-gray-400 font-normal hidden sm:inline">Tài khoản:</span> 
+                    <span id="activeUserName" class="text-cyan-300 font-bold">Chưa chọn</span>
+                </div>
+                <button onclick="openUserModal()" class="text-[11px] px-2.5 py-1 rounded-full bg-gray-800 hover:bg-gray-700 text-gray-300 border border-gray-600 transition flex items-center gap-1">
+                    <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Đổi
+                </button>
             </div>
         </div>
     </header>
@@ -599,7 +693,7 @@
     <!-- JAVASCRIPT LOGIC -->
     <script>
         // State variables
-        let currentUser = "Trang (Trưởng Ban Slide)";
+        let currentUser = localStorage.getItem('chuyenDeUser') || null;
 
         // Global comments memory storage
         const commentsData = {
@@ -636,14 +730,33 @@
 
         // File lists
         const uploadedFiles = {
-            slide: [],
-            quiz: [],
-            video: []
-        };
+        // Modal Functions
+        function openUserModal() {
+            const modal = document.getElementById('userSelectModal');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
+        }
 
-        // Initialize user
-        function changeCurrentUser() {
-            currentUser = document.getElementById('currentUserSelect').value;
+        function closeUserModal() {
+            const modal = document.getElementById('userSelectModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function selectModalUser(userName) {
+            currentUser = userName;
+            localStorage.setItem('chuyenDeUser', userName);
+            updateUserDisplay();
+            closeUserModal();
+        }
+
+        function updateUserDisplay() {
+            const displayElem = document.getElementById('activeUserName');
+            if (displayElem) {
+                displayElem.innerText = currentUser || "Chưa chọn";
+            }
         }
 
         // Tab Switching Logic
@@ -855,6 +968,13 @@
 
         // On Page Load Initialization
         window.onload = function() {
+            if (currentUser) {
+                updateUserDisplay();
+                closeUserModal();
+            } else {
+                openUserModal();
+            }
+
             renderComments('slide');
             renderComments('quiz');
             renderComments('video');
