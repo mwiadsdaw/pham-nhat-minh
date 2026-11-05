@@ -57,7 +57,7 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between custom-scrollbar bg-[#0f172a] text-slate-100">
 
-    <!-- USER SELECTION MODAL OVERLAY (Màn Hình Chọn Danh Tính Ban Đầu) -->
+    <!-- USER SELECTION MODAL OVERLAY -->
     <div id="userSelectModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-950/90 backdrop-blur-md transition-opacity duration-300">
         <div class="bg-slate-900 border border-slate-800 rounded-3xl max-w-xl w-full p-6 sm:p-8 shadow-2xl relative overflow-hidden transform transition-all scale-100 glow-box">
             <div class="absolute -top-20 -right-20 w-40 h-40 bg-sky-500/20 rounded-full blur-3xl pointer-events-none"></div>
@@ -68,18 +68,47 @@
                     <i class="fa-solid fa-id-badge"></i>
                 </div>
                 <h2 class="text-2xl font-extrabold text-white">Xác Nhận Tên Thành Viên</h2>
-                <p class="text-xs text-slate-400">Chọn tên của bạn để bắt đầu làm việc, gửi nhận xét và tải file chuyên đề</p>
+                <p class="text-xs text-slate-400">Chọn tên của bạn để đăng nhập hệ thống chuyên đề</p>
             </div>
 
-            <!-- Modal Body - Member Selection Grid -->
-            <div class="space-y-4 max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar">
+            <!-- Password Prompt Area (Hidden by default) -->
+            <div id="passwordArea" class="hidden mb-4 p-4 bg-slate-950 border border-sky-500/50 rounded-2xl space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-bold text-sky-400 flex items-center gap-2">
+                        <i class="fa-solid fa-lock"></i> Đăng nhập Admin: Phạm Nhật Minh
+                    </span>
+                    <button onclick="cancelPasswordPrompt()" class="text-xs text-slate-500 hover:text-slate-300">Hủy</button>
+                </div>
+                <input type="password" id="adminPasswordInput" placeholder="Nhập mật khẩu Admin..." 
+                       class="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 focus:outline-none focus:border-sky-400">
+                <button onclick="verifyAdminPassword()" class="w-full py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold text-xs rounded-xl shadow-lg hover:opacity-90 transition">
+                    Xác nhận Đăng nhập Admin
+                </button>
+                <p id="passwordError" class="text-[11px] text-red-400 font-semibold hidden text-center">Mật khẩu không chính xác! Vui lòng thử lại.</p>
+            </div>
+
+            <!-- Member Selection Grid -->
+            <div id="memberListArea" class="space-y-4 max-h-[55vh] overflow-y-auto pr-1 custom-scrollbar">
+                <!-- Admin & Special -->
+                <div class="bg-gradient-to-r from-sky-950/40 to-purple-950/40 p-3 rounded-2xl border border-sky-500/30">
+                    <div class="text-xs font-bold uppercase tracking-wider text-sky-300 mb-2 flex items-center gap-1.5">
+                        <i class="fa-solid fa-crown text-amber-400"></i> Ban Quản Lý / Admin
+                    </div>
+                    <button onclick="promptAdminPassword()" class="w-full bg-slate-800/90 hover:bg-sky-600/30 hover:border-sky-400 border border-sky-500/50 p-2.5 rounded-xl text-xs font-bold text-sky-300 text-left flex items-center justify-between transition group">
+                        <span class="flex items-center gap-2">
+                            <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh (Admin - Cần MK)
+                        </span>
+                        <i class="fa-solid fa-key text-xs text-amber-400"></i>
+                    </button>
+                </div>
+
                 <!-- Ban Slide -->
                 <div class="bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
                     <div class="text-xs font-bold uppercase tracking-wider text-sky-400 mb-2 flex items-center gap-1.5">
                         <i class="fa-solid fa-file-powerpoint"></i> Ban Slide (5 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <button onclick="selectModalUser('Trang (Leader Ban Slide)')" class="modal-user-btn bg-slate-800/80 hover:bg-sky-600/30 hover:border-sky-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group">
+                        <button onclick="selectModalUser('Trang')" class="modal-user-btn bg-slate-800/80 hover:bg-sky-600/30 hover:border-sky-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group">
                             <span>Trang (Leader)</span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-sky-400"></i>
                         </button>
@@ -105,13 +134,9 @@
                 <!-- Ban Quiz Game -->
                 <div class="bg-slate-950/60 p-3 rounded-2xl border border-slate-800">
                     <div class="text-xs font-bold uppercase tracking-wider text-purple-400 mb-2 flex items-center gap-1.5">
-                        <i class="fa-solid fa-gamepad"></i> Ban Quiz Game (5 thành viên)
+                        <i class="fa-solid fa-gamepad"></i> Ban Quiz Game (4 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <button onclick="selectModalUser('Phạm Minh (Leader Quiz)')" class="modal-user-btn bg-slate-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group">
-                            <span>Phạm Minh (Leader)</span>
-                            <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-purple-400"></i>
-                        </button>
                         <button onclick="selectModalUser('Lâm')" class="modal-user-btn bg-slate-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group">
                             <span>Lâm</span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-purple-400"></i>
@@ -124,7 +149,7 @@
                             <span>Quân</span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-purple-400"></i>
                         </button>
-                        <button onclick="selectModalUser('Tuệ')" class="modal-user-btn bg-slate-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group col-span-2">
+                        <button onclick="selectModalUser('Tuệ')" class="modal-user-btn bg-slate-800/80 hover:bg-purple-600/30 hover:border-purple-500 border border-slate-700/60 p-2.5 rounded-xl text-xs font-semibold text-slate-200 text-left flex items-center justify-between transition group">
                             <span>Tuệ</span>
                             <i class="fa-solid fa-chevron-right text-[10px] text-slate-500 group-hover:text-purple-400"></i>
                         </button>
@@ -170,8 +195,56 @@
 
                 <!-- Khách quan sát -->
                 <button onclick="selectModalUser('Khách quan sát')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 p-3 rounded-xl text-xs font-semibold text-slate-300 text-center transition">
-                    <i class="fa-solid fa-eye mr-1"></i> Tiếp tục với tư cách Khách / Giáo viên quan sát
+                    <i class="fa-solid fa-eye mr-1"></i> Khách quan sát
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT GENERAL INSTRUCTION MODAL -->
+    <div id="editInstructionModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen-to-square text-sky-400"></i> Sửa Hướng Dẫn Chung Nhóm
+            </h3>
+            <div id="instructionLinesInput" class="space-y-2">
+                <!-- Dynamic input lines -->
+            </div>
+            <div class="flex justify-between items-center pt-3 border-t border-slate-800">
+                <button onclick="addInstructionLine()" class="text-xs text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> Thêm dòng hướng dẫn
+                </button>
+                <div class="flex gap-2">
+                    <button onclick="closeInstructionModal()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Hủy</button>
+                    <button onclick="saveInstructionModal()" class="px-4 py-2 bg-sky-600 text-white text-xs font-bold rounded-xl shadow-lg">Lưu Thay Đổi</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT TASK CONTENT MODAL -->
+    <div id="editTaskModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-pen text-purple-400"></i> Chỉnh Sửa Công Việc Cá Nhân
+            </h3>
+            <input type="hidden" id="editTaskId">
+            <input type="hidden" id="editTaskSection">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1 font-semibold">Tên người phụ trách:</label>
+                <input type="text" id="editTaskAssignee" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200" readonly>
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1 font-semibold">Tiêu đề công việc:</label>
+                <input type="text" id="editTaskTitle" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500">
+            </div>
+            <div>
+                <label class="block text-xs text-slate-400 mb-1 font-semibold">Mô tả công việc chi tiết:</label>
+                <textarea id="editTaskDesc" rows="4" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500"></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeTaskModal()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Hủy</button>
+                <button onclick="saveTaskModal()" class="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl shadow-lg">Lưu Cập Nhật</button>
             </div>
         </div>
     </div>
@@ -201,9 +274,10 @@
             <!-- Trạng thái Tài khoản đang đăng nhập -->
             <div class="flex items-center space-x-3 bg-slate-950/80 border border-slate-800 rounded-full px-4 py-1.5 shadow-inner">
                 <i class="fa-solid fa-user-check text-sky-400 text-sm"></i>
-                <div class="text-xs font-semibold text-slate-200">
+                <div class="text-xs font-semibold text-slate-200 flex items-center gap-1.5">
                     <span class="text-slate-400 font-normal hidden sm:inline">Xin chào:</span> 
                     <span id="activeUserName" class="text-sky-300 font-bold">Chưa chọn</span>
+                    <span id="adminBadge" class="hidden text-[10px] bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 font-black px-2 py-0.5 rounded-full shadow">ADMIN</span>
                 </div>
                 <button onclick="openUserModal()" class="text-[11px] px-2.5 py-1 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition flex items-center gap-1">
                     <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Đổi
@@ -223,7 +297,7 @@
                 Chủ Đề: <span class="gradient-text">Phát Huy Truyền Thống Nhà Trường</span>
             </h1>
             <p class="text-xs sm:text-sm text-slate-400 max-w-2xl mx-auto">
-                Trang web phân chia công việc chi tiết, điều phối deadline & trao đổi trực tuyến cho các phân ban.
+                Hệ thống điều phối, phân chia công việc cá nhân, kiểm duyệt tiến độ & trao đổi trực tuyến cho các ban.
             </p>
         </div>
     </section>
@@ -254,14 +328,14 @@
 
         <!-- ==================== BAN 1: SLIDE ==================== -->
         <div id="section-slide" class="tab-content block space-y-8">
-            <!-- Header Card -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl relative overflow-hidden">
+                <!-- Header Card -->
                 <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-800 pb-4 mb-6">
                     <div>
                         <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-file-powerpoint text-sky-400"></i> Ban Thuyết Trình & Slide
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">Phụ trách nội dung, giao diện Canva & slide thuyết trình chuyên đề</p>
+                        <p class="text-xs text-slate-400 mt-1">Phụ trách thiết kế Canva AI & biên soạn slide chuyên đề</p>
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (5):</span>
@@ -269,85 +343,41 @@
                     </div>
                 </div>
 
-                <!-- Quy trình & Hướng dẫn -->
-                <div class="grid md:grid-cols-2 gap-6">
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-diagram-project"></i> Quy trình làm việc Ban Slide
+                <!-- Hướng dẫn chung của nhóm -->
+                <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 mb-6 relative">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                            <span class="text-red-500">📌</span> Hướng dẫn chung của nhóm
                         </h3>
-                        <ul class="text-xs space-y-2 text-slate-300">
-                            <li class="flex items-start gap-2">
-                                <span class="bg-sky-950 text-sky-300 text-[10px] px-1.5 py-0.5 rounded font-mono border border-sky-800">1</span>
-                                <span><b>Trang (Leader)</b> tạo Template chung trên Canva AI hoặc PowerPoint chuẩn tone màu trường.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="bg-sky-950 text-sky-300 text-[10px] px-1.5 py-0.5 rounded font-mono border border-sky-800">2</span>
-                                <span><b>Trang</b> giao từng nhóm slide nhỏ cho các bạn và duyệt nội dung cuối.</span>
-                            </li>
-                            <li class="flex items-start gap-2">
-                                <span class="bg-sky-950 text-sky-300 text-[10px] px-1.5 py-0.5 rounded font-mono border border-sky-800">3</span>
-                                <span><b>Các thành viên</b> truy cập Canva, thêm tư liệu, hình ảnh và bình luận giải thích bên dưới.</span>
-                            </li>
-                        </ul>
+                        <button id="editInstructionBtn-slide" onclick="openInstructionModal('slide')" 
+                                class="hidden text-xs bg-sky-950 hover:bg-sky-900 text-sky-300 border border-sky-800 px-3 py-1 rounded-lg transition items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa hướng dẫn
+                        </button>
                     </div>
+                    <ol id="instruction-list-slide" class="text-xs text-slate-300 space-y-2 pl-2 list-decimal list-inside leading-relaxed">
+                        <!-- Loaded dynamically -->
+                    </ol>
+                </div>
 
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-user-gear"></i> Hướng Dẫn Cụ Thể Từng Bạn
+                <!-- Thẻ Công Việc Cá Nhân -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-sky-400"></i> Công việc được giao
                         </h3>
-                        <div class="text-xs space-y-1.5 text-slate-300">
-                            <p><b class="text-white">Trang:</b> Thiết kế Canva AI, gửi link chỉnh sửa & theo dõi tiến độ.</p>
-                            <p><b class="text-white">Tuấn Sơn & Ngô Minh Hải:</b> Soạn thảo Lịch sử & Bề dày truyền thống THPT Sóc Sơn.</p>
-                            <p><b class="text-white">Mai Linh & Trần Minh:</b> Soạn thảo Thành tựu dạy-học, phong trào học sinh & Lời kết.</p>
-                        </div>
+                        <span id="viewingPermissionNotice-slide" class="text-[11px] text-slate-400 italic"></span>
                     </div>
-                </div>
 
-                <!-- Phân công chi tiết -->
-                <div class="mt-6 pt-4 border-t border-slate-800">
-                    <h3 class="text-xs font-bold text-slate-200 mb-3 flex items-center gap-2">
-                        <i class="fa-solid fa-list-check text-sky-400"></i> Bảng Phân Công Nhiệm Vụ Chi Tiết
-                    </h3>
-                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-3">
-                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                            <div class="text-xs font-bold text-sky-300">Tuấn Sơn</div>
-                            <div class="text-[11px] text-slate-400 mt-1">Slide 1-5: Lịch sử thành lập & các mốc son lịch sử trường.</div>
-                        </div>
-                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                            <div class="text-xs font-bold text-sky-300">Ngô Minh Hải</div>
-                            <div class="text-[11px] text-slate-400 mt-1">Slide 6-10: Các thế hệ thầy cô & học sinh tiêu biểu.</div>
-                        </div>
-                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                            <div class="text-xs font-bold text-sky-300">Mai Linh</div>
-                            <div class="text-[11px] text-slate-400 mt-1">Slide 11-15: Phong trào học tập, văn nghệ, thể thao.</div>
-                        </div>
-                        <div class="bg-slate-950/80 p-3.5 rounded-xl border border-slate-800">
-                            <div class="text-xs font-bold text-sky-300">Trần Minh</div>
-                            <div class="text-[11px] text-slate-400 mt-1">Slide 16-20: Trách nhiệm thế hệ trẻ & Lời kết.</div>
-                        </div>
+                    <div id="tasks-container-slide" class="grid md:grid-cols-2 gap-4">
+                        <!-- Task cards rendered dynamically based on current user -->
                     </div>
                 </div>
-
-                <!-- File Upload Section -->
-                <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-paperclip text-sky-400"></i>
-                        <span class="text-xs text-slate-300 font-semibold">Tải lên File Slide / Ảnh Canva:</span>
-                    </div>
-                    <div>
-                        <input type="file" id="file-slide" class="hidden" onchange="handleFileUpload('slide')">
-                        <label for="file-slide" class="px-3 py-1.5 bg-sky-600 hover:bg-sky-500 text-white text-xs font-medium rounded-lg cursor-pointer transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-upload"></i> Chọn File / Ảnh
-                        </label>
-                    </div>
-                </div>
-                <div id="file-list-slide" class="mt-3 space-y-1.5"></div>
             </div>
 
             <!-- Nested Comments Container -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fa-solid fa-comments text-sky-400"></i> Trao Đổi & Bình Luận Giải Thích (Ban Slide)
+                    <i class="fa-solid fa-comments text-sky-400"></i> Trao Đổi & Bình Luận (Ban Slide)
                 </h3>
                 
                 <div class="mb-6 space-y-2">
@@ -373,7 +403,7 @@
                         <h2 class="text-2xl font-bold text-white flex items-center gap-2">
                             <i class="fa-solid fa-gamepad text-purple-400"></i> Ban Quiz Game & Trò Chơi Tương Tác
                         </h2>
-                        <p class="text-xs text-slate-400 mt-1">Tạo bộ câu hỏi trắc nghiệm, quà tặng và quản lý file trò chơi</p>
+                        <p class="text-xs text-slate-400 mt-1">Soạn thảo câu hỏi trắc nghiệm, tạo game Kahoot/Quizizz</p>
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (5):</span>
@@ -381,40 +411,35 @@
                     </div>
                 </div>
 
-                <div class="grid md:grid-cols-2 gap-6 mb-6">
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved"></i> Quyền Hạn Leader (Phạm Minh)
+                <!-- Hướng dẫn chung ban Quiz -->
+                <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 mb-6 relative">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                            <span class="text-red-500">📌</span> Hướng dẫn chung của nhóm
                         </h3>
-                        <p class="text-xs text-slate-300 mb-3">
-                            Phạm Minh quản lý việc đính kèm link Kahoot / Quizizz / File câu hỏi chính cho toàn đội.
-                        </p>
-                        <div class="space-y-2 bg-purple-950/30 p-3 rounded-lg border border-purple-800/40">
-                            <span class="text-[11px] text-purple-300 font-semibold block">Tạo / Chèn Link Quiz Game Mới:</span>
-                            <div class="flex gap-2">
-                                <input type="text" id="quiz-title-input" placeholder="Tên bộ Quiz" class="bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200 flex-1 focus:outline-none">
-                                <input type="text" id="quiz-link-input" placeholder="https://..." class="bg-slate-900 text-xs px-2.5 py-1.5 rounded border border-slate-700 text-slate-200 flex-1 focus:outline-none">
-                                <button onclick="addQuizLink()" class="bg-purple-600 hover:bg-purple-500 text-white text-xs px-3 py-1.5 rounded font-bold transition">
-                                    Thêm
-                                </button>
-                            </div>
-                        </div>
+                        <button id="editInstructionBtn-quiz" onclick="openInstructionModal('quiz')" 
+                                class="hidden text-xs bg-purple-950 hover:bg-purple-900 text-purple-300 border border-purple-800 px-3 py-1 rounded-lg transition items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa hướng dẫn
+                        </button>
                     </div>
+                    <ol id="instruction-list-quiz" class="text-xs text-slate-300 space-y-2 pl-2 list-decimal list-inside leading-relaxed">
+                        <!-- Loaded dynamically -->
+                    </ol>
+                </div>
 
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-users"></i> Phân Công Nhiệm Vụ Thành Viên
-                        </h3>
-                        <ul class="text-xs space-y-1.5 text-slate-300">
-                            <li><b class="text-white">Lâm & Hải:</b> Sưu tầm 15 câu hỏi lịch sử trường & đáp án chi tiết.</li>
-                            <li><b class="text-white">Quân & Tuệ:</b> Soạn 10 câu hỏi tình huống quà tặng & thiết kế minigame.</li>
-                            <li><b class="text-white">Tất cả:</b> Đóng góp hình ảnh tư liệu câu hỏi bằng nút upload bên dưới.</li>
-                        </ul>
+                <!-- Chèn Link Quiz Game (Quyền Phạm Minh) -->
+                <div id="quizAdminLinkArea" class="hidden mb-6 p-4 bg-purple-950/30 border border-purple-800/40 rounded-2xl">
+                    <span class="text-xs text-purple-300 font-bold block mb-2"><i class="fa-solid fa-link"></i> Phạm Minh thêm Link Quiz Game:</span>
+                    <div class="flex gap-2">
+                        <input type="text" id="quiz-title-input" placeholder="Tên bộ Quiz" class="bg-slate-900 text-xs px-3 py-2 rounded-xl border border-slate-700 text-slate-200 flex-1 focus:outline-none">
+                        <input type="text" id="quiz-link-input" placeholder="https://..." class="bg-slate-900 text-xs px-3 py-2 rounded-xl border border-slate-700 text-slate-200 flex-1 focus:outline-none">
+                        <button onclick="addQuizLink()" class="bg-purple-600 hover:bg-purple-500 text-white text-xs px-4 py-2 rounded-xl font-bold transition">
+                            Thêm Link
+                        </button>
                     </div>
                 </div>
 
-                <!-- Danh sách Quiz Links -->
-                <div class="pt-4 border-t border-slate-800">
+                <div class="mb-6">
                     <h3 class="text-xs font-bold text-slate-200 mb-3 flex items-center gap-2">
                         <i class="fa-solid fa-link text-purple-400"></i> Danh Sách Link Quiz Game Công Khai
                     </h3>
@@ -436,20 +461,19 @@
                     </div>
                 </div>
 
-                <!-- File Upload -->
-                <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-file-arrow-up text-purple-400"></i>
-                        <span class="text-xs text-slate-300 font-semibold">Tải lên Ngân hàng đề / File quà tặng:</span>
+                <!-- Thẻ Công Việc Cá Nhân -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-purple-400"></i> Công việc được giao
+                        </h3>
+                        <span id="viewingPermissionNotice-quiz" class="text-[11px] text-slate-400 italic"></span>
                     </div>
-                    <div>
-                        <input type="file" id="file-quiz" class="hidden" onchange="handleFileUpload('quiz')">
-                        <label for="file-quiz" class="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium rounded-lg cursor-pointer transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-upload"></i> Chọn File Đề Thi / Ảnh
-                        </label>
+
+                    <div id="tasks-container-quiz" class="grid md:grid-cols-2 gap-4">
+                        <!-- Task cards rendered dynamically -->
                     </div>
                 </div>
-                <div id="file-list-quiz" class="mt-3 space-y-1.5"></div>
             </div>
 
             <!-- Comments -->
@@ -487,38 +511,24 @@
                     </div>
                 </div>
 
-                <!-- 3 Cột Hướng Dẫn Kỹ Thuật -->
-                <div class="grid lg:grid-cols-3 gap-6 mb-8">
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-music"></i> 1. Nhiệm vụ File Nhạc Gốc HQ
+                <!-- Hướng dẫn chung ban Video -->
+                <div class="bg-slate-950/80 p-5 rounded-2xl border border-slate-800 mb-6 relative">
+                    <div class="flex items-center justify-between mb-3">
+                        <h3 class="text-sm font-extrabold text-white flex items-center gap-2">
+                            <span class="text-red-500">📌</span> Hướng dẫn chung của nhóm
                         </h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            <b class="text-white">Nhiệm vụ bắt buộc:</b> 1 bạn phụ trách tìm hoặc tách nhạc bản chuẩn HD, <span class="text-pink-300 font-semibold">tuyệt đối không lẫn tạp âm</span> (tiếng nói, tiếng vỗ tay) để làm nhạc nền chính.
-                        </p>
+                        <button id="editInstructionBtn-video" onclick="openInstructionModal('video')" 
+                                class="hidden text-xs bg-pink-950 hover:bg-pink-900 text-pink-300 border border-pink-800 px-3 py-1 rounded-lg transition items-center gap-1">
+                            <i class="fa-solid fa-pen-to-square text-[10px]"></i> Sửa hướng dẫn
+                        </button>
                     </div>
-
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-sky-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-magnifying-glass"></i> 2. Công Cụ Tìm Visual Tương Tự
-                        </h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Sử dụng các nền tảng: <span class="text-sky-300">TikTok, Google Lens (Tìm kiếm bằng hình ảnh), YouTube, Pinterest</span> để tra cứu các hiệu ứng background LED tương tự nhóm mẫu.
-                        </p>
-                    </div>
-
-                    <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800">
-                        <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                            <i class="fa-solid fa-sliders"></i> 3. Kỹ Thuật Dựng Màn LED
-                        </h3>
-                        <p class="text-xs text-slate-300 leading-relaxed">
-                            Ghép ghép visual khớp nhịp trống, ánh sáng rực rỡ, độ phân giải sắc nét cho màn LED lớn sân khấu.
-                        </p>
-                    </div>
+                    <ol id="instruction-list-video" class="text-xs text-slate-300 space-y-2 pl-2 list-decimal list-inside leading-relaxed">
+                        <!-- Loaded dynamically -->
+                    </ol>
                 </div>
 
                 <!-- Embedded YouTube Video & Timeline Table -->
-                <div class="grid lg:grid-cols-12 gap-6 bg-slate-950 p-5 rounded-2xl border border-slate-800">
+                <div class="grid lg:grid-cols-12 gap-6 bg-slate-950 p-5 rounded-2xl border border-slate-800 mb-6">
                     <!-- YouTube Video Player -->
                     <div class="lg:col-span-6 space-y-3">
                         <h3 class="text-xs font-bold text-slate-200 flex items-center gap-2">
@@ -532,9 +542,6 @@
                                     allowfullscreen>
                             </iframe>
                         </div>
-                        <p class="text-[11px] text-slate-400">
-                            *Xem kỹ hiệu ứng chuyển cảnh và nhịp điệu ánh sáng của video trên.
-                        </p>
                     </div>
 
                     <!-- Timeline Phân Chia Chi Tiết 3m45s -->
@@ -588,20 +595,19 @@
                     </div>
                 </div>
 
-                <!-- File Upload -->
-                <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-file-video text-pink-400"></i>
-                        <span class="text-xs text-slate-300 font-semibold">Tải lên Clip Visual LED / File Audio HQ:</span>
+                <!-- Thẻ Công Việc Cá Nhân -->
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                            <i class="fa-solid fa-list-check text-pink-400"></i> Công việc được giao
+                        </h3>
+                        <span id="viewingPermissionNotice-video" class="text-[11px] text-slate-400 italic"></span>
                     </div>
-                    <div>
-                        <input type="file" id="file-video" class="hidden" onchange="handleFileUpload('video')">
-                        <label for="file-video" class="px-3 py-1.5 bg-pink-600 hover:bg-pink-500 text-white text-xs font-medium rounded-lg cursor-pointer transition flex items-center gap-1.5">
-                            <i class="fa-solid fa-upload"></i> Chọn Video / Audio
-                        </label>
+
+                    <div id="tasks-container-video" class="grid md:grid-cols-2 gap-4">
+                        <!-- Task cards rendered dynamically -->
                     </div>
                 </div>
-                <div id="file-list-video" class="mt-3 space-y-1.5"></div>
             </div>
 
             <!-- Comments -->
@@ -637,77 +643,138 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT LOGIC FULL FIX -->
+    <!-- JAVASCRIPT LOGIC FULL IMPLEMENTATION -->
     <script>
-        // State management
+        // User State
         let currentUser = localStorage.getItem('chuyenDeUser') || null;
+        let isAdmin = localStorage.getItem('chuyenDeIsAdmin') === 'true';
 
-        // Shared data for comments
-        const commentsData = {
+        // Check Editor Permission (Phạm Nhật Minh OR Trang)
+        function isEditor() {
+            return isAdmin || currentUser === 'Trang';
+        }
+
+        // General Instructions Data
+        const groupInstructions = {
             slide: [
-                {
-                    id: "c1",
-                    author: "Trang (Leader Ban Slide)",
-                    time: "10 phút trước",
-                    text: "Mình đã tạo xong khung Template trên Canva AI rồi nhé! Mọi người truy cập vào sửa đúng màu chủ đạo xanh tím giúp mình.",
-                    replies: [
-                        { author: "Tuấn Sơn", time: "5 phút trước", text: "OK Trang, mình đang chèn nội dung phần lịch sử trường vào slide 2-5 đây." }
-                    ]
-                }
+                "Trang tạo template bằng Canva AI hoặc công cụ tương tự; thống nhất màu sắc, font chữ, bố cục và gửi link Canva có quyền chỉnh sửa.",
+                "Trang chia nội dung thành các phần nhỏ, ghi rõ người phụ trách và thời hạn cho từng phần.",
+                "Tuấn Sơn, Ngô Minh Hải, Mai Linh và Trần Minh nghiên cứu phần được giao, viết nội dung ngắn gọn, bổ sung hình ảnh và chỉnh sửa trực tiếp trên bản Canva chung.",
+                "Mọi người kiểm tra lỗi chính tả, nguồn thông tin và sự thống nhất trước khi chốt slide."
             ],
             quiz: [
-                {
-                    id: "q1",
-                    author: "Phạm Minh (Leader Quiz)",
-                    time: "15 phút trước",
-                    text: "Mọi người tìm giúp mình khoảng 15-20 câu trắc nghiệm ngắn về truyền thống trường THPT Sóc Sơn nhé!",
-                    replies: []
-                }
+                "Phạm Minh khởi tạo bộ câu hỏi trên Quizizz/Kahoot và chia sẻ link biên soạn cho các thành viên.",
+                "Lâm và Hải chịu trách nhiệm thu thập 15 câu hỏi trắc nghiệm lịch sử truyền thống THPT Sóc Sơn.",
+                "Quân và Tuệ biên soạn 10 câu hỏi minigame quà tặng cùng đáp án ngắn gọn.",
+                "Toàn ban thống nhất bộ câu hỏi hoàn chỉnh trước khi Phạm Minh chốt xuất link cho chuyên đề."
             ],
             video: [
-                {
-                    id: "v1",
-                    author: "Gia Minh",
-                    time: "20 phút trước",
-                    text: "Đoạn 00:00 - 00:30 mình tìm được hiệu ứng tia sáng xanh trên TikTok rất hợp với phần Intro!",
-                    replies: []
-                }
+                "1 bạn chịu trách nhiệm tìm/tách file nhạc gốc HQ không tạp âm để làm sound background chuẩn cho màn trình diễn 3m45s.",
+                "Các thành viên còn lại sử dụng TikTok, Google Lens (tìm kiếm bằng hình ảnh), YouTube để tra cứu Visual LED tương tự video mẫu.",
+                "Phân chia thời lượng dựng video: 00:00-00:30 (Gia Minh), 00:30-01:15 (Hoàng Long), 01:15-02:00 (Kiệt), 02:00-02:45 (Nam Phong & An Danh), 02:45-03:45 (Bảo Long & Đức Trọng).",
+                "Ghép video hoàn chỉnh, đảm bảo chất lượng sắc nét khi chiếu lên màn hình LED lớn sân khấu."
             ]
         };
 
-        // Shared data for uploaded files
-        const uploadedFiles = {
-            slide: [],
-            quiz: [],
-            video: []
+        // Tasks Database
+        const groupTasks = {
+            slide: [
+                { id: "s1", assignee: "Trang", title: "Tạo template và thiết lập file Canva chung", desc: "Chọn phong cách, màu sắc, font, bố cục; tạo bản mẫu 2-3 slide; bật quyền chỉnh sửa cho cả nhóm; chia nội dung và cập nhật link.", completed: false, file: null },
+                { id: "s2", assignee: "Tuấn Sơn", title: "Biên soạn nội dung theo phần được Trang giao", desc: "Tìm thông tin đáng tin cậy, viết nội dung, đề xuất hình minh họa và cập nhật trực tiếp vào Canva (Slide 1-5).", completed: false, file: null },
+                { id: "s3", assignee: "Ngô Minh Hải", title: "Biên soạn nội dung truyền thống & thầy cô tiêu biểu", desc: "Tổng hợp hình ảnh tư liệu, soạn thảo slide mốc lịch sử & thành tựu (Slide 6-10).", completed: false, file: null },
+                { id: "s4", assignee: "Mai Linh", title: "Biên soạn phong trào học sinh & hoạt động", desc: "Nội dung phong trào thi đua, học tập, văn nghệ, thể thao THPT Sóc Sơn (Slide 11-15).", completed: false, file: null },
+                { id: "s5", assignee: "Trần Minh", title: "Soạn thảo bài học trách nhiệm & Lời kết", desc: "Tổng hợp thông điệp thế hệ trẻ, rà soát lỗi chính tả và định dạng slide (Slide 16-20).", completed: false, file: null }
+            ],
+            quiz: [
+                { id: "q1", assignee: "Phạm Minh", title: "Khởi tạo nền tảng & Quản lý Link Quiz", desc: "Tạo room Quizizz/Kahoot, cấp quyền truy cập, tổng hợp đề thi hoàn chỉnh.", completed: false, file: null },
+                { id: "q2", assignee: "Lâm", title: "Soạn 8 câu hỏi trắc nghiệm Lịch sử THPT Sóc Sơn", desc: "Thu thập ngày thành lập, các thầy cô hiệu trưởng qua các thời kỳ, thành tích danh dự.", completed: false, file: null },
+                { id: "q3", assignee: "Hải", title: "Soạn 7 câu hỏi mốc thời gian & sự kiện nổi bật", desc: "Biên soạn câu hỏi kèm 4 lựa chọn A, B, C, D và ghi rõ đáp án đúng.", completed: false, file: null },
+                { id: "q4", assignee: "Quân", title: "Biên soạn 5 câu hỏi minigame tương tác khán giả", desc: "Câu hỏi tình huống vui nhộn, dễ trả lời nhận quà tại sân khấu.", completed: false, file: null },
+                { id: "q5", assignee: "Tuệ", title: "Thiết kế hình ảnh minh họa cho bộ câu hỏi Quiz", desc: "Tìm kiếm và nén ảnh tư liệu tương ứng với từng câu hỏi trắc nghiệm.", completed: false, file: null }
+            ],
+            video: [
+                { id: "v1", assignee: "Gia Minh", title: "Tìm nhạc gốc HQ & Dựng Visual 00:00 - 00:30", desc: "Tách/tìm nhạc chuẩn không tạp âm + Dựng Visual Intro hào hùng, logo trường ẩn hiện.", completed: false, file: null },
+                { id: "v2", assignee: "Hoàng Long", title: "Dựng Visual LED Đoạn 00:30 - 01:15", desc: "Tìm background ánh sáng vàng kim, thành tựu giảng dạy và phong trào thi đua.", completed: false, file: null },
+                { id: "v3", assignee: "Kiệt", title: "Dựng Visual LED Đoạn 01:15 - 02:00", desc: "Hiệu ứng sóng âm thanh tươi trẻ, năng động minh họa hoạt động thanh niên.", completed: false, file: null },
+                { id: "v4", assignee: "Nam Phong", title: "Co-lead Dựng Visual Cao Trào 02:00 - 02:45", desc: "Visual 3D bùng nổ nhịp trống sôi động, hiệu ứng chuyển cảnh dồn dập.", completed: false, file: null },
+                { id: "v5", assignee: "An Danh", title: "Phối hợp Visual Cao Trào 02:00 - 02:45", desc: "Tìm kiếm các clip hiệu ứng đốm sáng, tia laser khớp từng giây nhạc cao trào.", completed: false, file: null },
+                { id: "v6", assignee: "Bảo Long", title: "Dựng Visual Outro Kết 02:45 - 03:45", desc: "Visual cờ hoa rực rỡ, thông điệp tự hào THPT Sóc Sơn.", completed: false, file: null },
+                { id: "v7", assignee: "Đức Trọng", title: "Tổng hợp & Render Video LED Full HD", desc: "Ghép khớp các đoạn video, kiểm tra độ phân giải phù hợp màn LED sân khấu.", completed: false, file: null }
+            ]
         };
 
-        // Modal Controls
+        // Comments Database
+        const commentsData = {
+            slide: [
+                { id: "c1", author: "Trang", time: "10 phút trước", text: "Mình đã cập nhật link Canva AI lên phần hướng dẫn chung, các bạn vào xem nhé!", replies: [] }
+            ],
+            quiz: [
+                { id: "q1", author: "Phạm Minh", time: "15 phút trước", text: "Lâm và Hải đã có danh sách câu hỏi chưa gửi lên đây nhé.", replies: [] }
+            ],
+            video: [
+                { id: "v1", author: "Gia Minh", time: "20 phút trước", text: "File nhạc gốc không tạp âm mình đã ghép xong chuẩn 3m45s!", replies: [] }
+            ]
+        };
+
+        // MODAL HANDLERS
         function openUserModal() {
-            const modal = document.getElementById('userSelectModal');
-            if (modal) modal.classList.remove('hidden');
+            document.getElementById('userSelectModal').classList.remove('hidden');
+            cancelPasswordPrompt();
         }
 
         function closeUserModal() {
-            const modal = document.getElementById('userSelectModal');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('userSelectModal').classList.add('hidden');
+        }
+
+        function promptAdminPassword() {
+            document.getElementById('passwordArea').classList.remove('hidden');
+            document.getElementById('memberListArea').classList.add('hidden');
+            document.getElementById('adminPasswordInput').focus();
+        }
+
+        function cancelPasswordPrompt() {
+            document.getElementById('passwordArea').classList.add('hidden');
+            document.getElementById('memberListArea').classList.remove('hidden');
+            document.getElementById('passwordError').classList.add('hidden');
+            document.getElementById('adminPasswordInput').value = '';
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById('adminPasswordInput').value;
+            if (pass === 'Minh1234#') {
+                currentUser = 'Phạm Nhật Minh';
+                isAdmin = true;
+                localStorage.setItem('chuyenDeUser', currentUser);
+                localStorage.setItem('chuyenDeIsAdmin', 'true');
+                updateUserDisplay();
+                closeUserModal();
+                refreshCurrentTab();
+            } else {
+                document.getElementById('passwordError').classList.remove('hidden');
+            }
         }
 
         function selectModalUser(userName) {
             currentUser = userName;
+            isAdmin = false;
             localStorage.setItem('chuyenDeUser', userName);
+            localStorage.setItem('chuyenDeIsAdmin', 'false');
             updateUserDisplay();
             closeUserModal();
+            refreshCurrentTab();
         }
 
         function updateUserDisplay() {
-            const displayElem = document.getElementById('activeUserName');
-            if (displayElem) {
-                displayElem.innerText = currentUser || "Chưa chọn";
+            document.getElementById('activeUserName').innerText = currentUser || "Chưa chọn";
+            const badge = document.getElementById('adminBadge');
+            if (isAdmin) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
             }
         }
 
-        // Tab Switcher
+        // TAB NAVIGATION
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -725,10 +792,249 @@
                 activeBtn.className = 'tab-btn flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all duration-200 bg-gradient-to-r from-pink-500 to-red-600 text-white shadow-lg';
             }
 
-            renderComments(tabName);
+            renderSection(tabName);
         }
 
-        // Render Comments Logic
+        function refreshCurrentTab() {
+            const visibleSection = document.querySelector('.tab-content:not(.hidden)');
+            if (visibleSection) {
+                const sectionName = visibleSection.id.replace('section-', '');
+                renderSection(sectionName);
+            }
+        }
+
+        // RENDER SECTION (General Instructions, Task Cards, Permissions)
+        function renderSection(section) {
+            // 1. Render General Instructions
+            const instList = document.getElementById(`instruction-list-${section}`);
+            const instItems = groupInstructions[section] || [];
+            instList.innerHTML = instItems.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+
+            // Toggle Edit Instruction Button
+            const editInstBtn = document.getElementById(`editInstructionBtn-${section}`);
+            if (editInstBtn) {
+                if (isEditor()) {
+                    editInstBtn.classList.remove('hidden');
+                    editInstBtn.classList.add('flex');
+                } else {
+                    editInstBtn.classList.add('hidden');
+                    editInstBtn.classList.remove('flex');
+                }
+            }
+
+            // Toggle Admin Quiz Link Input
+            const quizLinkAdmin = document.getElementById('quizAdminLinkArea');
+            if (quizLinkAdmin && section === 'quiz') {
+                if (isAdmin) {
+                    quizLinkAdmin.classList.remove('hidden');
+                } else {
+                    quizLinkAdmin.classList.add('hidden');
+                }
+            }
+
+            // 2. Render Tasks based on User Permissions
+            const tasksContainer = document.getElementById(`tasks-container-${section}`);
+            const noticeElem = document.getElementById(`viewingPermissionNotice-${section}`);
+            const allTasks = groupTasks[section] || [];
+
+            let filteredTasks = [];
+            if (isAdmin) {
+                filteredTasks = allTasks;
+                noticeElem.innerText = "Hiển thị công việc của TẤT CẢ thành viên (Quyền Admin)";
+            } else {
+                filteredTasks = allTasks.filter(t => t.assignee.toLowerCase() === (currentUser || '').toLowerCase());
+                if (filteredTasks.length > 0) {
+                    noticeElem.innerText = `Đang hiển thị công việc cá nhân của: ${currentUser}`;
+                } else {
+                    noticeElem.innerText = `Bạn không có công việc cá nhân thuộc ${section.toUpperCase()}`;
+                }
+            }
+
+            if (filteredTasks.length === 0) {
+                tasksContainer.innerHTML = `
+                    <div class="col-span-full bg-slate-950/60 p-6 rounded-2xl border border-slate-800 text-center">
+                        <i class="fa-solid fa-folder-open text-2xl text-slate-600 mb-2"></i>
+                        <p class="text-xs text-slate-400">Không có công việc nào được phân công cho bạn ở ban này.</p>
+                    </div>
+                `;
+            } else {
+                tasksContainer.innerHTML = filteredTasks.map(t => renderTaskCard(t, section)).join('');
+            }
+
+            // 3. Render Comments
+            renderComments(section);
+        }
+
+        // RENDER SINGLE TASK CARD (Matching the uploaded image style)
+        function renderTaskCard(task, section) {
+            const canToggleStatus = isEditor();
+            const canEditContent = isEditor();
+
+            return `
+            <div class="bg-slate-950/90 border border-slate-800/90 rounded-2xl p-5 shadow-lg flex flex-col justify-between relative space-y-4">
+                <div>
+                    <!-- Card Header: Title & Status Badge -->
+                    <div class="flex items-start justify-between gap-3 mb-2">
+                        <h4 class="text-sm font-extrabold text-slate-100 leading-snug">${escapeHtml(task.title)}</h4>
+                        <span class="px-2.5 py-1 rounded-xl text-[10px] font-bold whitespace-nowrap ${task.completed ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-800/60' : 'bg-slate-800/80 text-slate-400 border border-slate-700/60'}">
+                            ${task.completed ? '✓ Hoàn thành' : 'Chưa hoàn thành'}
+                        </span>
+                    </div>
+
+                    <!-- Assignee Badge -->
+                    <div class="flex items-center gap-1 text-xs text-purple-400 font-semibold mb-3">
+                        <i class="fa-solid fa-user-circle text-xs"></i>
+                        <span>${escapeHtml(task.assignee)}</span>
+                    </div>
+
+                    <!-- Task Description -->
+                    <p class="text-xs text-slate-400 leading-relaxed">${escapeHtml(task.desc)}</p>
+
+                    <!-- File attachment preview if exists -->
+                    ${task.file ? `
+                        <div class="mt-3 p-2 bg-slate-900 border border-slate-800 rounded-xl flex items-center justify-between text-xs">
+                            <span class="text-sky-300 font-medium truncate"><i class="fa-solid fa-paperclip mr-1"></i> ${escapeHtml(task.file)}</span>
+                            <span class="text-[10px] text-emerald-400 font-bold">Đã nộp</span>
+                        </div>
+                    ` : ''}
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-3 border-t border-slate-800/80 flex flex-wrap items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <!-- Toggle Status Button (Phạm Minh & Trang) -->
+                        ${canToggleStatus ? `
+                            <button onclick="toggleTaskStatus('${section}', '${task.id}')" 
+                                    class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 ${task.completed ? 'bg-amber-950/60 text-amber-300 border border-amber-800/60 hover:bg-amber-900/60' : 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/60 hover:bg-emerald-900/60'}">
+                                <i class="fa-solid ${task.completed ? 'fa-rotate-left' : 'fa-check'} text-[10px]"></i>
+                                ${task.completed ? 'Chuyển Chưa hoàn thành' : '✓ Đánh dấu hoàn thành'}
+                            </button>
+                        ` : ''}
+
+                        <!-- Edit Task Content Button (Phạm Minh & Trang) -->
+                        ${canEditContent ? `
+                            <button onclick="openTaskModal('${section}', '${task.id}')" class="px-2.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs rounded-xl transition">
+                                <i class="fa-solid fa-pen text-[10px]"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <!-- Upload File Button -->
+                    <div>
+                        <input type="file" id="upload-task-${task.id}" class="hidden" onchange="handleTaskFileUpload('${section}', '${task.id}')">
+                        <label for="upload-task-${task.id}" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 text-xs font-semibold rounded-xl cursor-pointer transition flex items-center gap-1">
+                            <i class="fa-solid fa-plus text-[10px]"></i> Tải ảnh/file
+                        </label>
+                    </div>
+                </div>
+            </div>
+            `;
+        }
+
+        // TASK ACTIONS
+        function toggleTaskStatus(section, taskId) {
+            if (!isEditor()) return;
+            const task = groupTasks[section].find(t => t.id === taskId);
+            if (task) {
+                task.completed = !task.completed;
+                renderSection(section);
+            }
+        }
+
+        function handleTaskFileUpload(section, taskId) {
+            const input = document.getElementById(`upload-task-${taskId}`);
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const task = groupTasks[section].find(t => t.id === taskId);
+                if (task) {
+                    task.file = file.name;
+                    renderSection(section);
+                }
+            }
+        }
+
+        // EDIT INSTRUCTION MODAL LOGIC
+        let currentInstSection = null;
+        function openInstructionModal(section) {
+            currentInstSection = section;
+            const lines = groupInstructions[section] || [];
+            const container = document.getElementById('instructionLinesInput');
+            container.innerHTML = lines.map((line, idx) => `
+                <div class="flex gap-2 items-center">
+                    <span class="text-xs font-mono text-slate-500">${idx + 1}.</span>
+                    <input type="text" value="${escapeHtml(line)}" class="inst-line-input w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500">
+                    <button onclick="this.parentElement.remove()" class="text-red-400 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            `).join('');
+
+            document.getElementById('editInstructionModal').classList.remove('hidden');
+        }
+
+        function closeInstructionModal() {
+            document.getElementById('editInstructionModal').classList.add('hidden');
+        }
+
+        function addInstructionLine() {
+            const container = document.getElementById('instructionLinesInput');
+            const count = container.children.length + 1;
+            const div = document.createElement('div');
+            div.className = 'flex gap-2 items-center';
+            div.innerHTML = `
+                <span class="text-xs font-mono text-slate-500">${count}.</span>
+                <input type="text" value="" placeholder="Nhập nội dung hướng dẫn..." class="inst-line-input w-full bg-slate-950 border border-slate-800 rounded-xl p-2 text-xs text-slate-200 focus:outline-none focus:border-sky-500">
+                <button onclick="this.parentElement.remove()" class="text-red-400 text-xs px-2"><i class="fa-solid fa-trash"></i></button>
+            `;
+            container.appendChild(div);
+        }
+
+        function saveInstructionModal() {
+            if (!currentInstSection) return;
+            const inputs = document.querySelectorAll('.inst-line-input');
+            const newLines = [];
+            inputs.forEach(input => {
+                const val = input.value.trim();
+                if (val) newLines.push(val);
+            });
+
+            groupInstructions[currentInstSection] = newLines;
+            closeInstructionModal();
+            renderSection(currentInstSection);
+        }
+
+        // EDIT TASK MODAL LOGIC
+        function openTaskModal(section, taskId) {
+            const task = groupTasks[section].find(t => t.id === taskId);
+            if (!task) return;
+
+            document.getElementById('editTaskId').value = task.id;
+            document.getElementById('editTaskSection').value = section;
+            document.getElementById('editTaskAssignee').value = task.assignee;
+            document.getElementById('editTaskTitle').value = task.title;
+            document.getElementById('editTaskDesc').value = task.desc;
+
+            document.getElementById('editTaskModal').classList.remove('hidden');
+        }
+
+        function closeTaskModal() {
+            document.getElementById('editTaskModal').classList.add('hidden');
+        }
+
+        function saveTaskModal() {
+            const section = document.getElementById('editTaskSection').value;
+            const taskId = document.getElementById('editTaskId').value;
+            const title = document.getElementById('editTaskTitle').value.trim();
+            const desc = document.getElementById('editTaskDesc').value.trim();
+
+            const task = groupTasks[section].find(t => t.id === taskId);
+            if (task) {
+                if (title) task.title = title;
+                if (desc) task.desc = desc;
+                renderSection(section);
+            }
+            closeTaskModal();
+        }
+
+        // Render Comments Logic (Hỗ trợ lồng nhau vô hạn cấp)
         function renderComments(section) {
             const container = document.getElementById(`comments-container-${section}`);
             if (!container) return;
@@ -739,48 +1045,59 @@
                 return;
             }
 
-            let html = '';
-            list.forEach(c => {
-                html += `
-                <div class="bg-slate-950/70 p-4 rounded-xl border border-slate-800 space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="text-xs font-bold text-sky-300"><i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(c.author)}</span>
-                        <span class="text-[10px] text-slate-500">${c.time}</span>
-                    </div>
-                    <p class="text-xs text-slate-300 leading-relaxed">${escapeHtml(c.text)}</p>
-                    <button onclick="toggleReplyInput('${section}', '${c.id}')" class="text-[11px] text-sky-400 hover:underline font-medium">
-                        <i class="fa-solid fa-reply mr-1"></i> Trả lời
-                    </button>
+            container.innerHTML = renderCommentTree(list, section);
+        }
 
-                    <!-- Nested Reply Box -->
-                    <div id="reply-box-${section}-${c.id}" class="hidden mt-2 pt-2 border-t border-slate-800 space-y-2">
-                        <input type="text" id="reply-input-${section}-${c.id}" placeholder="Viết phản hồi..." 
-                               class="w-full bg-slate-900 text-xs p-2 rounded-lg border border-slate-700 text-slate-200 focus:outline-none focus:border-sky-500">
+        // Hàm đệ quy render cây bình luận vô hạn cấp
+        function renderCommentTree(nodes, section) {
+            if (!nodes || nodes.length === 0) return '';
+            
+            const isAdmin = (currentUser === 'Phạm Nhật Minh');
+
+            return nodes.map(item => {
+                return `
+                <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 space-y-2 relative group">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs font-bold ${item.author === 'Phạm Nhật Minh' ? 'text-sky-400' : (item.author === 'Trang' ? 'text-pink-400' : 'text-purple-300')}">
+                                <i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(item.author)}
+                            </span>
+                            <span class="text-[10px] text-slate-500">${item.time}</span>
+                        </div>
+                        ${isAdmin ? `
+                            <button onclick="deleteCommentNode('${section}', '${item.id}')" title="Xóa bình luận" class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5 rounded hover:bg-slate-800 transition">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+
+                    <p class="text-xs text-slate-200 leading-relaxed whitespace-pre-line">${escapeHtml(item.text)}</p>
+
+                    <div class="flex items-center space-x-3 pt-1">
+                        <button onclick="toggleReplyInput('${section}', '${item.id}')" class="text-[11px] text-sky-400 hover:text-sky-300 font-medium flex items-center gap-1 transition">
+                            <i class="fa-solid fa-reply text-[10px]"></i> Trả lời
+                        </button>
+                    </div>
+
+                    <!-- Input Trả Lời Ẩn/Hiện -->
+                    <div id="reply-box-${section}-${item.id}" class="hidden mt-2 pt-2 border-t border-slate-800 space-y-2">
+                        <textarea id="reply-input-${section}-${item.id}" rows="2" placeholder="Trả lời ${escapeHtml(item.author)}..." 
+                               class="w-full bg-slate-900 text-xs p-2.5 rounded-xl border border-slate-700 text-slate-200 focus:outline-none focus:border-sky-500 custom-scrollbar"></textarea>
                         <div class="flex justify-end gap-2">
-                            <button onclick="toggleReplyInput('${section}', '${c.id}')" class="px-2 py-1 text-[10px] text-slate-400">Hủy</button>
-                            <button onclick="addReply('${section}', '${c.id}')" class="px-3 py-1 bg-sky-600 text-white text-[10px] rounded-lg font-bold">Gửi</button>
+                            <button onclick="toggleReplyInput('${section}', '${item.id}')" class="px-3 py-1 text-[11px] text-slate-400 hover:text-slate-200">Hủy</button>
+                            <button onclick="addNestedReply('${section}', '${item.id}')" class="px-3.5 py-1 bg-sky-600 hover:bg-sky-500 text-white text-[11px] rounded-lg font-bold transition">Gửi trả lời</button>
                         </div>
                     </div>
 
-                    <!-- Sub Replies List -->
-                    ${c.replies && c.replies.length > 0 ? `
-                        <div class="pl-4 border-l-2 border-sky-500/30 space-y-2 mt-2">
-                            ${c.replies.map(r => `
-                                <div class="bg-slate-900/60 p-2.5 rounded-lg border border-slate-800">
-                                    <div class="flex items-center justify-between">
-                                        <span class="text-[11px] font-bold text-purple-300"><i class="fa-solid fa-user-check mr-1"></i> ${escapeHtml(r.author)}</span>
-                                        <span class="text-[9px] text-slate-500">${r.time}</span>
-                                    </div>
-                                    <p class="text-xs text-slate-300 mt-1">${escapeHtml(r.text)}</p>
-                                </div>
-                            `).join('')}
+                    <!-- Bình luận con cấp tiếp theo (Recursive Children) -->
+                    ${item.replies && item.replies.length > 0 ? `
+                        <div class="pl-3 sm:pl-4 border-l-2 border-sky-500/30 space-y-2.5 mt-2.5">
+                            ${renderCommentTree(item.replies, section)}
                         </div>
                     ` : ''}
                 </div>
                 `;
-            });
-
-            container.innerHTML = html;
+            }).join('');
         }
 
         // Add Main Comment
@@ -790,7 +1107,7 @@
             if (!text) return;
 
             const newComment = {
-                id: 'c_' + Date.now(),
+                id: 'c_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
                 author: currentUser || 'Khách',
                 time: 'Vừa xong',
                 text: text,
@@ -807,25 +1124,63 @@
             if (box) box.classList.toggle('hidden');
         }
 
-        function addReply(section, commentId) {
-            const input = document.getElementById(`reply-input-${section}-${commentId}`);
+        // Thêm phản hồi đệ quy vào bất kỳ nút con nào
+        function addNestedReply(section, targetId) {
+            const input = document.getElementById(`reply-input-${section}-${targetId}`);
             const text = input.value.trim();
             if (!text) return;
 
-            const parent = commentsData[section].find(c => c.id === commentId);
-            if (parent) {
-                parent.replies.push({
-                    author: currentUser || 'Khách',
-                    time: 'Vừa xong',
-                    text: text
-                });
+            const newReply = {
+                id: 'r_' + Date.now() + '_' + Math.random().toString(36).substr(2, 4),
+                author: currentUser || 'Khách',
+                time: 'Vừa xong',
+                text: text,
+                replies: []
+            };
+
+            // Hàm đệ quy tìm node để chèn
+            function insertIntoTree(nodes) {
+                for (let node of nodes) {
+                    if (node.id === targetId) {
+                        if (!node.replies) node.replies = [];
+                        node.replies.push(newReply);
+                        return true;
+                    }
+                    if (node.replies && node.replies.length > 0) {
+                        if (insertIntoTree(node.replies)) return true;
+                    }
+                }
+                return false;
             }
 
+            insertIntoTree(commentsData[section]);
+            renderComments(section);
+        }
+
+        // Xóa đệ quy node bình luận (Admin)
+        function deleteCommentNode(section, targetId) {
+            if (currentUser !== 'Phạm Nhật Minh') return;
+
+            function removeFromTree(nodes) {
+                for (let i = 0; i < nodes.length; i++) {
+                    if (nodes[i].id === targetId) {
+                        nodes.splice(i, 1);
+                        return true;
+                    }
+                    if (nodes[i].replies && nodes[i].replies.length > 0) {
+                        if (removeFromTree(nodes[i].replies)) return true;
+                    }
+                }
+                return false;
+            }
+
+            removeFromTree(commentsData[section]);
             renderComments(section);
         }
 
         // Add Quiz Link
         function addQuizLink() {
+            if (!isAdmin) return;
             const titleInput = document.getElementById('quiz-title-input');
             const linkInput = document.getElementById('quiz-link-input');
             const title = titleInput.value.trim();
@@ -843,7 +1198,7 @@
                     </div>
                     <div>
                         <div class="text-xs font-bold text-white">${escapeHtml(title)}</div>
-                        <div class="text-[10px] text-slate-400">Tạo bởi: ${escapeHtml(currentUser || 'Khách')}</div>
+                        <div class="text-[10px] text-slate-400">Tạo bởi: Phạm Minh (Admin)</div>
                     </div>
                 </div>
                 <a href="${escapeHtml(link)}" target="_blank" class="px-2.5 py-1 bg-purple-600/30 hover:bg-purple-600 text-purple-300 hover:text-white rounded text-xs transition">
@@ -856,43 +1211,8 @@
             linkInput.value = '';
         }
 
-        // File Upload Simulation
-        function handleFileUpload(section) {
-            const input = document.getElementById(`file-${section}`);
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-                uploadedFiles[section].push({
-                    name: file.name,
-                    size: (file.size / 1024).toFixed(1) + ' KB',
-                    uploader: currentUser || 'Khách'
-                });
-
-                renderFileList(section);
-            }
-        }
-
-        function renderFileList(section) {
-            const container = document.getElementById(`file-list-${section}`);
-            const list = uploadedFiles[section];
-            
-            if (list.length === 0) {
-                container.innerHTML = '';
-                return;
-            }
-
-            container.innerHTML = list.map(f => `
-                <div class="flex items-center justify-between text-xs bg-slate-950 p-2.5 rounded-xl border border-slate-800">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa-solid fa-file-lines text-sky-400"></i>
-                        <span class="text-slate-200 font-medium">${escapeHtml(f.name)}</span>
-                        <span class="text-[10px] text-slate-500">(${f.size})</span>
-                    </div>
-                    <span class="text-[10px] text-slate-400">Tải lên bởi: <b>${escapeHtml(f.uploader)}</b></span>
-                </div>
-            `).join('');
-        }
-
         function escapeHtml(text) {
+            if (!text) return '';
             return text
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -901,7 +1221,7 @@
                 .replace(/'/g, "&#039;");
         }
 
-        // Page Load Init
+        // Page Load Initializer
         window.onload = function() {
             if (currentUser) {
                 updateUserDisplay();
@@ -910,9 +1230,7 @@
                 openUserModal();
             }
 
-            renderComments('slide');
-            renderComments('quiz');
-            renderComments('video');
+            renderSection('slide');
         };
     </script>
 </body>
