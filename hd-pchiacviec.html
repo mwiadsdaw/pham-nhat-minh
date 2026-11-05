@@ -96,10 +96,10 @@
                         <i class="fa-solid fa-file-powerpoint"></i> Ban Slide (5 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <!-- Nút của Trang: Ẩn MK, nằm ở ban Slide, cần mật khẩu -->
+                        <!-- Tên Trang hiển thị gọn gàng, có chìa khóa yêu cầu MK 123 -->
                         <button onclick="promptPassword('Trang', '123')" class="bg-slate-800/90 hover:bg-pink-600/30 hover:border-pink-400 border border-pink-500/50 p-2.5 rounded-xl text-xs font-bold text-pink-300 text-left flex items-center justify-between transition group">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-pen text-pink-400"></i> Trang (Leader)
+                                <i class="fa-solid fa-user-pen text-pink-400"></i> Trang
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -128,10 +128,9 @@
                         <i class="fa-solid fa-gamepad"></i> Ban Quiz Game (5 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <!-- Phạm Nhật Minh trong Ban Quiz -->
                         <button onclick="promptPassword('Phạm Nhật Minh', 'Minh1234#')" class="bg-slate-800/90 hover:bg-sky-600/30 hover:border-sky-400 border border-sky-500/50 p-2.5 rounded-xl text-xs font-bold text-sky-300 text-left flex items-center justify-between transition group col-span-2">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh (Admin)
+                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -160,10 +159,9 @@
                         <i class="fa-solid fa-video"></i> Ban Video & Visual LED (8 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <!-- Phạm Nhật Minh trong Ban Video -->
                         <button onclick="promptPassword('Phạm Nhật Minh', 'Minh1234#')" class="bg-slate-800/90 hover:bg-sky-600/30 hover:border-sky-400 border border-sky-500/50 p-2.5 rounded-xl text-xs font-bold text-sky-300 text-left flex items-center justify-between transition group col-span-2">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh (Admin)
+                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -400,7 +398,7 @@
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (5):</span>
-                        <span class="font-bold text-purple-300">Phạm Nhật Minh (Admin), Lâm, Hải, Quân, Tuệ</span>
+                        <span class="font-bold text-purple-300">Phạm Nhật Minh, Lâm, Hải, Quân, Tuệ</span>
                     </div>
                 </div>
 
@@ -490,7 +488,7 @@
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (8):</span>
-                        <span class="font-bold text-pink-300">Phạm Nhật Minh (Admin), Gia Minh, Hoàng Long, Kiệt, Nam Phong, An Danh, Bảo Long, Đức Trọng</span>
+                        <span class="font-bold text-pink-300">Phạm Nhật Minh, Gia Minh, Hoàng Long, Kiệt, Nam Phong, An Danh, Bảo Long, Đức Trọng</span>
                     </div>
                 </div>
 
@@ -618,7 +616,7 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT -->
+    <!-- JAVASCRIPT (Đã tích hợp localStorage đầy đủ) -->
     <script>
         let currentUser = localStorage.getItem('chuyenDeUser') || null;
         let isAdmin = localStorage.getItem('chuyenDeIsAdmin') === 'true';
@@ -627,7 +625,8 @@
             return isAdmin || currentUser === 'Trang';
         }
 
-        const groupInstructions = {
+        // Khởi tạo dữ liệu hướng dẫn chung (lưu vào localStorage nếu có)
+        const defaultInstructions = {
             slide: {
                 text: [
                     "Trang tạo template bằng Canva AI hoặc công cụ tương tự; thống nhất màu sắc, font chữ, bố cục và gửi link Canva có quyền chỉnh sửa.",
@@ -656,7 +655,10 @@
             }
         };
 
-        const groupTasks = {
+        let groupInstructions = JSON.parse(localStorage.getItem('chuyenDeInstructions')) || defaultInstructions;
+
+        // Khởi tạo danh sách công việc (lưu vào localStorage nếu có)
+        const defaultTasks = {
             slide: [
                 { id: "s1", assignee: "Trang", title: "Tạo template và thiết lập file Canva chung", desc: "Chọn phong cách, màu sắc, font, bố cục; tạo bản mẫu 2-3 slide; bật quyền chỉnh sửa cho cả nhóm; chia nội dung và cập nhật link.", completed: false, file: null },
                 { id: "s2", assignee: "Tuấn Sơn", title: "Biên soạn nội dung theo phần được Trang giao", desc: "Tìm thông tin đáng tin cậy, viết nội dung, đề xuất hình minh họa và cập nhật trực tiếp vào Canva (Slide 1-5).", completed: false, file: null },
@@ -683,11 +685,21 @@
             ]
         };
 
+        let groupTasks = JSON.parse(localStorage.getItem('chuyenDeTasks')) || defaultTasks;
+
         const commentsData = {
             slide: [{ id: "c1", author: "Trang", time: "10 phút trước", text: "Mình đã cập nhật link Canva AI lên phần hướng dẫn chung, các bạn vào xem nhé!", replies: [] }],
             quiz: [{ id: "q1", author: "Phạm Nhật Minh", time: "15 phút trước", text: "Lâm và Hải đã có danh sách câu hỏi chưa gửi lên đây nhé.", replies: [] }],
             video: [{ id: "v1", author: "Bảo Long", time: "20 phút trước", text: "Mình đang tìm file gốc âm thanh chuẩn, sẽ gửi lên sớm!", replies: [] }]
         };
+
+        function saveTasksToStorage() {
+            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
+        }
+
+        function saveInstructionsToStorage() {
+            localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
+        }
 
         function openUserModal() {
             document.getElementById('userSelectModal').classList.remove('hidden');
@@ -890,6 +902,7 @@
             const task = groupTasks[section].find(t => t.id === taskId);
             if (task) {
                 task.completed = !task.completed;
+                saveTasksToStorage();
                 renderSection(section);
             }
         }
@@ -900,6 +913,7 @@
                 const task = groupTasks[section].find(t => t.id === taskId);
                 if (task) {
                     task.file = input.files[0].name;
+                    saveTasksToStorage();
                     renderSection(section);
                 }
             }
@@ -952,11 +966,13 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     groupInstructions[currentInstSection].image = e.target.result;
+                    saveInstructionsToStorage();
                     closeInstructionModal();
                     renderSection(currentInstSection);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
+                saveInstructionsToStorage();
                 closeInstructionModal();
                 renderSection(currentInstSection);
             }
@@ -985,6 +1001,7 @@
             if (task) {
                 if (document.getElementById('editTaskTitle').value.trim()) task.title = document.getElementById('editTaskTitle').value.trim();
                 if (document.getElementById('editTaskDesc').value.trim()) task.desc = document.getElementById('editTaskDesc').value.trim();
+                saveTasksToStorage();
                 renderSection(section);
             }
             closeTaskModal();
