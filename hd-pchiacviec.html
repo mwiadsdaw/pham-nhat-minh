@@ -591,8 +591,24 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT -->
-    <script>
+    <!-- JAVASCRIPT & FIREBASE REALTIME SYNC -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        // Cấu hình Firebase dùng chung từ dự án minh-s-website của bạn
+        const firebaseConfig = {
+            apiKey: "AIzaSyB100rlybpLzv5ax2otgGPzDJc1l5pASyo",
+            authDomain: "minh-s-website.firebaseapp.com",
+            projectId: "minh-s-website",
+            storageBucket: "minh-s-website.appspot.com",
+            messagingSenderId: "453574408938",
+            appId: "1:453574408938:web:f5b017647a17deacfc3593"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
         let currentUser = localStorage.getItem('chuyenDeUser') || null;
         let isAdmin = localStorage.getItem('chuyenDeIsAdmin') === 'true';
 
@@ -697,148 +713,58 @@
 
         let commentsData = JSON.parse(localStorage.getItem('chuyenDeComments')) || defaultComments;
 
-        // ==========================================
-        // ĐỒNG BỘ DỮ LIỆU CHUNG QUA SUPABASE
-        // Điền URL và anon key của dự án Supabase tại đây.
-        // ==========================================
-        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
-        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
-        const SUPABASE_TABLE = 'chuyende_state';
-        const SUPABASE_ROW_ID = 1;
+        // ĐỒNG BỘ DỮ LIỆU LÊN FIRESTORE (GIỐNG FILE 2)
+        const docRef = doc(db, "chuyende", "main_state");
 
-        let lastRemoteUpdatedAt = null;
-        let saveTimer = null;
-        let saveInProgress = false;
-        let localChangeVersion = 0;
-
-        function supabaseReady() {
-            return SUPABASE_URL.startsWith('https://') &&
-                   !SUPABASE_URL.includes('YOUR_PROJECT_ID') &&
-                   SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_KEY');
-        }
-
-        function getSharedState() {
-            return { instructions: groupInstructions, tasks: groupTasks, comments: commentsData };
-        }
-
-        function applySharedState(data) {
-            if (!data) return;
-            if (data.instructions) groupInstructions = data.instructions;
-            if (data.tasks) groupTasks = data.tasks;
-            if (data.comments) commentsData = data.comments;
-            // Giữ bản cache để trang vẫn có dữ liệu nếu mạng tạm thời bị mất.
-            localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
-            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
-            localStorage.setItem('chuyenDeComments', JSON.stringify(commentsData));
-        }
-
-        async function writeSharedState() {
-            if (!supabaseReady()) {
-                console.warn('Chưa cấu hình Supabase. Dữ liệu hiện chỉ được lưu trên thiết bị này.');
-                return;
-            }
-            const versionBeingSaved = localChangeVersion;
-            saveInProgress = true;
+        async function saveSharedStateToFirebase() {
             try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`, {
-                    method: 'POST',
-                    headers: {
-                        'apikey': SUPABASE_ANON_KEY,
-                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
-                        'Content-Type': 'application/json',
-                        'Prefer': 'resolution=merge-duplicates,return=minimal'
-                    },
-                    body: JSON.stringify({
-                        id: SUPABASE_ROW_ID,
-                        data: getSharedState(),
-                        updated_at: new Date().toISOString()
-                    })
+                await setDoc(docRef, {
+                    instructions: groupInstructions,
+                    tasks: groupTasks,
+                    comments: commentsData,
+                    updatedAt: new Date().toISOString()
                 });
-                if (!response.ok) throw new Error(await response.text());
-                lastRemoteUpdatedAt = new Date().toISOString();
-                console.info('Đã lưu dữ liệu chung lên Supabase.');
-                // Nếu có thay đổi mới phát sinh trong lúc đang gửi, lưu tiếp lần nữa.
-                if (versionBeingSaved !== localChangeVersion) scheduleSharedSave();
             } catch (error) {
-                console.error('Không thể lưu dữ liệu lên Supabase:', error);
-                alert('Chưa đồng bộ được dữ liệu lên máy chủ. Hãy kiểm tra mạng và cấu hình Supabase.');
-            } finally {
-                saveInProgress = false;
+                console.error("Lỗi khi đồng bộ dữ liệu lên Firebase:", error);
             }
         }
 
-        function scheduleSharedSave() {
-            localChangeVersion++;
-            localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
-            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
-            localStorage.setItem('chuyenDeComments', JSON.stringify(commentsData));
-            clearTimeout(saveTimer);
-            saveTimer = setTimeout(() => {
-                if (!saveInProgress) writeSharedState();
-                else scheduleSharedSave();
-            }, 350);
-        }
+        // Lắng nghe dữ liệu thời gian thực từ mọi thiết bị tự động cập nhật
+        onSnapshot(docRef, (docSnap) => {
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                if (data.instructions) groupInstructions = data.instructions;
+                if (data.tasks) groupTasks = data.tasks;
+                if (data.comments) commentsData = data.comments;
 
-        function saveTasksToStorage() { scheduleSharedSave(); }
-        function saveInstructionsToStorage() { scheduleSharedSave(); }
-        function saveCommentsToStorage() { scheduleSharedSave(); }
+                localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
+                localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
+                localStorage.setItem('chuyenDeComments', JSON.stringify(commentsData));
 
-        async function loadSharedState() {
-            if (!supabaseReady()) {
-                console.warn('Supabase chưa được cấu hình; đang dùng localStorage trên thiết bị hiện tại.');
-                return;
+                refreshCurrentTab();
+            } else {
+                // Nếu chưa có trên cloud, đẩy bản hiện tại lên
+                saveSharedStateToFirebase();
             }
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data,updated_at`, {
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
-                });
-                if (!response.ok) throw new Error(await response.text());
-                const rows = await response.json();
-                if (rows.length) {
-                    applySharedState(rows[0].data);
-                    lastRemoteUpdatedAt = rows[0].updated_at;
-                } else {
-                    await writeSharedState();
-                }
-            } catch (error) {
-                console.error('Không tải được dữ liệu chung:', error);
-                alert('Không tải được dữ liệu chung từ máy chủ. Website đang hiển thị dữ liệu đã lưu trên thiết bị này.');
-            }
-        }
+        });
 
-        async function checkForRemoteChanges() {
-            if (!supabaseReady() || saveInProgress || saveTimer) return;
-            try {
-                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data,updated_at`, {
-                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Cache-Control': 'no-cache' }
-                });
-                if (!response.ok) return;
-                const rows = await response.json();
-                if (!rows.length) return;
-                const remoteTime = rows[0].updated_at;
-                if (remoteTime && (!lastRemoteUpdatedAt || new Date(remoteTime) > new Date(lastRemoteUpdatedAt))) {
-                    applySharedState(rows[0].data);
-                    lastRemoteUpdatedAt = remoteTime;
-                    refreshCurrentTab();
-                }
-            } catch (error) {
-                console.warn('Tạm thời chưa kiểm tra được dữ liệu mới:', error);
-            }
-        }
+        function saveTasksToStorage() { saveSharedStateToFirebase(); }
+        function saveInstructionsToStorage() { saveSharedStateToFirebase(); }
+        function saveCommentsToStorage() { saveSharedStateToFirebase(); }
 
-        function openUserModal() {
+        window.openUserModal = function() {
             document.getElementById('userSelectModal').classList.remove('hidden');
             cancelPasswordPrompt();
         }
 
-        function closeUserModal() {
+        window.closeUserModal = function() {
             document.getElementById('userSelectModal').classList.add('hidden');
         }
 
         let currentPromptTargetUser = '';
         let currentPromptPassword = '';
 
-        function promptPassword(targetUser, correctPass) {
+        window.promptPassword = function(targetUser, correctPass) {
             currentPromptTargetUser = targetUser;
             currentPromptPassword = correctPass;
             document.getElementById('promptTargetUser').innerText = targetUser;
@@ -847,14 +773,14 @@
             document.getElementById('adminPasswordInput').focus();
         }
 
-        function cancelPasswordPrompt() {
+        window.cancelPasswordPrompt = function() {
             document.getElementById('passwordArea').classList.add('hidden');
             document.getElementById('memberListArea').classList.remove('hidden');
             document.getElementById('passwordError').classList.add('hidden');
             document.getElementById('adminPasswordInput').value = '';
         }
 
-        function verifyPassword() {
+        window.verifyPassword = function() {
             const pass = document.getElementById('adminPasswordInput').value;
             if (pass === currentPromptPassword) {
                 currentUser = currentPromptTargetUser;
@@ -869,7 +795,7 @@
             }
         }
 
-        function selectModalUser(userName) {
+        window.selectModalUser = function(userName) {
             currentUser = userName;
             isAdmin = false;
             localStorage.setItem('chuyenDeUser', userName);
@@ -890,7 +816,7 @@
             }
         }
 
-        function switchTab(tabName) {
+        window.switchTab = function(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.className = 'tab-btn flex items-center space-x-2 px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-slate-400 hover:text-white hover:bg-slate-800/60 transition-all duration-200';
@@ -1013,7 +939,7 @@
             `;
         }
 
-        function toggleTaskStatus(section, taskId) {
+        window.toggleTaskStatus = function(section, taskId) {
             if (!isEditor()) return;
             const task = groupTasks[section].find(t => t.id === taskId);
             if (task) {
@@ -1023,7 +949,7 @@
             }
         }
 
-        function handleTaskFileUpload(section, taskId) {
+        window.handleTaskFileUpload = function(section, taskId) {
             const input = document.getElementById(`upload-task-${taskId}`);
             if (input.files && input.files[0]) {
                 const task = groupTasks[section].find(t => t.id === taskId);
@@ -1036,7 +962,7 @@
         }
 
         let currentInstSection = null;
-        function openInstructionModal(section) {
+        window.openInstructionModal = function(section) {
             if (!isEditor()) return;
             currentInstSection = section;
             const instData = groupInstructions[section] || { text: [], image: null };
@@ -1052,11 +978,11 @@
             document.getElementById('editInstructionModal').classList.remove('hidden');
         }
 
-        function closeInstructionModal() {
+        window.closeInstructionModal = function() {
             document.getElementById('editInstructionModal').classList.add('hidden');
         }
 
-        function addInstructionLine() {
+        window.addInstructionLine = function() {
             const container = document.getElementById('instructionLinesInput');
             const div = document.createElement('div');
             div.className = 'flex gap-2 items-center';
@@ -1068,7 +994,7 @@
             container.appendChild(div);
         }
 
-        function saveInstructionModal() {
+        window.saveInstructionModal = function() {
             if (!currentInstSection) return;
             const inputs = document.querySelectorAll('.inst-line-input');
             const newLines = [];
@@ -1094,7 +1020,7 @@
             }
         }
 
-        function openTaskModal(section, taskId) {
+        window.openTaskModal = function(section, taskId) {
             if (!isEditor()) return;
             const task = groupTasks[section].find(t => t.id === taskId);
             if (!task) return;
@@ -1106,11 +1032,11 @@
             document.getElementById('editTaskModal').classList.remove('hidden');
         }
 
-        function closeTaskModal() {
+        window.closeTaskModal = function() {
             document.getElementById('editTaskModal').classList.add('hidden');
         }
 
-        function saveTaskModal() {
+        window.saveTaskModal = function() {
             const section = document.getElementById('editTaskSection').value;
             const taskId = document.getElementById('editTaskId').value;
             const task = groupTasks[section].find(t => t.id === taskId);
@@ -1124,7 +1050,7 @@
         }
 
         // ==========================================
-        // TÍNH NĂNG BÌNH LUẬN ĐA CẤP (FACEBOOK STYLE)
+        // TÍNH NĂNG BÌNH LUẬN ĐA CẤP (REALTIME)
         // ==========================================
 
         function renderComments(section) {
@@ -1197,14 +1123,14 @@
             }).join('');
         }
 
-        function toggleReplyBox(section, commentId) {
+        window.toggleReplyBox = function(section, commentId) {
             const box = document.getElementById(`reply-box-${commentId}`);
             if (box) {
                 box.classList.toggle('hidden');
             }
         }
 
-        function addComment(section, parentId) {
+        window.addComment = function(section, parentId) {
             let textVal = "";
             if (!parentId) {
                 const input = document.getElementById(`comment-input-${section}`);
@@ -1241,14 +1167,14 @@
             renderComments(section);
         }
 
-        function deleteCommentNode(section, targetId) {
+        window.deleteCommentNode = function(section, targetId) {
             if (!commentsData[section]) return;
             commentsData[section] = commentsData[section].filter(c => c.id !== targetId);
             saveCommentsToStorage();
             renderComments(section);
         }
 
-        function deleteReply(section, parentId, replyId) {
+        window.deleteReply = function(section, parentId, replyId) {
             if (!commentsData[section]) return;
             const parentComment = commentsData[section].find(c => c.id === parentId);
             if (parentComment && parentComment.replies) {
@@ -1263,9 +1189,7 @@
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        window.onload = async function() {
-            // Tải dữ liệu chung trước khi vẽ giao diện để tránh hiện dữ liệu mặc định cũ.
-            await loadSharedState();
+        window.onload = function() {
             if (currentUser) {
                 updateUserDisplay();
                 closeUserModal();
@@ -1273,8 +1197,6 @@
                 openUserModal();
             }
             renderSection('slide');
-            // Kiểm tra thay đổi từ thiết bị khác mỗi 4 giây.
-            setInterval(checkForRemoteChanges, 4000);
         };
     </script>
 </body>
