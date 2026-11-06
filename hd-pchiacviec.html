@@ -1,3 +1,5 @@
+index.html
+100%
 <!DOCTYPE html>
 <html lang="vi" class="dark">
 <head>
@@ -96,10 +98,10 @@
                         <i class="fa-solid fa-file-powerpoint"></i> Ban Slide (5 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
-                        <!-- Tên Trang hiển thị gọn gàng, có chìa khóa yêu cầu MK 123 -->
+                        <!-- Nút của Trang: Ẩn MK, nằm ở ban Slide, cần mật khẩu -->
                         <button onclick="promptPassword('Trang', '123')" class="bg-slate-800/90 hover:bg-pink-600/30 hover:border-pink-400 border border-pink-500/50 p-2.5 rounded-xl text-xs font-bold text-pink-300 text-left flex items-center justify-between transition group">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-pen text-pink-400"></i> Trang
+                                <i class="fa-solid fa-user-pen text-pink-400"></i> Trang (Leader)
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -128,9 +130,10 @@
                         <i class="fa-solid fa-gamepad"></i> Ban Quiz Game (5 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
+                        <!-- Phạm Nhật Minh trong Ban Quiz -->
                         <button onclick="promptPassword('Phạm Nhật Minh', 'Minh1234#')" class="bg-slate-800/90 hover:bg-sky-600/30 hover:border-sky-400 border border-sky-500/50 p-2.5 rounded-xl text-xs font-bold text-sky-300 text-left flex items-center justify-between transition group col-span-2">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh
+                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh (Admin)
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -159,9 +162,10 @@
                         <i class="fa-solid fa-video"></i> Ban Video & Visual LED (8 thành viên)
                     </div>
                     <div class="grid grid-cols-2 gap-2">
+                        <!-- Phạm Nhật Minh trong Ban Video -->
                         <button onclick="promptPassword('Phạm Nhật Minh', 'Minh1234#')" class="bg-slate-800/90 hover:bg-sky-600/30 hover:border-sky-400 border border-sky-500/50 p-2.5 rounded-xl text-xs font-bold text-sky-300 text-left flex items-center justify-between transition group col-span-2">
                             <span class="flex items-center gap-2">
-                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh
+                                <i class="fa-solid fa-user-shield text-sky-400"></i> Phạm Nhật Minh (Admin)
                             </span>
                             <i class="fa-solid fa-key text-xs text-amber-400"></i>
                         </button>
@@ -249,6 +253,25 @@
             <div class="flex justify-end gap-2 pt-2">
                 <button onclick="closeTaskModal()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Hủy</button>
                 <button onclick="saveTaskModal()" class="px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl shadow-lg">Lưu Cập Nhật</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- REPLY COMMENT MODAL -->
+    <div id="replyCommentModal" class="fixed inset-0 z-[110] hidden flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-reply text-sky-400"></i> Trả lời bình luận
+            </h3>
+            <input type="hidden" id="replySection">
+            <input type="hidden" id="replyParentId">
+            <div>
+                <label class="block text-xs text-slate-400 mb-1 font-semibold">Nội dung phản hồi:</label>
+                <textarea id="replyTextInput" rows="3" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 focus:outline-none focus:border-sky-500" placeholder="Viết câu trả lời của bạn..."></textarea>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeReplyModal()" class="px-4 py-2 bg-slate-800 text-slate-300 text-xs font-semibold rounded-xl">Hủy</button>
+                <button onclick="submitReply()" class="px-4 py-2 bg-sky-600 text-white text-xs font-bold rounded-xl shadow-lg">Gửi Phản Hồi</button>
             </div>
         </div>
     </div>
@@ -398,7 +421,7 @@
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (5):</span>
-                        <span class="font-bold text-purple-300">Phạm Nhật Minh, Lâm, Hải, Quân, Tuệ</span>
+                        <span class="font-bold text-purple-300">Phạm Nhật Minh (Admin), Lâm, Hải, Quân, Tuệ</span>
                     </div>
                 </div>
 
@@ -488,7 +511,7 @@
                     </div>
                     <div class="flex items-center gap-2 bg-slate-950/80 px-4 py-2 rounded-xl text-xs border border-slate-800">
                         <span class="text-slate-400">Thành viên (8):</span>
-                        <span class="font-bold text-pink-300">Phạm Nhật Minh, Gia Minh, Hoàng Long, Kiệt, Nam Phong, An Danh, Bảo Long, Đức Trọng</span>
+                        <span class="font-bold text-pink-300">Phạm Nhật Minh (Admin), Gia Minh, Hoàng Long, Kiệt, Nam Phong, An Danh, Bảo Long, Đức Trọng</span>
                     </div>
                 </div>
 
@@ -616,7 +639,7 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT (Đã tích hợp localStorage đầy đủ) -->
+    <!-- JAVASCRIPT -->
     <script>
         let currentUser = localStorage.getItem('chuyenDeUser') || null;
         let isAdmin = localStorage.getItem('chuyenDeIsAdmin') === 'true';
@@ -625,8 +648,7 @@
             return isAdmin || currentUser === 'Trang';
         }
 
-        // Khởi tạo dữ liệu hướng dẫn chung (lưu vào localStorage nếu có)
-        const defaultInstructions = {
+        const groupInstructions = {
             slide: {
                 text: [
                     "Trang tạo template bằng Canva AI hoặc công cụ tương tự; thống nhất màu sắc, font chữ, bố cục và gửi link Canva có quyền chỉnh sửa.",
@@ -655,10 +677,7 @@
             }
         };
 
-        let groupInstructions = JSON.parse(localStorage.getItem('chuyenDeInstructions')) || defaultInstructions;
-
-        // Khởi tạo danh sách công việc (lưu vào localStorage nếu có)
-        const defaultTasks = {
+        const groupTasks = {
             slide: [
                 { id: "s1", assignee: "Trang", title: "Tạo template và thiết lập file Canva chung", desc: "Chọn phong cách, màu sắc, font, bố cục; tạo bản mẫu 2-3 slide; bật quyền chỉnh sửa cho cả nhóm; chia nội dung và cập nhật link.", completed: false, file: null },
                 { id: "s2", assignee: "Tuấn Sơn", title: "Biên soạn nội dung theo phần được Trang giao", desc: "Tìm thông tin đáng tin cậy, viết nội dung, đề xuất hình minh họa và cập nhật trực tiếp vào Canva (Slide 1-5).", completed: false, file: null },
@@ -685,21 +704,11 @@
             ]
         };
 
-        let groupTasks = JSON.parse(localStorage.getItem('chuyenDeTasks')) || defaultTasks;
-
         const commentsData = {
             slide: [{ id: "c1", author: "Trang", time: "10 phút trước", text: "Mình đã cập nhật link Canva AI lên phần hướng dẫn chung, các bạn vào xem nhé!", replies: [] }],
             quiz: [{ id: "q1", author: "Phạm Nhật Minh", time: "15 phút trước", text: "Lâm và Hải đã có danh sách câu hỏi chưa gửi lên đây nhé.", replies: [] }],
             video: [{ id: "v1", author: "Bảo Long", time: "20 phút trước", text: "Mình đang tìm file gốc âm thanh chuẩn, sẽ gửi lên sớm!", replies: [] }]
         };
-
-        function saveTasksToStorage() {
-            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
-        }
-
-        function saveInstructionsToStorage() {
-            localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
-        }
 
         function openUserModal() {
             document.getElementById('userSelectModal').classList.remove('hidden');
@@ -902,7 +911,6 @@
             const task = groupTasks[section].find(t => t.id === taskId);
             if (task) {
                 task.completed = !task.completed;
-                saveTasksToStorage();
                 renderSection(section);
             }
         }
@@ -913,7 +921,6 @@
                 const task = groupTasks[section].find(t => t.id === taskId);
                 if (task) {
                     task.file = input.files[0].name;
-                    saveTasksToStorage();
                     renderSection(section);
                 }
             }
@@ -966,13 +973,11 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     groupInstructions[currentInstSection].image = e.target.result;
-                    saveInstructionsToStorage();
                     closeInstructionModal();
                     renderSection(currentInstSection);
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                saveInstructionsToStorage();
                 closeInstructionModal();
                 renderSection(currentInstSection);
             }
@@ -1001,7 +1006,6 @@
             if (task) {
                 if (document.getElementById('editTaskTitle').value.trim()) task.title = document.getElementById('editTaskTitle').value.trim();
                 if (document.getElementById('editTaskDesc').value.trim()) task.desc = document.getElementById('editTaskDesc').value.trim();
-                saveTasksToStorage();
                 renderSection(section);
             }
             closeTaskModal();
@@ -1019,18 +1023,77 @@
         }
 
         function renderCommentTree(nodes, section) {
-            return nodes.map(item => `
+            return nodes.map(item => {
+                const isAuthor = currentUser && (currentUser.toLowerCase() === item.author.toLowerCase());
+                const canDelete = isEditor() || isAuthor;
+                const repliesHtml = (item.replies && item.replies.length > 0) 
+                    ? `<div class="mt-3 pl-4 border-l-2 border-slate-700/80 space-y-3">${renderCommentTree(item.replies, section)}</div>` 
+                    : '';
+
+                return `
                 <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 space-y-2 relative group">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
                             <span class="text-xs font-bold text-sky-400"><i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(item.author)}</span>
                             <span class="text-[10px] text-slate-500">${item.time}</span>
                         </div>
-                        ${isEditor() ? `<button onclick="deleteCommentNode('${section}', '${item.id}')" class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                        <div class="flex items-center gap-1">
+                            <button onclick="openReplyModal('${section}', '${item.id}')" class="text-slate-400 hover:text-sky-300 text-xs px-2 py-0.5 rounded bg-slate-900 border border-slate-800 flex items-center gap-1 transition">
+                                <i class="fa-solid fa-reply text-[10px]"></i> Trả lời
+                            </button>
+                            ${canDelete ? `<button onclick="deleteCommentNode('${section}', '${item.id}')" class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5"><i class="fa-solid fa-trash-can"></i></button>` : ''}
+                        </div>
                     </div>
                     <p class="text-xs text-slate-200 leading-relaxed">${escapeHtml(item.text)}</p>
+                    ${repliesHtml}
                 </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        function openReplyModal(section, parentId) {
+            document.getElementById('replySection').value = section;
+            document.getElementById('replyParentId').value = parentId;
+            document.getElementById('replyTextInput').value = '';
+            document.getElementById('replyCommentModal').classList.remove('hidden');
+            document.getElementById('replyTextInput').focus();
+        }
+
+        function closeReplyModal() {
+            document.getElementById('replyCommentModal').classList.add('hidden');
+        }
+
+        function submitReply() {
+            const section = document.getElementById('replySection').value;
+            const parentId = document.getElementById('replyParentId').value;
+            const text = document.getElementById('replyTextInput').value.trim();
+            if (!text) return;
+
+            const newReply = {
+                id: 'c_' + Date.now(),
+                author: currentUser || 'Khách',
+                time: 'Vừa xong',
+                text: text,
+                replies: []
+            };
+
+            function findAndInsertReply(nodes) {
+                for (let node of nodes) {
+                    if (node.id === parentId) {
+                        if (!node.replies) node.replies = [];
+                        node.replies.push(newReply);
+                        return true;
+                    }
+                    if (node.replies && node.replies.length > 0) {
+                        if (findAndInsertReply(node.replies)) return true;
+                    }
+                }
+                return false;
+            }
+
+            findAndInsertReply(commentsData[section]);
+            closeReplyModal();
+            renderComments(section);
         }
 
         function addComment(section) {
@@ -1048,8 +1111,20 @@
         }
 
         function deleteCommentNode(section, targetId) {
-            if (!isEditor()) return;
-            commentsData[section] = commentsData[section].filter(c => c.id !== targetId);
+            function removeNode(nodes) {
+                return nodes.filter(node => {
+                    if (node.id === targetId) {
+                        const isAuthor = currentUser && (currentUser.toLowerCase() === node.author.toLowerCase());
+                        return !(isEditor() || isAuthor);
+                    }
+                    if (node.replies && node.replies.length > 0) {
+                        node.replies = removeNode(node.replies);
+                    }
+                    return true;
+                });
+            }
+
+            commentsData[section] = removeNode(commentsData[section]);
             renderComments(section);
         }
 
@@ -1095,3 +1170,4 @@
     </script>
 </body>
 </html>
+Đang hiển thị index.html.
