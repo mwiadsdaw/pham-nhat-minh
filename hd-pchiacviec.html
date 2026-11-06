@@ -367,20 +367,25 @@
                 </div>
             </div>
 
+            <!-- KHU VỰC BÌNH LUẬN BAN SLIDE -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-comments text-sky-400"></i> Trao Đổi & Bình Luận (Ban Slide)
                 </h3>
+                
+                <!-- Hộp nhập bình luận gốc -->
                 <div class="mb-6 space-y-2">
                     <textarea id="comment-input-slide" rows="3" 
                               class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition"
                               placeholder="Viết ý kiến đóng góp hoặc giải thích..."></textarea>
                     <div class="flex justify-end">
-                        <button onclick="addComment('slide')" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
+                        <button onclick="addComment('slide', null)" class="px-4 py-2 bg-gradient-to-r from-sky-500 to-blue-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
                             <i class="fa-solid fa-paper-plane mr-1"></i> Gửi Bình Luận
                         </button>
                     </div>
                 </div>
+
+                <!-- Danh sách bình luận -->
                 <div id="comments-container-slide" class="space-y-4"></div>
             </div>
         </div>
@@ -457,6 +462,7 @@
                 </div>
             </div>
 
+            <!-- KHU VỰC BÌNH LUẬN BAN QUIZ -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-comments text-purple-400"></i> Trao Đổi Câu Hỏi Trắc Nghiệm (Ban Quiz)
@@ -466,7 +472,7 @@
                               class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-purple-500 transition"
                               placeholder="Đóng góp câu hỏi mới hoặc ý kiến trò chơi..."></textarea>
                     <div class="flex justify-end">
-                        <button onclick="addComment('quiz')" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
+                        <button onclick="addComment('quiz', null)" class="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
                             <i class="fa-solid fa-paper-plane mr-1"></i> Gửi Bình Luận
                         </button>
                     </div>
@@ -583,6 +589,7 @@
                 </div>
             </div>
 
+            <!-- KHU VỰC BÌNH LUẬN BAN VIDEO -->
             <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 shadow-xl">
                 <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
                     <i class="fa-solid fa-comments text-pink-400"></i> Trao Đổi Link Visual & File Nhạc (Ban Video)
@@ -592,7 +599,7 @@
                               class="w-full bg-slate-950 border border-slate-800 rounded-xl p-3 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-pink-500 transition"
                               placeholder="Dán link TikTok/YouTube Visual tìm được hoặc gửi ghi chú..."></textarea>
                     <div class="flex justify-end">
-                        <button onclick="addComment('video')" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
+                        <button onclick="addComment('video', null)" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold rounded-lg hover:opacity-90 transition">
                             <i class="fa-solid fa-paper-plane mr-1"></i> Gửi Bình Luận
                         </button>
                     </div>
@@ -615,7 +622,7 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT (Đã đồng bộ LocalStorage toàn bộ Công việc & Bình luận) -->
+    <!-- JAVASCRIPT -->
     <script>
         let currentUser = localStorage.getItem('chuyenDeUser') || null;
         let isAdmin = localStorage.getItem('chuyenDeIsAdmin') === 'true';
@@ -686,11 +693,37 @@
 
         let groupTasks = JSON.parse(localStorage.getItem('chuyenDeTasks')) || defaultTasks;
 
-        // 3. DỮ LIỆU BÌNH LUẬN (ĐÃ TÍCH HỢP LOCALSTORAGE)
+        // 3. DỮ LIỆU BÌNH LUẬN (HỖ TRỢ ĐA CẤP / TRẢ LỜI TRONG BÌNH LUẬN)
         const defaultComments = {
-            slide: [{ id: "c1", author: "Trang", time: "10 phút trước", text: "Mình đã cập nhật link Canva AI lên phần hướng dẫn chung, các bạn vào xem nhé!" }],
-            quiz: [{ id: "q1", author: "Phạm Nhật Minh", time: "15 phút trước", text: "Lâm và Hải đã có danh sách câu hỏi chưa gửi lên đây nhé." }],
-            video: [{ id: "v1", author: "Bảo Long", time: "20 phút trước", text: "Mình đang tìm file gốc âm thanh chuẩn, sẽ gửi lên sớm!" }]
+            slide: [
+                { 
+                    id: "c1", 
+                    author: "Trang", 
+                    time: "10 phút trước", 
+                    text: "Mình đã cập nhật link Canva AI lên phần hướng dẫn chung, các bạn vào xem nhé!",
+                    replies: [
+                        { id: "c1_1", author: "Tuấn Sơn", time: "5 phút trước", text: "Mình đã nhận được quyền chỉnh sửa, cảm ơn Trang nhé!" }
+                    ]
+                }
+            ],
+            quiz: [
+                { 
+                    id: "q1", 
+                    author: "Phạm Nhật Minh", 
+                    time: "15 phút trước", 
+                    text: "Lâm và Hải đã có danh sách câu hỏi chưa gửi lên đây nhé.",
+                    replies: []
+                }
+            ],
+            video: [
+                { 
+                    id: "v1", 
+                    author: "Bảo Long", 
+                    time: "20 phút trước", 
+                    text: "Mình đang tìm file gốc âm thanh chuẩn, sẽ gửi lên sớm!",
+                    replies: []
+                }
+            ]
         };
 
         let commentsData = JSON.parse(localStorage.getItem('chuyenDeComments')) || defaultComments;
@@ -1013,7 +1046,10 @@
             closeTaskModal();
         }
 
-        // HÀM HIỂN THỊ VÀ XÓA BÌNH LUẬN ĐÃ ĐƯỢC CẬP NHẬT
+        // ==========================================
+        // TÍNH NĂNG BÌNH LUẬN ĐA CẤP (FACEBOOK STYLE)
+        // ==========================================
+
         function renderComments(section) {
             const container = document.getElementById(`comments-container-${section}`);
             if (!container) return;
@@ -1023,49 +1059,129 @@
                 return;
             }
             
-            // Render bình luận và hiển thị nút xóa cho Admin / Trang / Tác giả bài viết
             container.innerHTML = list.map(item => {
-                const canDelete = isEditor() || (currentUser && currentUser === item.author);
+                const canDeleteParent = isEditor() || (currentUser && currentUser === item.author);
+                
+                // Render các phản hồi (replies) bên trong bình luận chính
+                const repliesHtml = (item.replies || []).map(reply => {
+                    const canDeleteReply = isEditor() || (currentUser && currentUser === reply.author);
+                    return `
+                        <div class="bg-slate-900/90 p-3 rounded-xl border border-slate-800/60 space-y-1.5 relative group ml-6 sm:ml-8 mt-2">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center space-x-2">
+                                    <span class="text-xs font-bold text-purple-400"><i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(reply.author)}</span>
+                                    <span class="text-[10px] text-slate-500">${reply.time}</span>
+                                </div>
+                                ${canDeleteReply ? `
+                                    <button onclick="deleteReply('${section}', '${item.id}', '${reply.id}')" class="text-slate-500 hover:text-red-400 text-xs px-1.5 py-0.5 rounded transition" title="Xóa trả lời">
+                                        <i class="fa-solid fa-trash-can text-[10px]"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                            <p class="text-xs text-slate-200 leading-relaxed">${escapeHtml(reply.text)}</p>
+                        </div>
+                    `;
+                }).join('');
+
                 return `
-                <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 space-y-2 relative group">
+                <div class="bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 space-y-3 relative group">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center space-x-2">
                             <span class="text-xs font-bold text-sky-400"><i class="fa-solid fa-user-circle mr-1"></i> ${escapeHtml(item.author)}</span>
                             <span class="text-[10px] text-slate-500">${item.time}</span>
                         </div>
-                        ${canDelete ? `
+                        ${canDeleteParent ? `
                             <button onclick="deleteCommentNode('${section}', '${item.id}')" class="text-slate-500 hover:text-red-400 text-xs px-2 py-1 rounded transition" title="Xóa bình luận">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         ` : ''}
                     </div>
                     <p class="text-xs text-slate-200 leading-relaxed">${escapeHtml(item.text)}</p>
+                    
+                    <!-- Nút Trả Lời & Khung nhập phản hồi ẩn -->
+                    <div class="pt-1">
+                        <button onclick="toggleReplyBox('${section}', '${item.id}')" class="text-[11px] text-sky-400 hover:underline font-semibold flex items-center gap-1">
+                            <i class="fa-solid fa-reply text-[10px]"></i> Trả lời
+                        </button>
+                        <div id="reply-box-${item.id}" class="hidden mt-2 pt-2 border-t border-slate-800/80 space-y-2">
+                            <textarea id="reply-input-${item.id}" rows="2" 
+                                      class="w-full bg-slate-900 border border-slate-800 rounded-xl p-2.5 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-sky-500 transition"
+                                      placeholder="Viết câu trả lời của bạn..."></textarea>
+                            <div class="flex justify-end gap-2">
+                                <button onclick="toggleReplyBox('${section}', '${item.id}')" class="px-3 py-1 bg-slate-800 text-slate-300 text-[11px] font-semibold rounded-lg">Hủy</button>
+                                <button onclick="addComment('${section}', '${item.id}')" class="px-3 py-1 bg-sky-600 text-white text-[11px] font-bold rounded-lg shadow hover:bg-sky-500 transition">Gửi Trả Lời</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách các bình luận con được lùi vào trong -->
+                    <div class="space-y-2 border-l-2 border-slate-800 pl-2 mt-2">
+                        ${repliesHtml}
+                    </div>
                 </div>
                 `;
             }).join('');
         }
 
-        function addComment(section) {
-            const input = document.getElementById(`comment-input-${section}`);
-            if (!input.value.trim()) return;
-            if (!commentsData[section]) commentsData[section] = [];
-            
-            commentsData[section].unshift({
-                id: 'c_' + Date.now(),
-                author: currentUser || 'Khách',
-                time: 'Vừa xong',
-                text: input.value.trim()
-            });
-            input.value = '';
-            saveCommentsToStorage(); // Lưu ngay vào LocalStorage
+        function toggleReplyBox(section, commentId) {
+            const box = document.getElementById(`reply-box-${commentId}`);
+            if (box) {
+                box.classList.toggle('hidden');
+            }
+        }
+
+        function addComment(section, parentId) {
+            let textVal = "";
+            if (!parentId) {
+                const input = document.getElementById(`comment-input-${section}`);
+                textVal = input ? input.value.trim() : "";
+                if (!textVal) return;
+                input.value = "";
+                
+                if (!commentsData[section]) commentsData[section] = [];
+                commentsData[section].unshift({
+                    id: 'c_' + Date.now(),
+                    author: currentUser || 'Khách',
+                    time: 'Vừa xong',
+                    text: textVal,
+                    replies: []
+                });
+            } else {
+                const replyInput = document.getElementById(`reply-input-${parentId}`);
+                textVal = replyInput ? replyInput.value.trim() : "";
+                if (!textVal) return;
+                
+                const parentComment = commentsData[section].find(c => c.id === parentId);
+                if (parentComment) {
+                    if (!parentComment.replies) parentComment.replies = [];
+                    parentComment.replies.push({
+                        id: 'r_' + Date.now(),
+                        author: currentUser || 'Khách',
+                        time: 'Vừa xong',
+                        text: textVal
+                    });
+                }
+            }
+
+            saveCommentsToStorage();
             renderComments(section);
         }
 
         function deleteCommentNode(section, targetId) {
             if (!commentsData[section]) return;
             commentsData[section] = commentsData[section].filter(c => c.id !== targetId);
-            saveCommentsToStorage(); // Lưu thay đổi khi xóa vào LocalStorage
+            saveCommentsToStorage();
             renderComments(section);
+        }
+
+        function deleteReply(section, parentId, replyId) {
+            if (!commentsData[section]) return;
+            const parentComment = commentsData[section].find(c => c.id === parentId);
+            if (parentComment && parentComment.replies) {
+                parentComment.replies = parentComment.replies.filter(r => r.id !== replyId);
+                saveCommentsToStorage();
+                renderComments(section);
+            }
         }
 
         function addQuizLink() {
