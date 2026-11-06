@@ -697,16 +697,133 @@
 
         let commentsData = JSON.parse(localStorage.getItem('chuyenDeComments')) || defaultComments;
 
-        function saveTasksToStorage() {
-            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
+        // ==========================================
+        // ĐỒNG BỘ DỮ LIỆU CHUNG QUA SUPABASE
+        // Điền URL và anon key của dự án Supabase tại đây.
+        // ==========================================
+        const SUPABASE_URL = 'https://YOUR_PROJECT_ID.supabase.co';
+        const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY';
+        const SUPABASE_TABLE = 'chuyende_state';
+        const SUPABASE_ROW_ID = 1;
+
+        let lastRemoteUpdatedAt = null;
+        let saveTimer = null;
+        let saveInProgress = false;
+        let localChangeVersion = 0;
+
+        function supabaseReady() {
+            return SUPABASE_URL.startsWith('https://') &&
+                   !SUPABASE_URL.includes('YOUR_PROJECT_ID') &&
+                   SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes('YOUR_SUPABASE_ANON_KEY');
         }
 
-        function saveInstructionsToStorage() {
+        function getSharedState() {
+            return { instructions: groupInstructions, tasks: groupTasks, comments: commentsData };
+        }
+
+        function applySharedState(data) {
+            if (!data) return;
+            if (data.instructions) groupInstructions = data.instructions;
+            if (data.tasks) groupTasks = data.tasks;
+            if (data.comments) commentsData = data.comments;
+            // Giữ bản cache để trang vẫn có dữ liệu nếu mạng tạm thời bị mất.
             localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
+            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
+            localStorage.setItem('chuyenDeComments', JSON.stringify(commentsData));
         }
 
-        function saveCommentsToStorage() {
+        async function writeSharedState() {
+            if (!supabaseReady()) {
+                console.warn('Chưa cấu hình Supabase. Dữ liệu hiện chỉ được lưu trên thiết bị này.');
+                return;
+            }
+            const versionBeingSaved = localChangeVersion;
+            saveInProgress = true;
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?on_conflict=id`, {
+                    method: 'POST',
+                    headers: {
+                        'apikey': SUPABASE_ANON_KEY,
+                        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+                        'Content-Type': 'application/json',
+                        'Prefer': 'resolution=merge-duplicates,return=minimal'
+                    },
+                    body: JSON.stringify({
+                        id: SUPABASE_ROW_ID,
+                        data: getSharedState(),
+                        updated_at: new Date().toISOString()
+                    })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                lastRemoteUpdatedAt = new Date().toISOString();
+                console.info('Đã lưu dữ liệu chung lên Supabase.');
+                // Nếu có thay đổi mới phát sinh trong lúc đang gửi, lưu tiếp lần nữa.
+                if (versionBeingSaved !== localChangeVersion) scheduleSharedSave();
+            } catch (error) {
+                console.error('Không thể lưu dữ liệu lên Supabase:', error);
+                alert('Chưa đồng bộ được dữ liệu lên máy chủ. Hãy kiểm tra mạng và cấu hình Supabase.');
+            } finally {
+                saveInProgress = false;
+            }
+        }
+
+        function scheduleSharedSave() {
+            localChangeVersion++;
+            localStorage.setItem('chuyenDeInstructions', JSON.stringify(groupInstructions));
+            localStorage.setItem('chuyenDeTasks', JSON.stringify(groupTasks));
             localStorage.setItem('chuyenDeComments', JSON.stringify(commentsData));
+            clearTimeout(saveTimer);
+            saveTimer = setTimeout(() => {
+                if (!saveInProgress) writeSharedState();
+                else scheduleSharedSave();
+            }, 350);
+        }
+
+        function saveTasksToStorage() { scheduleSharedSave(); }
+        function saveInstructionsToStorage() { scheduleSharedSave(); }
+        function saveCommentsToStorage() { scheduleSharedSave(); }
+
+        async function loadSharedState() {
+            if (!supabaseReady()) {
+                console.warn('Supabase chưa được cấu hình; đang dùng localStorage trên thiết bị hiện tại.');
+                return;
+            }
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data,updated_at`, {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+                });
+                if (!response.ok) throw new Error(await response.text());
+                const rows = await response.json();
+                if (rows.length) {
+                    applySharedState(rows[0].data);
+                    lastRemoteUpdatedAt = rows[0].updated_at;
+                } else {
+                    await writeSharedState();
+                }
+            } catch (error) {
+                console.error('Không tải được dữ liệu chung:', error);
+                alert('Không tải được dữ liệu chung từ máy chủ. Website đang hiển thị dữ liệu đã lưu trên thiết bị này.');
+            }
+        }
+
+        async function checkForRemoteChanges() {
+            if (!supabaseReady() || saveInProgress || saveTimer) return;
+            try {
+                const response = await fetch(`${SUPABASE_URL}/rest/v1/${SUPABASE_TABLE}?id=eq.${SUPABASE_ROW_ID}&select=data,updated_at`, {
+                    headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}`, 'Cache-Control': 'no-cache' }
+                });
+                if (!response.ok) return;
+                const rows = await response.json();
+                if (!rows.length) return;
+                const remoteTime = rows[0].updated_at;
+                if (remoteTime && (!lastRemoteUpdatedAt || new Date(remoteTime) > new Date(lastRemoteUpdatedAt))) {
+                    applySharedState(rows[0].data);
+                    lastRemoteUpdatedAt = remoteTime;
+                    refreshCurrentTab();
+                }
+            } catch (error) {
+                console.warn('Tạm thời chưa kiểm tra được dữ liệu mới:', error);
+            }
         }
 
         function openUserModal() {
@@ -1146,7 +1263,9 @@
             return text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        window.onload = function() {
+        window.onload = async function() {
+            // Tải dữ liệu chung trước khi vẽ giao diện để tránh hiện dữ liệu mặc định cũ.
+            await loadSharedState();
             if (currentUser) {
                 updateUserDisplay();
                 closeUserModal();
@@ -1154,6 +1273,8 @@
                 openUserModal();
             }
             renderSection('slide');
+            // Kiểm tra thay đổi từ thiết bị khác mỗi 4 giây.
+            setInterval(checkForRemoteChanges, 4000);
         };
     </script>
 </body>
