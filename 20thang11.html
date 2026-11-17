@@ -46,7 +46,6 @@
             overflow-x: hidden;
         }
 
-        /* Continuous Petal Fall Canvas */
         #petal-canvas {
             position: fixed;
             top: 0;
@@ -57,19 +56,10 @@
             z-index: 50;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #fdfbf7;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #f48fb1;
-            border-radius: 4px;
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #fdfbf7; }
+        ::-webkit-scrollbar-thumb { background: #f48fb1; border-radius: 4px; }
 
-        /* Continuous Pulsing Animation */
         @keyframes bloomPulse {
             0%, 100% { transform: scale(1) rotate(0deg); }
             50% { transform: scale(1.04) rotate(3deg); }
@@ -79,7 +69,6 @@
             animation-delay: 2s;
         }
 
-        /* Hiệu ứng hoa nở từ nụ ở Landing Page */
         @keyframes bloomPetal1 {
             0% { transform: rotate(var(--rot)) scale(0); opacity: 0; }
             50% { opacity: 0.5; }
@@ -115,16 +104,11 @@
             animation: popCenter 0.8s ease-out forwards;
         }
 
-        /* Background gradient */
         .bg-soft-gradient {
             background: linear-gradient(180deg, #fce4ec 0%, #fdf6f4 60%, #fff5f5 100%);
         }
 
-        /* ============================================== */
-        /* HIỆU ỨNG HOA LẦN LƯỢT MỞ & CHỮ HIỆN DẦN KHI LƯỚT */
-        /* ============================================== */
-
-        /* Class dành cho hoa xuất hiện lần lượt */
+        /* Hiệu ứng hoa trang trí hiện dần */
         .decor-flower {
             opacity: 0;
             transform: scale(0.3) rotate(-20deg);
@@ -135,7 +119,6 @@
             transform: scale(1) rotate(0deg);
         }
 
-        /* Class dành cho chữ hiện từ từ khi lướt (Scroll Reveal) */
         .reveal-text {
             opacity: 0;
             transform: translateY(30px);
@@ -146,13 +129,27 @@
             transform: translateY(0);
         }
 
-        /* Card Shadow & Hover */
-        .card-hover {
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        /* Hiệu ứng thẻ nghiêng (Tilt & Quick action button) */
+        .card-tilt {
+            transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
         }
-        .card-hover:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 30px -10px rgba(233, 30, 99, 0.15);
+        .card-tilt:hover {
+            transform: translateY(-8px) rotate(1deg) scale(1.02);
+            box-shadow: 0 25px 35px -10px rgba(233, 30, 99, 0.2);
+        }
+        
+        .quick-action-btn {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.3s ease;
+            z-index: 20;
+        }
+        .card-tilt:hover .quick-action-btn {
+            opacity: 1;
+            transform: scale(1);
         }
     </style>
 </head>
@@ -174,16 +171,20 @@
                 <a href="#co-chu-nhiem" class="hover:text-rose-600 transition-colors">Gửi cô chủ nhiệm</a>
                 <a href="#loi-ket" class="hover:text-rose-600 transition-colors">Lời kết</a>
             </nav>
-            <div class="text-xs px-3 py-1 bg-pink-100 text-rose-700 rounded-full font-semibold border border-pink-200">
-                10A2 - THPT Sóc Sơn
+            <div class="flex items-center space-x-3">
+                <button onclick="openAdminModal()" class="text-xs px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full font-semibold shadow-sm transition-colors">
+                    <i class="fa-solid fa-lock mr-1"></i> Admin (123)
+                </button>
+                <div class="text-xs px-3 py-1 bg-pink-100 text-rose-700 rounded-full font-semibold border border-pink-200">
+                    10A2 - THPT Sóc Sơn
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- SECTION 1: LANDING SCREEN (Ảnh 1) -->
+    <!-- SECTION 1: LANDING PAGE -->
     <section id="welcome" class="min-h-screen w-full relative flex flex-col justify-center items-center text-center px-4 bg-soft-gradient py-12">
         
-        <!-- Bông hoa trung tâm SVG -->
         <div class="relative mb-8 cursor-pointer group" onclick="goToGarden()">
             <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center bloom-icon">
                 <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
@@ -199,7 +200,6 @@
                     </defs>
                     
                     <g transform="translate(100,100)">
-                        <!-- Lớp 1 (Cánh hoa ngoài) -->
                         <path class="petal-layer-1" style="--rot: 0deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 45deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 90deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
@@ -209,7 +209,6 @@
                         <path class="petal-layer-1" style="--rot: 270deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 315deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
 
-                        <!-- Lớp 2 (Cánh hoa trong) -->
                         <path class="petal-layer-2" style="--rot: 22.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 67.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 112.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
@@ -219,14 +218,13 @@
                         <path class="petal-layer-2" style="--rot: 292.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 337.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
 
-                        <!-- Nhụy Hoa -->
                         <g class="flower-center">
                             <circle cx="0" cy="0" r="16" fill="#ffe082" />
                             <circle cx="0" cy="0" r="12" fill="#ffd54f" />
                             <circle cx="-6" cy="-6" r="2" fill="#ffb300" />
                             <circle cx="6" cy="-6" r="2" fill="#ffb300" />
                             <circle cx="6" cy="6" r="2" fill="#ffb300" />
-                            <circle cx="-6" cy="-6" r="2" fill="#ffb300" />
+                            <circle cx="-6" cy="6" r="2" fill="#ffb300" />
                             <circle cx="0" cy="0" r="3" fill="#ff8f00" />
                         </g>
                     </g>
@@ -245,7 +243,6 @@
             Chi đoàn 10A2 — THPT Sóc Sơn
         </div>
 
-        <!-- Nút bấm chạm -->
         <button onclick="goToGarden()" class="px-8 py-3.5 bg-white/90 hover:bg-white text-rose-700 hover:text-rose-800 rounded-full shadow-lg hover:shadow-xl border border-pink-200 transition-all duration-300 font-medium text-sm tracking-wide transform hover:-translate-y-1">
             Chạm để bước vào khu vườn ký ức
         </button>
@@ -255,66 +252,39 @@
         </div>
     </section>
 
-    <!-- SECTION 2: GIAO DIỆN TRANG TRÍ MỚI (MÔ PHỎNG ẢNH BẠN GỬI) -->
-    <section id="thu-tri-an" class="min-h-screen max-w-5xl mx-auto px-4 py-16 text-center relative flex flex-col items-center justify-center">
+    <!-- SECTION 2: KHU VƯỜN NGẬP TRÀN HOA VÀ THƠ MỘNG -->
+    <section id="thu-tri-an" class="min-h-screen max-w-5xl mx-auto px-4 py-20 text-center relative flex flex-col items-center justify-center">
         
         <!-- ============================================== -->
-        /* CÁC BÔNG HOA VÀ CÀNH LÁ TRANG TRÍ TỰ NỞ LẦN LƯỢT */
+        <!-- BỐ TRÍ NGẬP TRÀN CÁC ĐÓA HOA XINH XẮN Ở CÁC GÓC -->
         <!-- ============================================== -->
+        <!-- Cụm hoa góc trên bên trái -->
+        <div class="decor-flower absolute top-4 left-4 sm:left-8 text-4xl sm:text-6xl z-10" style="transition-delay: 0.1s;">🌺</div>
+        <div class="decor-flower absolute top-12 left-16 sm:left-24 text-3xl sm:text-5xl z-10" style="transition-delay: 0.2s;">🌸</div>
+        <div class="decor-flower absolute top-2 left-28 sm:left-40 text-2xl sm:text-4xl z-10" style="transition-delay: 0.3s;">🌼</div>
 
-        <!-- Cành lá xanh góc trên bên phải -->
-        <div class="decor-flower absolute top-6 -right-6 sm:top-10 sm:right-0 w-36 sm:w-56 pointer-events-none z-10" style="transition-delay: 0.2s;">
-            <svg viewBox="0 0 200 200" fill="#7d9d85" opacity="0.85">
-                <path d="M10,180 Q100,100 190,10 C150,60 110,120 10,180 Z" />
-                <path d="M70,120 C40,90 20,80 0,90 C20,110 50,120 70,120 Z" fill="#608068"/>
-                <path d="M120,70 C100,40 90,20 100,0 C110,20 130,50 120,70 Z" fill="#88ab91"/>
-            </svg>
-        </div>
+        <!-- Cụm hoa góc trên bên phải -->
+        <div class="decor-flower absolute top-4 right-6 sm:right-12 text-5xl sm:text-7xl z-10" style="transition-delay: 0.2s;">🌸</div>
+        <div class="decor-flower absolute top-16 right-20 sm:right-32 text-3xl sm:text-5xl z-10" style="transition-delay: 0.4s;">🌺</div>
+        <div class="decor-flower absolute top-8 right-2 sm:right-6 text-2xl sm:text-4xl z-10" style="transition-delay: 0.5s;">💐</div>
 
-        <!-- Cành lá xanh góc dưới bên trái -->
-        <div class="decor-flower absolute bottom-8 -left-8 sm:left-0 w-36 sm:w-56 pointer-events-none z-10" style="transition-delay: 0.4s;">
-            <svg viewBox="0 0 200 200" fill="#7d9d85" opacity="0.85">
-                <path d="M190,190 Q100,100 10,20 C50,80 100,140 190,190 Z" />
-                <path d="M110,120 C80,150 60,170 40,180 C60,150 90,130 110,120 Z" fill="#608068"/>
-            </svg>
-        </div>
+        <!-- Cụm hoa góc dưới bên trái -->
+        <div class="decor-flower absolute bottom-12 left-2 sm:left-10 text-5xl sm:text-7xl z-10" style="transition-delay: 0.3s;">🌹</div>
+        <div class="decor-flower absolute bottom-4 left-16 sm:left-28 text-4xl sm:text-6xl z-10" style="transition-delay: 0.5s;">🌸</div>
+        <div class="decor-flower absolute bottom-24 left-12 sm:left-20 text-3xl sm:text-5xl z-10" style="transition-delay: 0.7s;">🌼</div>
+        <div class="decor-flower absolute bottom-2 left-32 sm:left-44 text-3xl sm:text-5xl z-10" style="transition-delay: 0.8s;">🌺</div>
 
-        <!-- Hoa hồng góc dưới bên trái 1 -->
-        <div class="decor-flower absolute bottom-24 left-4 sm:left-12 w-16 sm:w-24 text-rose-500 z-10" style="transition-delay: 0.6s;">
-            <div class="text-4xl sm:text-6xl">🌺</div>
-        </div>
+        <!-- Cụm hoa góc dưới bên phải -->
+        <div class="decor-flower absolute bottom-16 right-4 sm:right-12 text-5xl sm:text-7xl z-10" style="transition-delay: 0.4s;">🌷</div>
+        <div class="decor-flower absolute bottom-6 right-20 sm:right-32 text-4xl sm:text-6xl z-10" style="transition-delay: 0.6s;">🌸</div>
+        <div class="decor-flower absolute bottom-28 right-16 sm:right-24 text-3xl sm:text-5xl z-10" style="transition-delay: 0.8s;">🌼</div>
+        <div class="decor-flower absolute bottom-2 right-36 sm:right-48 text-3xl sm:text-5xl z-10" style="transition-delay: 0.9s;">💐</div>
 
-        <!-- Hoa hồng góc dưới bên trái 2 -->
-        <div class="decor-flower absolute bottom-8 left-16 sm:left-32 w-12 sm:w-20 text-rose-600 z-10" style="transition-delay: 0.8s;">
-            <div class="text-3xl sm:text-5xl">🌸</div>
-        </div>
-
-        <!-- Hoa vàng góc dưới bên trái 3 -->
-        <div class="decor-flower absolute bottom-4 left-2 sm:left-10 w-10 sm:w-16 text-amber-400 z-10" style="transition-delay: 1.0s;">
-            <div class="text-2xl sm:text-4xl">🌼</div>
-        </div>
-
-        <!-- Hoa vàng nhỏ bên phải -->
-        <div class="decor-flower absolute bottom-16 right-12 sm:right-28 w-12 sm:w-16 text-amber-400 z-10" style="transition-delay: 1.2s;">
-            <div class="text-2xl sm:text-4xl">🌼</div>
-        </div>
-
-        <!-- Hoa hồng to góc trên bên phải (cạnh Menu) -->
-        <div class="decor-flower absolute top-4 right-20 sm:right-36 w-20 sm:w-28 z-10" style="transition-delay: 1.4s;">
-            <div class="text-5xl sm:text-7xl">🌸</div>
-        </div>
-
-
-        <!-- ============================================== -->
-        /* NỘI DUNG VĂN BẢN HIỆN DẦN KHI LƯỚT (SCROLL REVEAL) */
-        <!-- ============================================== -->
-
-        <!-- Dòng ngày tháng đỏ nhỏ phía trên -->
+        <!-- NỘI DUNG VĂN BẢN THƠ MỘNG -->
         <div class="reveal-text text-xs uppercase tracking-[0.3em] text-rose-600 font-semibold mb-4">
             NGÀY NHÀ GIÁO VIỆT NAM · 20.11.2026
         </div>
 
-        <!-- Tiêu đề MÙA HOA Tri Ân cỡ lớn (Font Garamond chuẩn như ảnh) -->
         <div class="reveal-text mb-6">
             <h1 class="font-serif text-5xl sm:text-7xl md:text-8xl font-bold tracking-tight text-brand-titleRed leading-tight">
                 MÙA HOA <br>
@@ -322,12 +292,10 @@
             </h1>
         </div>
 
-        <!-- Tên chi đoàn & Trường -->
         <div class="reveal-text text-xs sm:text-sm tracking-[0.25em] uppercase font-semibold text-rose-900/70 mb-12">
             CHI ĐOÀN 10A2 ✦ THPT SÓC SƠN
         </div>
 
-        <!-- Khung Trích Dẫn Thơ Mộng (Thẻ bo tròn bo viền trắng mờ) -->
         <div class="reveal-text bg-white/75 backdrop-blur-md p-8 sm:p-12 rounded-[2.5rem] border border-pink-100 shadow-sm max-w-2xl mx-auto mb-12 relative z-20">
             <p class="font-serif italic text-xl sm:text-2xl text-gray-700 leading-relaxed">
                 “Mỗi người thầy, người cô là một mùa hoa.<br>
@@ -336,7 +304,6 @@
             </p>
         </div>
 
-        <!-- Đoạn Lời Dẫn hiện từ từ khi lướt tiếp -->
         <div class="reveal-text space-y-6 text-gray-700 font-serif text-lg sm:text-2xl leading-relaxed max-w-3xl mx-auto px-2 mb-16">
             <h3 class="font-cursive text-3xl text-rose-600 font-normal">Lời dẫn</h3>
             <p>
@@ -347,7 +314,6 @@
             </p>
         </div>
 
-        <!-- Tiêu đề Khu Vườn Tri Ân -->
         <div class="reveal-text mt-12 mb-8">
             <span class="text-xs uppercase tracking-[0.3em] text-rose-600 font-bold block mb-2">Khu Vườn Tri Ân</span>
             <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-titleRed">
@@ -357,14 +323,19 @@
         </div>
     </section>
 
-    <!-- SECTION 3: KHU VƯỜN TRI ÂN - DANH SÁCH CARD THẦY CÔ -->
+    <!-- SECTION 3: DANH SÁCH THẦY CÔ (TỰ ĐỘNG CẬP NHẬT TỪ ADMIN) -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div class="reveal-text mb-8 font-serif text-xl text-rose-900 border-b border-pink-200 pb-3 flex items-center">
-            <span class="text-rose-500 mr-2">I.</span> Những người vun đắp mái trường THPT Sóc Sơn
+        <div class="reveal-text mb-8 font-serif text-xl text-rose-900 border-b border-pink-200 pb-3 flex items-center justify-between">
+            <div class="flex items-center">
+                <span class="text-rose-500 mr-2">I.</span> Những người vun đắp mái trường THPT Sóc Sơn
+            </div>
+            <button onclick="openAdminModal()" class="text-xs bg-rose-100 hover:bg-rose-200 text-rose-700 px-3 py-1 rounded-full font-medium transition-colors">
+                <i class="fa-solid fa-plus mr-1"></i> Thêm thầy cô (Admin)
+            </button>
         </div>
 
         <div id="teachers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Dynamic Injection from JS -->
+            <!-- Dynamic Injection -->
         </div>
     </section>
 
@@ -401,7 +372,7 @@
         </div>
     </footer>
 
-    <!-- MODAL -->
+    <!-- MODAL HIỂN THỊ LỜI TRI ÂN -->
     <div id="modal-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div id="modal-box" class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100 transition-all transform">
             <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center transition-colors">
@@ -409,7 +380,7 @@
             </button>
             
             <div class="text-center mb-6">
-                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-pink-100 via-rose-100 to-amber-50 flex items-center justify-center border-2 border-rose-300 mb-3 shadow-sm text-rose-500 text-3xl">
+                <div id="modal-icon-wrap" class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-pink-100 via-rose-100 to-amber-50 flex items-center justify-center border-2 border-rose-300 mb-3 shadow-sm text-3xl">
                     🌸
                 </div>
                 <span id="modal-role" class="text-xs font-semibold uppercase tracking-wider text-rose-600 block mb-1">NGƯỜI VUN ĐẮP MÁI TRƯỜNG</span>
@@ -430,38 +401,80 @@
         </div>
     </div>
 
+    <!-- MODAL ĐĂNG NHẬP ADMIN (MẬT KHẨU 123) -->
+    <div id="admin-login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100">
+            <button onclick="closeAdminLogin()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            <h3 class="font-serif text-2xl font-bold text-brand-titleRed mb-2 text-center">Đăng nhập Quản Trị</h3>
+            <p class="text-xs text-gray-500 text-center mb-6">Nhập mật khẩu (123) để thêm và chỉnh sửa thông tin thầy cô</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Mật khẩu hệ thống</label>
+                    <input type="password" id="admin-pass-input" placeholder="Nhập 123..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+                <button onclick="verifyAdminPassword()" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium text-sm transition-colors shadow-md">
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL QUẢN TRỊ THÊM THẦY CÔ (ADMIN DASHBOARD) -->
+    <div id="admin-dashboard-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100 max-h-[90vh] overflow-y-auto">
+            <button onclick="closeAdminDashboard()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <h3 class="font-serif text-2xl font-bold text-brand-titleRed mb-1">Hệ Thống Quản Trị 10A2</h3>
+            <p class="text-xs text-rose-600 mb-6 font-medium">Thêm hồ sơ thầy cô mới để hiển thị ngay lập tức lên website</p>
+
+            <form id="add-teacher-form" onsubmit="handleAddNewTeacher(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Họ và tên Thầy/Cô</label>
+                    <input type="text" id="new-name" required placeholder="Ví dụ: Cô Nguyễn Thị Mai" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Chức vụ / Bộ môn</label>
+                    <input type="text" id="new-role" required placeholder="Ví dụ: GIÁO VIÊN MÔN TOÁN" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Câu nói / Châm ngôn ngắn</label>
+                    <input type="text" id="new-quote" required placeholder="Ví dụ: Người truyền lửa đam mê toán học..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Lời tri ân chi tiết</label>
+                    <textarea id="new-message" rows="3" required placeholder="Lời chúc gửi đến thầy cô..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-600 mb-1">Biểu tượng / Icon hoa (🌸, 💐, 🌹, 🌷, 🌼)</label>
+                    <input type="text" id="new-icon" required value="💐" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:border-rose-500 text-sm">
+                </div>
+
+                <div class="flex space-x-3 pt-2">
+                    <button type="submit" class="flex-1 py-3 bg-rose-600 hover:bg-rose-700 text-white rounded-xl font-medium text-sm transition-colors shadow-md">
+                        Lưu và Đăng lên hệ thống
+                    </button>
+                    <button type="button" onclick="resetTeachersData()" class="px-4 py-3 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-xl font-medium text-sm transition-colors">
+                        Khôi phục mặc định
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Bấm nút chuyển đến khu vườn
         function goToGarden() {
             const el = document.getElementById('thu-tri-an');
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Tự động kích hoạt hiệu ứng nở hoa trang trí và hiện chữ khi lướt (IntersectionObserver)
-        const observerOptions = {
-            root: null,
-            threshold: 0.15
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                }
-            });
-        }, observerOptions);
-
-        document.addEventListener("DOMContentLoaded", () => {
-            // Đăng ký observer cho hoa và dòng chữ
-            document.querySelectorAll('.decor-flower, .reveal-text').forEach(el => {
-                observer.observe(el);
-            });
-        });
-
-        const teachersData = [
+        // Quản lý dữ liệu Thầy Cô bằng localStorage để cập nhật trực tiếp
+        const defaultTeachers = [
             {
                 id: 1,
                 name: "Cô Lưu Thị Kim Oanh",
@@ -472,11 +485,24 @@
             }
         ];
 
+        function getTeachers() {
+            const data = localStorage.getItem('teachers_10a2_data');
+            return data ? JSON.parse(data) : defaultTeachers;
+        }
+
         function renderTeachers() {
+            const teachers = getTeachers();
             const grid = document.getElementById('teachers-grid');
-            grid.className = "flex justify-center max-w-md mx-auto";
-            grid.innerHTML = teachersData.map(teacher => `
-                <div class="reveal-text bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-md card-hover flex flex-col justify-between relative overflow-hidden group w-full">
+            
+            grid.innerHTML = teachers.map(teacher => `
+                <div class="reveal-text bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-md card-tilt flex flex-col justify-between relative overflow-hidden group w-full">
+                    
+                    <!-- Nút bấm ở góc trái xuất hiện khi rê chuột -->
+                    <button onclick="openModal(${teacher.id})" class="quick-action-btn px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-xs font-semibold shadow-md flex items-center space-x-1">
+                        <i class="fa-solid fa-heart text-[10px]"></i>
+                        <span>Xem lời tri ân</span>
+                    </button>
+
                     <div class="absolute top-4 right-4 text-pink-300 text-xl font-serif">🌺</div>
                     <div>
                         <div class="w-full h-64 rounded-t-full rounded-b-2xl mb-6 bg-gradient-to-b from-pink-100/80 via-rose-50/60 to-white relative border border-pink-100 flex flex-col items-center justify-center p-4">
@@ -487,7 +513,7 @@
                                 ${teacher.icon}
                             </div>
                             <span class="mt-4 font-serif text-xs text-rose-800 font-bold tracking-widest uppercase z-10 bg-white/90 px-4 py-1.5 rounded-full border border-pink-100 shadow-2xs">
-                                Tri Ân Cô Chủ Nhiệm
+                                Tri Ân Thầy Cô
                             </span>
                         </div>
 
@@ -506,17 +532,19 @@
                 </div>
             `).join('');
 
-            // Observer lại các phần tử thẻ teacher vừa được render
             document.querySelectorAll('#teachers-grid .reveal-text').forEach(el => observer.observe(el));
         }
 
+        // Modal xem lời tri ân
         function openModal(id) {
-            const teacher = teachersData.find(t => t.id === id);
+            const teachers = getTeachers();
+            const teacher = teachers.find(t => t.id === id);
             if (!teacher) return;
 
             document.getElementById('modal-role').innerText = teacher.role;
             document.getElementById('modal-name').innerText = teacher.name;
             document.getElementById('modal-message').innerText = `“${teacher.fullMessage}”`;
+            document.getElementById('modal-icon-wrap').innerText = teacher.icon;
 
             const backdrop = document.getElementById('modal-backdrop');
             backdrop.classList.remove('hidden');
@@ -529,6 +557,83 @@
             backdrop.classList.remove('flex');
         }
 
+        // Admin Auth & Actions
+        function openAdminModal() {
+            document.getElementById('admin-login-modal').classList.remove('hidden');
+            document.getElementById('admin-login-modal').classList.add('flex');
+        }
+
+        function closeAdminLogin() {
+            document.getElementById('admin-login-modal').classList.add('hidden');
+            document.getElementById('admin-login-modal').classList.remove('flex');
+        }
+
+        function verifyAdminPassword() {
+            const pass = document.getElementById('admin-pass-input').value;
+            if (pass === '123') {
+                closeAdminLogin();
+                document.getElementById('admin-pass-input').value = '';
+                document.getElementById('admin-dashboard-modal').classList.remove('hidden');
+                document.getElementById('admin-dashboard-modal').classList.add('flex');
+            } else {
+                alert('Mật khẩu không đúng! (Gợi ý: 123)');
+            }
+        }
+
+        function closeAdminDashboard() {
+            document.getElementById('admin-dashboard-modal').classList.add('hidden');
+            document.getElementById('admin-dashboard-modal').classList.remove('flex');
+        }
+
+        function handleAddNewTeacher(event) {
+            event.preventDefault();
+            const name = document.getElementById('new-name').value;
+            const role = document.getElementById('new-role').value;
+            const quote = document.getElementById('new-quote').value;
+            const message = document.getElementById('new-message').value;
+            const icon = document.getElementById('new-icon').value;
+
+            const teachers = getTeachers();
+            const newTeacher = {
+                id: Date.now(),
+                name,
+                role,
+                quote,
+                fullMessage: message,
+                icon
+            };
+
+            teachers.push(newTeacher);
+            localStorage.setItem('teachers_10a2_data', JSON.stringify(teachers));
+            
+            renderTeachers();
+            closeAdminDashboard();
+            document.getElementById('add-teacher-form').reset();
+            alert('Đã cập nhật thành công thầy cô mới lên hệ thống!');
+        }
+
+        function resetTeachersData() {
+            if (confirm('Bạn có chắc muốn khôi phục lại danh sách mặc định?')) {
+                localStorage.removeItem('teachers_10a2_data');
+                renderTeachers();
+                closeAdminDashboard();
+                alert('Đã khôi phục thành công!');
+            }
+        }
+
+        // Observer cho hiệu ứng lướt
+        const observerOptions = { root: null, threshold: 0.15 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('active');
+            });
+        }, observerOptions);
+
+        document.addEventListener("DOMContentLoaded", () => {
+            document.querySelectorAll('.decor-flower, .reveal-text').forEach(el => observer.observe(el));
+            renderTeachers();
+        });
+
         window.addEventListener('scroll', () => {
             const header = document.getElementById('main-header');
             if (window.scrollY > 200) {
@@ -540,7 +645,7 @@
             }
         });
 
-        // Continuous Falling Petals Canvas
+        // Cánh hoa rơi lãng mạn
         const canvas = document.getElementById('petal-canvas');
         const ctx = canvas.getContext('2d');
 
@@ -553,65 +658,48 @@
         });
 
         class Petal {
-            constructor() {
-                this.reset();
-            }
-
+            constructor() { this.reset(); }
             reset() {
                 this.x = Math.random() * width;
                 this.y = Math.random() * -height;
-                this.size = Math.random() * 8 + 6;
-                this.speedY = Math.random() * 1.2 + 0.8;
-                this.speedX = Math.random() * 0.8 - 0.4;
+                this.size = Math.random() * 10 + 6;
+                this.speedY = Math.random() * 1.5 + 0.8;
+                this.speedX = Math.random() * 1 - 0.5;
                 this.angle = Math.random() * 360;
                 this.spin = Math.random() * 2 - 1;
-                this.color = ['#f8bbd0', '#f48fb1', '#ffcdd2', '#f06292'][Math.floor(Math.random() * 4)];
-                this.opacity = Math.random() * 0.5 + 0.4;
+                this.color = ['#f8bbd0', '#f48fb1', '#ffcdd2', '#f06292', '#ff80ab'][Math.floor(Math.random() * 5)];
+                this.opacity = Math.random() * 0.6 + 0.4;
             }
-
             update() {
                 this.y += this.speedY;
                 this.x += Math.sin(this.y * 0.01) + this.speedX;
                 this.angle += this.spin;
-
-                if (this.y > height + 20) {
-                    this.reset();
-                    this.y = -10;
-                }
+                if (this.y > height + 20) { this.reset(); this.y = -10; }
             }
-
             draw() {
                 ctx.save();
                 ctx.translate(this.x, this.y);
                 ctx.rotate((this.angle * Math.PI) / 180);
                 ctx.globalAlpha = this.opacity;
                 ctx.fillStyle = this.color;
-
                 ctx.beginPath();
                 ctx.moveTo(0, 0);
                 ctx.quadraticCurveTo(this.size / 2, -this.size, this.size, 0);
                 ctx.quadraticCurveTo(this.size / 2, this.size, 0, 0);
                 ctx.fill();
-
                 ctx.restore();
             }
         }
 
-        const petals = Array.from({ length: 35 }, () => new Petal());
+        const petals = Array.from({ length: 50 }, () => new Petal());
 
         function animatePetals() {
             ctx.clearRect(0, 0, width, height);
-            petals.forEach(petal => {
-                petal.update();
-                petal.draw();
-            });
+            petals.forEach(petal => { petal.update(); petal.draw(); });
             requestAnimationFrame(animatePetals);
         }
 
-        window.onload = function () {
-            renderTeachers();
-            animatePetals();
-        };
+        animatePetals();
     </script>
 </body>
 </html>
