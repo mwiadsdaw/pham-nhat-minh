@@ -69,57 +69,33 @@
             border-radius: 4px;
         }
 
-        /* Pulsing & Spinning Animations */
+        /* Continuous Pulsing Animation */
         @keyframes bloomPulse {
             0%, 100% { transform: scale(1) rotate(0deg); }
             50% { transform: scale(1.04) rotate(3deg); }
         }
         .bloom-icon {
             animation: bloomPulse 6s ease-in-out infinite;
-            animation-delay: 2s; /* Chờ hiệu ứng nở hoàn tất mới nhịp đập */
+            animation-delay: 2s;
         }
 
         /* Hiệu ứng hoa nở từ nụ */
         @keyframes bloomPetal1 {
-            0% {
-                transform: rotate(var(--rot)) scale(0);
-                opacity: 0;
-            }
-            50% {
-                opacity: 0.5;
-            }
-            100% {
-                transform: rotate(var(--rot)) scale(1);
-                opacity: 0.85;
-            }
+            0% { transform: rotate(var(--rot)) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: rotate(var(--rot)) scale(1); opacity: 0.85; }
         }
 
         @keyframes bloomPetal2 {
-            0% {
-                transform: rotate(var(--rot)) scale(0);
-                opacity: 0;
-            }
-            50% {
-                opacity: 0.5;
-            }
-            100% {
-                transform: rotate(var(--rot)) scale(1);
-                opacity: 0.9;
-            }
+            0% { transform: rotate(var(--rot)) scale(0); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: rotate(var(--rot)) scale(1); opacity: 0.9; }
         }
 
         @keyframes popCenter {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-            80% {
-                transform: scale(1.15);
-            }
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
+            0% { transform: scale(0); opacity: 0; }
+            80% { transform: scale(1.15); }
+            100% { transform: scale(1); opacity: 1; }
         }
 
         .petal-layer-1 {
@@ -137,6 +113,55 @@
         .flower-center {
             transform-origin: 0px 0px;
             animation: popCenter 0.8s ease-out forwards;
+        }
+
+        /* ============================================== */
+        /* CẤU TRÚC VÀ HIỆU ỨNG CÁNH CỬA MỞ MÔ PHỎNG 3D   */
+        /* ============================================== */
+        #door-wrapper {
+            perspective: 1500px;
+            position: relative;
+            width: 100%;
+            min-h-screen: 100vh;
+            overflow: hidden;
+        }
+
+        .door-panel {
+            transition: transform 1.8s cubic-bezier(0.77, 0, 0.175, 1), opacity 1.5s ease-in-out;
+            transform-style: preserve-3d;
+            box-shadow: 0 0 50px rgba(233, 30, 99, 0.15);
+        }
+
+        /* Trạng thái mở cửa */
+        .door-open-left {
+            transform: rotateY(-110deg) translateX(-20%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .door-open-right {
+            transform: rotateY(110deg) translateX(20%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Hiệu ứng ánh sáng huyền ảo lung linh xuất hiện sau cửa */
+        @keyframes glowSparkle {
+            0%, 100% { opacity: 0.3; transform: scale(0.9); }
+            50% { opacity: 0.8; transform: scale(1.1); }
+        }
+        .magical-glow {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(255,182,193,0.6) 0%, rgba(255,240,245,0.3) 40%, rgba(255,255,255,0) 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10;
+            animation: glowSparkle 4s ease-in-out infinite;
         }
 
         /* Shimmer background */
@@ -178,78 +203,108 @@
         </div>
     </header>
 
-    <!-- SECTION 1: LANDING / WELCOME SCREEN -->
-    <section id="welcome" class="min-h-screen w-full relative flex flex-col justify-center items-center text-center px-4 bg-soft-gradient py-12">
+    <!-- SECTION 1: CÁNH CỬA & LANDING SCREEN (Ảnh 1) -->
+    <section id="welcome" class="min-h-screen w-full relative overflow-hidden bg-soft-gradient flex flex-col justify-center items-center">
         
-        <!-- Bông hoa trung tâm SVG với Animation Hoa Nở -->
-        <div class="relative mb-8 cursor-pointer group" onclick="scrollToSection('thu-tri-an')">
-            <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center bloom-icon">
-                <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
-                    <defs>
-                        <linearGradient id="petalGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#f8bbd0" />
-                            <stop offset="100%" stop-color="#f48fb1" />
-                        </linearGradient>
-                        <linearGradient id="petalGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#f48fb1" />
-                            <stop offset="100%" stop-color="#ad1457" />
-                        </linearGradient>
-                    </defs>
-                    
-                    <g transform="translate(100,100)">
-                        <!-- Lớp 1 (Cánh hoa ngoài - Nở bung ra sau) -->
-                        <path class="petal-layer-1" style="--rot: 0deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 45deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 90deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 135deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 180deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 225deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 270deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-                        <path class="petal-layer-1" style="--rot: 315deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+        <!-- Vạt sáng lung linh huyền ảo phía sau cánh cửa -->
+        <div class="magical-glow"></div>
 
-                        <!-- Lớp 2 (Cánh hoa trong - Nở trước) -->
-                        <path class="petal-layer-2" style="--rot: 22.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 67.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 112.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 157.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 202.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 247.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 292.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-                        <path class="petal-layer-2" style="--rot: 337.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+        <!-- Khung chứa 2 cánh cửa -->
+        <div id="door-wrapper" class="absolute inset-0 z-20 flex">
+            
+            <!-- Cánh cửa bên TÁI (Bên Trái) -->
+            <div id="door-left" class="door-panel w-1/2 h-full bg-gradient-to-r from-pink-100 via-rose-50 to-pink-100 border-r border-rose-200/60 flex flex-col items-end justify-center pr-4 sm:pr-12 relative origin-left">
+                <!-- Họa tiết hoa trang trí mép cửa -->
+                <div class="absolute top-12 left-8 text-rose-300/40 text-6xl">🌸</div>
+                <div class="absolute bottom-12 left-12 text-pink-300/40 text-5xl">🌺</div>
+                <!-- Tay cầm cửa viền vàng kiều diễm -->
+                <div class="w-3 h-24 bg-gradient-to-b from-amber-200 via-amber-400 to-amber-200 rounded-full shadow-md border border-amber-300 mr-2"></div>
+            </div>
 
-                        <!-- Nhụy Hoa -->
-                        <g class="flower-center">
-                            <circle cx="0" cy="0" r="16" fill="#ffe082" />
-                            <circle cx="0" cy="0" r="12" fill="#ffd54f" />
-                            <circle cx="-6" cy="-6" r="2" fill="#ffb300" />
-                            <circle cx="6" cy="-6" r="2" fill="#ffb300" />
-                            <circle cx="6" cy="6" r="2" fill="#ffb300" />
-                            <circle cx="-6" cy="6" r="2" fill="#ffb300" />
-                            <circle cx="0" cy="0" r="3" fill="#ff8f00" />
-                        </g>
-                    </g>
-                </svg>
+            <!-- Cánh cửa bên PHẢI (Bên Phải) -->
+            <div id="door-right" class="door-panel w-1/2 h-full bg-gradient-to-l from-pink-100 via-rose-50 to-pink-100 border-l border-rose-200/60 flex flex-col items-start justify-center pl-4 sm:pl-12 relative origin-right">
+                <!-- Họa tiết hoa trang trí mép cửa -->
+                <div class="absolute top-12 right-8 text-rose-300/40 text-6xl">🌸</div>
+                <div class="absolute bottom-12 right-12 text-pink-300/40 text-5xl">🌺</div>
+                <!-- Tay cầm cửa viền vàng kiều diễm -->
+                <div class="w-3 h-24 bg-gradient-to-b from-amber-200 via-amber-400 to-amber-200 rounded-full shadow-md border border-amber-300 ml-2"></div>
             </div>
         </div>
 
-        <!-- Tiêu đề chính -->
-        <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-brand-titleRed mb-3">
-            MÙA HOA <span class="font-cursive text-rose-600 font-normal ml-2">Tri Ân</span>
-        </h1>
+        <!-- Nội dung hiển thị chính (Bông hoa & Nút chạm) nằm đè trên cánh cửa trước khi mở -->
+        <div id="landing-content" class="relative z-30 flex flex-col items-center text-center px-4 transition-all duration-1000">
+            
+            <!-- Bông hoa trung tâm SVG với Animation Hoa Nở -->
+            <div class="relative mb-8 cursor-pointer group" onclick="openGardenDoor()">
+                <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center bloom-icon">
+                    <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+                        <defs>
+                            <linearGradient id="petalGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f8bbd0" />
+                                <stop offset="100%" stop-color="#f48fb1" />
+                            </linearGradient>
+                            <linearGradient id="petalGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#f48fb1" />
+                                <stop offset="100%" stop-color="#ad1457" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <g transform="translate(100,100)">
+                            <!-- Lớp 1 (Cánh hoa ngoài) -->
+                            <path class="petal-layer-1" style="--rot: 0deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 45deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 90deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 135deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 180deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 225deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 270deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                            <path class="petal-layer-1" style="--rot: 315deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
 
-        <div class="tracking-[0.3em] text-gray-500 font-medium text-sm sm:text-base mb-2">
-            20 · 11 · 2026
-        </div>
-        <div class="text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold text-rose-800/80 mb-10">
-            Chi đoàn 10A2 — THPT Sóc Sơn
-        </div>
+                            <!-- Lớp 2 (Cánh hoa trong) -->
+                            <path class="petal-layer-2" style="--rot: 22.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 67.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 112.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 157.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 202.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 247.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 292.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                            <path class="petal-layer-2" style="--rot: 337.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
 
-        <button onclick="scrollToSection('thu-tri-an')" class="px-8 py-3.5 bg-white/90 hover:bg-white text-rose-700 hover:text-rose-800 rounded-full shadow-lg hover:shadow-xl border border-pink-200 transition-all duration-300 font-medium text-sm tracking-wide transform hover:-translate-y-1">
-            Chạm để bước vào khu vườn ký ức
-        </button>
+                            <!-- Nhụy Hoa -->
+                            <g class="flower-center">
+                                <circle cx="0" cy="0" r="16" fill="#ffe082" />
+                                <circle cx="0" cy="0" r="12" fill="#ffd54f" />
+                                <circle cx="-6" cy="-6" r="2" fill="#ffb300" />
+                                <circle cx="6" cy="-6" r="2" fill="#ffb300" />
+                                <circle cx="6" cy="6" r="2" fill="#ffb300" />
+                                <circle cx="-6" cy="6" r="2" fill="#ffb300" />
+                                <circle cx="0" cy="0" r="3" fill="#ff8f00" />
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+            </div>
 
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-pink-400">
-            <i class="fa-solid fa-chevron-down text-lg"></i>
+            <!-- Tiêu đề chính -->
+            <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-brand-titleRed mb-3">
+                MÙA HOA <span class="font-cursive text-rose-600 font-normal ml-2">Tri Ân</span>
+            </h1>
+
+            <div class="tracking-[0.3em] text-gray-500 font-medium text-sm sm:text-base mb-2">
+                20 · 11 · 2026
+            </div>
+            <div class="text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold text-rose-800/80 mb-10">
+                Chi đoàn 10A2 — THPT Sóc Sơn
+            </div>
+
+            <!-- Nút bấm mở cửa -->
+            <button onclick="openGardenDoor()" class="px-8 py-3.5 bg-white/90 hover:bg-white text-rose-700 hover:text-rose-800 rounded-full shadow-lg hover:shadow-xl border border-pink-200 transition-all duration-300 font-medium text-sm tracking-wide transform hover:-translate-y-1 hover:scale-105 active:scale-95">
+                🌸 Chạm để bước vào khu vườn ký ức 🌸
+            </button>
+
+            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-pink-400">
+                <i class="fa-solid fa-chevron-down text-lg"></i>
+            </div>
         </div>
     </section>
 
@@ -365,6 +420,35 @@
 
     <!-- JAVASCRIPT LOGIC -->
     <script>
+        // Xử lý hiệu ứng mở cửa 3D khi bấm nút "Chạm..."
+        function openGardenDoor() {
+            const doorLeft = document.getElementById('door-left');
+            const doorRight = document.getElementById('door-right');
+            const landingContent = document.getElementById('landing-content');
+
+            // Mở 2 cánh cửa sang 2 bên
+            doorLeft.classList.add('door-open-left');
+            doorRight.classList.add('door-open-right');
+            
+            // Làm mờ nhẹ phần tiêu đề trang bìa
+            landingContent.style.opacity = '0.2';
+            landingContent.style.transform = 'scale(0.95)';
+
+            // Tăng số lượng và tốc độ cánh hoa rơi lung linh khi mở cửa
+            petals.forEach(p => {
+                p.speedY *= 1.8;
+                p.size *= 1.2;
+            });
+
+            // Cuộn mượt xuống Khu Vườn Tri Ân sau khi cánh cửa xòe ra
+            setTimeout(() => {
+                const el = document.getElementById('thu-tri-an');
+                if (el) {
+                    el.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 800);
+        }
+
         const teachersData = [
             {
                 id: 1,
@@ -505,7 +589,7 @@
             }
         }
 
-        const petals = Array.from({ length: 35 }, () => new Petal());
+        const petals = Array.from({ length: 40 }, () => new Petal());
 
         function animatePetals() {
             ctx.clearRect(0, 0, width, height);
