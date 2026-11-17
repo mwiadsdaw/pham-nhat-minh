@@ -356,7 +356,7 @@
         </div>
     </section>
 
-    <!-- FOOTER / LỜI KẾT (CÓ NÚT LIÊN KẾT NHỎ GỌN PMINH83) -->
+    <!-- FOOTER / LỜI KẾT -->
     <footer id="loi-ket" class="bg-white py-20 border-t border-pink-100 text-center relative">
         <div class="max-w-4xl mx-auto px-4">
             <div class="reveal-text">
@@ -381,7 +381,7 @@
             </div>
         </div>
 
-        <!-- Nút liên kết nhẹ nhàng, ẩn vừa đủ ở góc dưới bên phải -->
+        <!-- Nút liên kết tác giả pminh83 -->
         <a href="https://pminh83.name.vn" target="_blank" rel="noopener noreferrer" 
            class="absolute bottom-4 right-4 text-[11px] text-gray-400 hover:text-rose-500 transition-colors duration-200 opacity-60 hover:opacity-100 flex items-center space-x-1 bg-gray-50 hover:bg-pink-50 px-2.5 py-1 rounded-full border border-gray-100 shadow-2xs">
             <span>Tác giả: pminh83</span>
@@ -425,6 +425,7 @@
             if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
+        // Danh sách đầy đủ các thầy cô, đã thêm Cô Tú
         const teachers = [
             {
                 id: 1,
@@ -444,67 +445,75 @@
             },
             {
                 id: 3,
-                name: "Cô Hằng",
-                role: "NGƯỜI LÁI ĐÒ THẦM LẶNG",
-                quote: "Không có nghề nào cao quý hơn nghề dạy học.",
-                fullMessage: "Nhân ngày Nhà giáo Việt Nam 20/11, em xin gửi lời cảm ơn chân thành đến cô – người đã tận tụy truyền đạt tri thức và chắp cánh ước mơ cho chúng em. Kính chúc cô luôn vui vẻ, bình an và mãi giữ ngọn lửa nhiệt huyết với nghề!",
+                name: "Cô Tú",
+                role: "GIÁO VIÊN MÔN TIẾNG ANH",
+                quote: "Người truyền lửa đam mê tiếng Anh qua những bài giảng sinh động và dễ hiểu.",
+                fullMessage: "\"Happy Vietnamese Teachers' Day!\" Nhân ngày 20/11, em kính chúc cô Tú luôn mạnh khỏe, hạnh phúc và gặt hái thật nhiều thành công trong sự nghiệp trồng người. Cảm ơn cô đã luôn tận tâm, nhiệt huyết truyền lửa đam mê tiếng Anh qua những bài giảng sinh động, dễ hiểu. Nhờ sự hướng dẫn ân cần của cô, tiếng Anh đã trở thành niềm vui lớn mỗi ngày tới lớp của em!",
                 icon: "🌸"
             },
             {
                 id: 4,
-                name: "Thầy Khương",
-                role: "GIÁO VIÊN THPT SÓC SƠN",
-                quote: "Người thầy kính yêu luôn tận tụy vì học trò.",
-                fullMessage: "Kính chúc thầy Khương luôn mạnh khỏe, hạnh phúc và gặt hái thật nhiều thành công trong sự nghiệp trồng người cao cả!",
+                name: "Cô Hằng",
+                role: "NGƯỜI LÁI ĐÒ THẦM LẶNG",
+                quote: "Không có nghề nào cao quý hơn nghề dạy học.",
+                fullMessage: "Nhân ngày Nhà giáo Việt Nam 20/11, em xin gửi lời cảm ơn chân thành đến cô – người đã tận tụy truyền đạt tri thức và chắp cánh ước mơ cho chúng em. Kính chúc cô luôn vui vẻ, bình an và mãi giữ ngọn lửa nhiệt huyết với nghề!",
                 icon: "💐"
             },
             {
                 id: 5,
-                name: "Cô Khuyên",
+                name: "Thầy Khương",
                 role: "GIÁO VIÊN THPT SÓC SƠN",
-                quote: "Người mang đến những bài học bổ ích và sự tận tình trong mỗi tiết học.",
-                fullMessage: "Nhân ngày Nhà giáo Việt Nam 20/11, em muốn gửi đến cô những lời chúc tốt đẹp và chân thành nhất. Chúc cô luôn mạnh khỏe, vui vẻ và giữ mãi nhiệt huyết với nghề. Em cảm ơn cô vì những bài học bổ ích, sự tận tình và cả những điều nhỏ bé cô đã dành cho chúng em trong mỗi tiết học!",
+                quote: "Người thầy kính yêu luôn tận tụy vì học trò.",
+                fullMessage: "Kính chúc thầy Khương luôn mạnh khỏe, hạnh phúc và gặt hái thật nhiều thành công trong sự nghiệp trồng người cao cả!",
                 icon: "🌷"
             },
             {
                 id: 6,
-                name: "Cô Thơ",
-                role: "GIÁO VIÊN MÔN VẬT LÝ",
-                quote: "Người thắp lên ngọn lửa đam mê dưới ánh sáng của những định luật khoa học.",
-                fullMessage: "Dưới ánh sáng của những định luật khô khan, cô đã thắp lên ngọn lửa đam mê rực rỡ trong trái tim chúng em. Những tiết học Vật lý của cô không chỉ có công thức hay phép tính, mà còn là hành trình khám phá sự kỳ diệu của vũ trụ và cuộc sống. Cảm ơn cô vì sự tận tụy, kiên nhẫn đã uốn nắn từng nét tư duy!",
+                name: "Cô Khuyên",
+                role: "GIÁO VIÊN THPT SÓC SƠN",
+                quote: "Người mang đến những bài học bổ ích và sự tận tình trong mỗi tiết học.",
+                fullMessage: "Nhân ngày Nhà giáo Việt Nam 20/11, em muốn gửi đến cô những lời chúc tốt đẹp và chân thành nhất. Chúc cô luôn mạnh khỏe, vui vẻ và giữ mãi nhiệt huyết với nghề. Em cảm ơn cô vì những bài học bổ ích, sự tận tình và cả những điều nhỏ bé cô đã dành cho chúng em trong mỗi tiết học!",
                 icon: "🌺"
             },
             {
                 id: 7,
-                name: "Cô Yến",
-                role: "GIÁO VIÊN MÔN LỊCH SỬ",
-                quote: "Người đưa học sinh ngược dòng thời gian qua những bài giảng đầy tâm huyết.",
-                fullMessage: "Nhân ngày 20/11, em chúc cô luôn thật nhiều sức khỏe, hạnh phúc và gặp nhiều điều may mắn trong cuộc sống. Cảm ơn cô vì đã giúp chúng em hiểu hơn về những câu chuyện, sự kiện và giá trị của lịch sử bằng những bài giảng đầy tâm huyết!",
+                name: "Cô Thơ",
+                role: "GIÁO VIÊN MÔN VẬT LÝ",
+                quote: "Người thắp lên ngọn lửa đam mê dưới ánh sáng của những định luật khoa học.",
+                fullMessage: "Dưới ánh sáng của những định luật khô khan, cô đã thắp lên ngọn lửa đam mê rực rỡ trong trái tim chúng em. Những tiết học Vật lý của cô không chỉ có công thức hay phép tính, mà còn là hành trình khám phá sự kỳ diệu của vũ trụ và cuộc sống. Cảm ơn cô vì sự tận tụy, kiên nhẫn đã uốn nắn từng nét tư duy!",
                 icon: "🌼"
             },
             {
                 id: 8,
-                name: "Thầy Công",
-                role: "GIÁO VIÊN MÔN HÓA HỌC",
-                quote: "Người biến những phương trình khô khan thành sự sống và biến hóa kỳ diệu.",
-                fullMessage: "Trong những giờ học Hóa học đầy màu sắc của thầy, từng phương trình khô khan dường như đều mang sự sống. Thầy không chỉ truyền đạt kiến thức phản ứng trong phòng thí nghiệm, mà còn dạy chúng em cách 'xúc tác' niềm đam mê và sự kiên trì trong cuộc sống!",
+                name: "Cô Yến",
+                role: "GIÁO VIÊN MÔN LỊCH SỬ",
+                quote: "Người đưa học sinh ngược dòng thời gian qua những bài giảng đầy tâm huyết.",
+                fullMessage: "Nhân ngày 20/11, em chúc cô luôn thật nhiều sức khỏe, hạnh phúc và gặp nhiều điều may mắn trong cuộc sống. Cảm ơn cô vì đã giúp chúng em hiểu hơn về những câu chuyện, sự kiện và giá trị của lịch sử bằng những bài giảng đầy tâm huyết!",
                 icon: "🌹"
             },
             {
                 id: 9,
-                name: "Thầy giáo môn Tin",
-                role: "GIÁO VIÊN MÔN TIN HỌC",
-                quote: "Người mang đến những giờ học tràn đầy năng lượng và hứng khởi.",
-                fullMessage: "Nhân ngày 20/11, lớp chúng em chúc thầy sức khoẻ dồi dào, tràn đầy năng lượng và luôn luôn vui vẻ, năng động trong những giờ dạy học ạ! Chúng em rất cảm ơn thầy vì những giờ học tràn đầy hứng khởi và dễ hiểu.",
+                name: "Thầy Công",
+                role: "GIÁO VIÊN MÔN HÓA HỌC",
+                quote: "Người biến những phương trình khô khan thành sự sống và biến hóa kỳ diệu.",
+                fullMessage: "Trong những giờ học Hóa học đầy màu sắc của thầy, từng phương trình khô khan dường như đều mang sự sống. Thầy không chỉ truyền đạt kiến thức phản ứng trong phòng thí nghiệm, mà còn dạy chúng em cách 'xúc tác' niềm đam mê và sự kiên trì trong cuộc sống!",
                 icon: "💻"
             },
             {
                 id: 10,
+                name: "Thầy giáo môn Tin",
+                role: "GIÁO VIÊN MÔN TIN HỌC",
+                quote: "Người mang đến những giờ học tràn đầy năng lượng và hứng khởi.",
+                fullMessage: "Nhân ngày 20/11, lớp chúng em chúc thầy sức khoẻ dồi dào, tràn đầy năng lượng và luôn luôn vui vẻ, năng động trong những giờ dạy học ạ! Chúng em rất cảm ơn thầy vì những giờ học tràn đầy hứng khởi và dễ hiểu.",
+                icon: "⚽"
+            },
+            {
+                id: 11,
                 name: "Thầy Tuấn thể dục",
                 role: "GIÁO VIÊN THỂ DỤC",
                 quote: "Người rèn luyện sức khỏe, tinh thần thép và sự dẻo dai cho học sinh.",
                 fullMessage: "Nhân ngày 20/11, chúng em chúc thầy Thể dục luôn khỏe như vận động viên, giữ vững phong độ đỉnh cao và lúc nào cũng tràn đầy năng lượng trên sân tập. Cảm ơn thầy đã giúp lũ 'mới lên cấp 3' như chúng em rèn thể lực và có những tiết học khỏe khoắn, vui vẻ!",
-                icon: "⚽"
+                icon: "🌸"
             }
         ];
 
