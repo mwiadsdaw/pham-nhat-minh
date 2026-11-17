@@ -1,59 +1,525 @@
-/* Animation hoa nở từ nụ */
-@keyframes bloomPetal1 {
-    0% {
-        transform: rotate(var(--rot)) scale(0);
-        opacity: 0;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        transform: rotate(var(--rot)) scale(1);
-        opacity: 0.85;
-    }
-}
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mùa Hoa Tri Ân - Chi đoàn 10A2 - THPT Sóc Sơn</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-@keyframes bloomPetal2 {
-    0% {
-        transform: rotate(var(--rot)) scale(0);
-        opacity: 0;
-    }
-    50% {
-        opacity: 0.5;
-    }
-    100% {
-        transform: rotate(var(--rot)) scale(1);
-        opacity: 0.9;
-    }
-}
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#fce4ec',
+                            rose: '#e91e63',
+                            deepRose: '#880e4f',
+                            cream: '#fdfbf7',
+                            gold: '#d4af37',
+                            softText: '#5c4949',
+                            titleRed: '#9e2a2b',
+                        }
+                    },
+                    fontFamily: {
+                        serif: ['"Cormorant Garamond"', 'serif'],
+                        cursive: ['"Dancing Script"', 'cursive'],
+                        sans: ['"Montserrat"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
-@keyframes popCenter {
-    0% {
-        transform: scale(0);
-        opacity: 0;
-    }
-    80% {
-        transform: scale(1.15);
-    }
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
+    <style>
+        body {
+            background-color: #fdf6f4;
+            color: #5c4949;
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+        }
 
-/* Áp dụng hiệu ứng nở hoa */
-.petal-layer-1 {
-    transform-origin: 0px 0px;
-    animation: bloomPetal1 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-}
+        /* Continuous Petal Fall Canvas */
+        #petal-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 50;
+        }
 
-.petal-layer-2 {
-    transform-origin: 0px 0px;
-    animation: bloomPetal2 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    animation-delay: 0.3s; /* Nở sau lớp trong một chút */
-}
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdfbf7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f48fb1;
+            border-radius: 4px;
+        }
 
-.flower-center {
-    transform-origin: 0px 0px;
-    animation: popCenter 0.8s ease-out forwards;
-}
+        /* Pulsing & Spinning Animations */
+        @keyframes bloomPulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.04) rotate(3deg); }
+        }
+        .bloom-icon {
+            animation: bloomPulse 6s ease-in-out infinite;
+            animation-delay: 2s; /* Chờ hiệu ứng nở hoàn tất mới nhịp đập */
+        }
+
+        /* Hiệu ứng hoa nở từ nụ */
+        @keyframes bloomPetal1 {
+            0% {
+                transform: rotate(var(--rot)) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: rotate(var(--rot)) scale(1);
+                opacity: 0.85;
+            }
+        }
+
+        @keyframes bloomPetal2 {
+            0% {
+                transform: rotate(var(--rot)) scale(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.5;
+            }
+            100% {
+                transform: rotate(var(--rot)) scale(1);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes popCenter {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+            80% {
+                transform: scale(1.15);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .petal-layer-1 {
+            transform-origin: 0px 0px;
+            animation: bloomPetal1 1.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.3s;
+        }
+
+        .petal-layer-2 {
+            transform-origin: 0px 0px;
+            animation: bloomPetal2 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            animation-delay: 0.1s;
+        }
+
+        .flower-center {
+            transform-origin: 0px 0px;
+            animation: popCenter 0.8s ease-out forwards;
+        }
+
+        /* Shimmer background */
+        .bg-soft-gradient {
+            background: linear-gradient(180deg, #fce4ec 0%, #fdf6f4 60%, #fff5f5 100%);
+        }
+
+        /* Card Shadow & Hover */
+        .card-hover {
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 30px -10px rgba(233, 30, 99, 0.15);
+        }
+    </style>
+</head>
+<body class="relative">
+
+    <!-- Falling Petals Canvas -->
+    <canvas id="petal-canvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header id="main-header" class="fixed top-0 left-0 right-0 z-40 bg-white/80 backdrop-blur-md transition-all duration-300 border-b border-pink-100/50 shadow-sm opacity-0 -translate-y-full">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <a href="#" class="flex items-center space-x-2">
+                <span class="text-rose-500 text-xl"><i class="fa-solid font-serif">🌸</i></span>
+                <span class="font-serif text-lg font-bold tracking-wider text-brand-titleRed">Mùa Hoa Tri Ân</span>
+            </a>
+            <nav class="hidden md:flex space-x-8 text-sm font-medium text-gray-700">
+                <a href="#welcome" class="hover:text-rose-600 transition-colors">Trang chủ</a>
+                <a href="#thu-tri-an" class="hover:text-rose-600 transition-colors">Khu vườn</a>
+                <a href="#co-chu-nhiem" class="hover:text-rose-600 transition-colors">Gửi cô chủ nhiệm</a>
+                <a href="#loi-ket" class="hover:text-rose-600 transition-colors">Lời kết</a>
+            </nav>
+            <div class="text-xs px-3 py-1 bg-pink-100 text-rose-700 rounded-full font-semibold border border-pink-200">
+                10A2 - THPT Sóc Sơn
+            </div>
+        </div>
+    </header>
+
+    <!-- SECTION 1: LANDING / WELCOME SCREEN -->
+    <section id="welcome" class="min-h-screen w-full relative flex flex-col justify-center items-center text-center px-4 bg-soft-gradient py-12">
+        
+        <!-- Bông hoa trung tâm SVG với Animation Hoa Nở -->
+        <div class="relative mb-8 cursor-pointer group" onclick="scrollToSection('thu-tri-an')">
+            <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center bloom-icon">
+                <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
+                    <defs>
+                        <linearGradient id="petalGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f8bbd0" />
+                            <stop offset="100%" stop-color="#f48fb1" />
+                        </linearGradient>
+                        <linearGradient id="petalGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#f48fb1" />
+                            <stop offset="100%" stop-color="#ad1457" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <g transform="translate(100,100)">
+                        <!-- Lớp 1 (Cánh hoa ngoài - Nở bung ra sau) -->
+                        <path class="petal-layer-1" style="--rot: 0deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 45deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 90deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 135deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 180deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 225deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 270deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+                        <path class="petal-layer-1" style="--rot: 315deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
+
+                        <!-- Lớp 2 (Cánh hoa trong - Nở trước) -->
+                        <path class="petal-layer-2" style="--rot: 22.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 67.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 112.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 157.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 202.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 247.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 292.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+                        <path class="petal-layer-2" style="--rot: 337.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
+
+                        <!-- Nhụy Hoa -->
+                        <g class="flower-center">
+                            <circle cx="0" cy="0" r="16" fill="#ffe082" />
+                            <circle cx="0" cy="0" r="12" fill="#ffd54f" />
+                            <circle cx="-6" cy="-6" r="2" fill="#ffb300" />
+                            <circle cx="6" cy="-6" r="2" fill="#ffb300" />
+                            <circle cx="6" cy="6" r="2" fill="#ffb300" />
+                            <circle cx="-6" cy="6" r="2" fill="#ffb300" />
+                            <circle cx="0" cy="0" r="3" fill="#ff8f00" />
+                        </g>
+                    </g>
+                </svg>
+            </div>
+        </div>
+
+        <!-- Tiêu đề chính -->
+        <h1 class="font-serif text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-brand-titleRed mb-3">
+            MÙA HOA <span class="font-cursive text-rose-600 font-normal ml-2">Tri Ân</span>
+        </h1>
+
+        <div class="tracking-[0.3em] text-gray-500 font-medium text-sm sm:text-base mb-2">
+            20 · 11 · 2026
+        </div>
+        <div class="text-xs sm:text-sm tracking-[0.2em] uppercase font-semibold text-rose-800/80 mb-10">
+            Chi đoàn 10A2 — THPT Sóc Sơn
+        </div>
+
+        <button onclick="scrollToSection('thu-tri-an')" class="px-8 py-3.5 bg-white/90 hover:bg-white text-rose-700 hover:text-rose-800 rounded-full shadow-lg hover:shadow-xl border border-pink-200 transition-all duration-300 font-medium text-sm tracking-wide transform hover:-translate-y-1">
+            Chạm để bước vào khu vườn ký ức
+        </button>
+
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 animate-bounce text-pink-400">
+            <i class="fa-solid fa-chevron-down text-lg"></i>
+        </div>
+    </section>
+
+    <!-- SECTION 2: LỜI DẪN & THƯ TRI ÂN -->
+    <section id="thu-tri-an" class="max-w-4xl mx-auto px-4 py-20 text-center relative">
+        <div class="text-xs uppercase tracking-[0.25em] text-rose-700/70 font-semibold mb-8">
+            Chi đoàn 10A2 ✦ THPT Sóc Sơn
+        </div>
+
+        <div class="bg-white/70 backdrop-blur-sm p-8 sm:p-12 rounded-3xl border border-pink-100 shadow-sm max-w-2xl mx-auto mb-16 relative">
+            <div class="w-12 h-0.5 bg-rose-300 mx-auto mb-6"></div>
+            <p class="font-serif italic text-lg sm:text-xl text-gray-700 leading-relaxed">
+                “Mỗi người thầy, người cô là một mùa hoa.<br class="hidden sm:inline">
+                Có người gieo trí thức, có người thắp sáng ước mơ,<br class="hidden sm:inline">
+                có người âm thầm vun đắp để thanh xuân học trò nở rộ.”
+            </p>
+            <div class="mt-6 flex justify-center">
+                <span class="w-2 h-2 rounded-full bg-pink-300 inline-block mx-1"></span>
+                <span class="w-2 h-2 rounded-full bg-rose-400 inline-block mx-1"></span>
+                <span class="w-2 h-2 rounded-full bg-pink-300 inline-block mx-1"></span>
+            </div>
+        </div>
+
+        <div class="space-y-6 text-gray-700 font-serif text-lg sm:text-2xl leading-relaxed max-w-3xl mx-auto px-2">
+            <h3 class="font-cursive text-2xl sm:text-3xl text-rose-600 font-normal">Lời dẫn</h3>
+            <p>
+                Tháng Mười Một lại về, mang theo những dịu dàng của mùa tri ân. Có những bài học sẽ theo chúng em suốt cuộc đời, có những người thầy, người cô sẽ ở lại mãi trong miền ký ức đẹp nhất của tuổi học trò.
+            </p>
+            <p class="text-rose-800 font-medium">
+                Hôm nay, 10A2 xin gửi đến những người đã và đang vun đắp cho mái trường THPT Sóc Sơn những đóa hoa của lòng biết ơn.
+            </p>
+        </div>
+
+        <div class="mt-24 mb-12">
+            <span class="text-xs uppercase tracking-[0.3em] text-rose-600 font-bold block mb-2">Khu Vườn Tri Ân</span>
+            <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-titleRed">
+                Mười lăm <span class="font-cursive font-normal text-rose-600">đóa hoa,</span><br class="sm:hidden"> mười lăm lời cảm ơn
+            </h2>
+            <p class="text-xs text-gray-500 italic mt-3">Chạm vào một đóa hoa để mở lời tri ân</p>
+        </div>
+    </section>
+
+    <!-- SECTION 3: KHU VƯỜN TRI ÂN -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
+        <div class="mb-8 font-serif text-xl text-rose-900 border-b border-pink-200 pb-3 flex items-center">
+            <span class="text-rose-500 mr-2">I.</span> Những người vun đắp mái trường THPT Sóc Sơn
+        </div>
+
+        <div id="teachers-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- Dynamic Injection from JS -->
+        </div>
+    </section>
+
+    <!-- SECTION 4: GỬI CÔ CHỦ NHIỆM -->
+    <section id="co-chu-nhiem" class="bg-pink-50/60 py-20 border-t border-pink-100">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <span class="text-xs uppercase tracking-[0.25em] text-rose-600 font-bold block mb-2">Gửi cô chủ nhiệm 10A2</span>
+            <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-titleRed mb-8">Cô Lưu Thị Kim Oanh - Người Thuyền Trưởng Tận Tụy</h2>
+            
+            <div class="bg-white p-8 sm:p-12 rounded-3xl shadow-sm border border-pink-100 text-left relative">
+                <div class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-rose-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-md">
+                    💌
+                </div>
+                <p class="font-serif text-gray-700 text-lg leading-relaxed mb-6 pt-2">
+                    Kính gửi Cô Lưu Thị Kim Oanh - cô chủ nhiệm kính yêu của tập thể 10A2! Cảm ơn Cô đã luôn bao dung, kiên nhẫn và đồng hành cùng chúng em từ những ngày đầu tiên bước chân vào mái trường THPT Sóc Sơn. Mỗi giờ sinh hoạt, mỗi lời nhắc nhở của Cô đều là hành trang quý giá giúp chúng em trưởng thành hơn từng ngày.
+                </p>
+                <p class="font-serif text-gray-700 text-lg leading-relaxed italic text-right font-semibold text-rose-800">
+                    — Tập thể học sinh Chi đoàn 10A2
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="loi-ket" class="bg-white py-12 border-t border-pink-100 text-center">
+        <div class="max-w-7xl mx-auto px-4">
+            <h3 class="font-serif text-2xl text-brand-titleRed font-bold mb-2">MÙA HOA Tri Ân 2026</h3>
+            <p class="text-xs text-gray-500 mb-4">Món quà tri ân từ Chi đoàn 10A2 — THPT Sóc Sơn dành tặng Thầy Cô</p>
+            <div class="text-xs text-gray-400">
+                &copy; 2026 Chi đoàn 10A2 THPT Sóc Sơn. Giữ trọn tình cảm tri ân.
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODAL -->
+    <div id="modal-backdrop" class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div id="modal-box" class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100 transition-all transform">
+            <button onclick="closeModal()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+            
+            <div class="text-center mb-6">
+                <div class="w-20 h-20 mx-auto rounded-full bg-gradient-to-tr from-pink-100 via-rose-100 to-amber-50 flex items-center justify-center border-2 border-rose-300 mb-3 shadow-sm text-rose-500 text-3xl">
+                    🌸
+                </div>
+                <span id="modal-role" class="text-xs font-semibold uppercase tracking-wider text-rose-600 block mb-1">NGƯỜI VUN ĐẮP MÁI TRƯỜNG</span>
+                <h3 id="modal-name" class="font-serif text-2xl font-bold text-gray-900">Thầy / Cô</h3>
+            </div>
+
+            <div class="bg-pink-50/50 p-5 rounded-2xl border border-pink-100 mb-6">
+                <p id="modal-message" class="font-serif text-gray-700 italic text-base sm:text-lg leading-relaxed text-center">
+                    "Lời tri ân sâu sắc nhất..."
+                </p>
+            </div>
+
+            <div class="text-center">
+                <button onclick="closeModal()" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-sm font-medium transition-colors shadow-md">
+                    Đóng cửa sổ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const teachersData = [
+            {
+                id: 1,
+                name: "Cô Lưu Thị Kim Oanh",
+                role: "GIÁO VIÊN CHỦ NHIỆM 10A2",
+                quote: "Người gieo mầm tri thức, thắp sáng ước mơ và đồng hành cùng tập thể 10A2 THPT Sóc Sơn.",
+                fullMessage: "Tập thể 10A2 xin kính chúc Cô chủ nhiệm Lưu Thị Kim Oanh luôn ngập tràn niềm vui, sức khỏe, hạnh phúc và luôn giữ ngọn lửa yêu thương, dẫn dắt chúng em trong suốt 3 năm cấp 3 đáng nhớ dưới mái trường THPT Sóc Sơn!",
+                icon: "💐"
+            }
+        ];
+
+        function renderTeachers() {
+            const grid = document.getElementById('teachers-grid');
+            grid.className = "flex justify-center max-w-md mx-auto";
+            grid.innerHTML = teachersData.map(teacher => `
+                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-md card-hover flex flex-col justify-between relative overflow-hidden group w-full">
+                    <div class="absolute top-4 right-4 text-pink-300 text-xl font-serif">🌺</div>
+                    <div>
+                        <div class="w-full h-64 rounded-t-full rounded-b-2xl mb-6 bg-gradient-to-b from-pink-100/80 via-rose-50/60 to-white relative border border-pink-100 flex flex-col items-center justify-center p-4">
+                            <svg class="w-32 h-32 text-rose-300 opacity-40 absolute" viewBox="0 0 100 100" fill="currentColor">
+                                <path d="M50 0 C60 30 70 40 100 50 C70 60 60 70 50 100 C40 70 30 60 0 50 C30 40 40 30 50 0 Z"/>
+                            </svg>
+                            <div class="w-20 h-20 rounded-full bg-white shadow-md border border-pink-200 flex items-center justify-center text-4xl z-10 group-hover:scale-110 transition-transform duration-300">
+                                ${teacher.icon}
+                            </div>
+                            <span class="mt-4 font-serif text-xs text-rose-800 font-bold tracking-widest uppercase z-10 bg-white/90 px-4 py-1.5 rounded-full border border-pink-100 shadow-2xs">
+                                Tri Ân Cô Chủ Nhiệm
+                            </span>
+                        </div>
+
+                        <span class="text-xs uppercase font-bold tracking-widest text-rose-600 block text-center mb-1.5">${teacher.role}</span>
+                        <h4 class="font-serif text-2xl font-bold text-gray-800 text-center mb-3">${teacher.name}</h4>
+                        <p class="font-serif italic text-base text-gray-600 text-center leading-relaxed mb-6 px-2">
+                            “${teacher.quote}”
+                        </p>
+                    </div>
+                    <div class="text-center">
+                        <button onclick="openModal(${teacher.id})" class="inline-flex items-center space-x-2 px-6 py-3 rounded-full bg-slate-900 hover:bg-rose-700 text-white text-xs font-semibold tracking-wide transition-all duration-300 shadow-md transform hover:-translate-y-0.5">
+                            <span>Mở lời tri ân</span>
+                            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openModal(id) {
+            const teacher = teachersData.find(t => t.id === id);
+            if (!teacher) return;
+
+            document.getElementById('modal-role').innerText = teacher.role;
+            document.getElementById('modal-name').innerText = teacher.name;
+            document.getElementById('modal-message').innerText = `“${teacher.fullMessage}”`;
+
+            const backdrop = document.getElementById('modal-backdrop');
+            backdrop.classList.remove('hidden');
+            backdrop.classList.add('flex');
+        }
+
+        function closeModal() {
+            const backdrop = document.getElementById('modal-backdrop');
+            backdrop.classList.add('hidden');
+            backdrop.classList.remove('flex');
+        }
+
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('main-header');
+            if (window.scrollY > 200) {
+                header.classList.remove('opacity-0', '-translate-y-full');
+                header.classList.add('opacity-100', 'translate-y-0');
+            } else {
+                header.classList.add('opacity-0', '-translate-y-full');
+                header.classList.remove('opacity-100', 'translate-y-0');
+            }
+        });
+
+        // Continuous Falling Petals Canvas
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+
+        let width = canvas.width = window.innerWidth;
+        let height = canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', () => {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        });
+
+        class Petal {
+            constructor() {
+                this.reset();
+            }
+
+            reset() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * -height;
+                this.size = Math.random() * 8 + 6;
+                this.speedY = Math.random() * 1.2 + 0.8;
+                this.speedX = Math.random() * 0.8 - 0.4;
+                this.angle = Math.random() * 360;
+                this.spin = Math.random() * 2 - 1;
+                this.color = ['#f8bbd0', '#f48fb1', '#ffcdd2', '#f06292'][Math.floor(Math.random() * 4)];
+                this.opacity = Math.random() * 0.5 + 0.4;
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.x += Math.sin(this.y * 0.01) + this.speedX;
+                this.angle += this.spin;
+
+                if (this.y > height + 20) {
+                    this.reset();
+                    this.y = -10;
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate((this.angle * Math.PI) / 180);
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.quadraticCurveTo(this.size / 2, -this.size, this.size, 0);
+                ctx.quadraticCurveTo(this.size / 2, this.size, 0, 0);
+                ctx.fill();
+
+                ctx.restore();
+            }
+        }
+
+        const petals = Array.from({ length: 35 }, () => new Petal());
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, width, height);
+            petals.forEach(petal => {
+                petal.update();
+                petal.draw();
+            });
+            requestAnimationFrame(animatePetals);
+        }
+
+        window.onload = function () {
+            renderTeachers();
+            animatePetals();
+        };
+    </script>
+</body>
+</html>
