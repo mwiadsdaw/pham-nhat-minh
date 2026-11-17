@@ -108,7 +108,6 @@
             background: linear-gradient(180deg, #fce4ec 0%, #fdf6f4 60%, #fff5f5 100%);
         }
 
-        /* Hiệu ứng hoa trang trí hiện dần */
         .decor-flower {
             opacity: 0;
             transform: scale(0.3) rotate(-20deg);
@@ -129,7 +128,6 @@
             transform: translateY(0);
         }
 
-        /* Hiệu ứng thẻ nghiêng (Tilt & Quick action button) */
         .card-tilt {
             transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.4s ease;
         }
@@ -184,7 +182,6 @@
 
     <!-- SECTION 1: LANDING PAGE -->
     <section id="welcome" class="min-h-screen w-full relative flex flex-col justify-center items-center text-center px-4 bg-soft-gradient py-12">
-        
         <div class="relative mb-8 cursor-pointer group" onclick="goToGarden()">
             <div class="w-48 h-48 sm:w-64 sm:h-64 relative flex items-center justify-center bloom-icon">
                 <svg viewBox="0 0 200 200" class="w-full h-full drop-shadow-md">
@@ -198,7 +195,6 @@
                             <stop offset="100%" stop-color="#ad1457" />
                         </linearGradient>
                     </defs>
-                    
                     <g transform="translate(100,100)">
                         <path class="petal-layer-1" style="--rot: 0deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 45deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
@@ -208,7 +204,6 @@
                         <path class="petal-layer-1" style="--rot: 225deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 270deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
                         <path class="petal-layer-1" style="--rot: 315deg;" d="M0,-85 C25,-85 45,-55 0,0 C-45,-55 -25,-85 0,-85" fill="url(#petalGrad1)" />
-
                         <path class="petal-layer-2" style="--rot: 22.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 67.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 112.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
@@ -217,7 +212,6 @@
                         <path class="petal-layer-2" style="--rot: 247.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 292.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
                         <path class="petal-layer-2" style="--rot: 337.5deg;" d="M0,-60 C20,-60 35,-35 0,0 C-35,-35 -20,-60 0,-60" fill="url(#petalGrad2)" />
-
                         <g class="flower-center">
                             <circle cx="0" cy="0" r="16" fill="#ffe082" />
                             <circle cx="0" cy="0" r="12" fill="#ffd54f" />
@@ -255,30 +249,30 @@
     <!-- SECTION 2: KHU VƯỜN NGẬP TRÀN HOA VÀ THƠ MỘNG -->
     <section id="thu-tri-an" class="min-h-screen max-w-5xl mx-auto px-4 py-20 text-center relative flex flex-col items-center justify-center">
         
-        <!-- ============================================== -->
-        <!-- BỐ TRÍ NGẬP TRÀN CÁC ĐÓA HOA XINH XẮN Ở CÁC GÓC -->
-        <!-- ============================================== -->
-        <!-- Cụm hoa góc trên bên trái -->
+        <!-- BỔ SUNG NHIỀU HOA HƠN Ở CÁC GÓC VÀ VIỀN -->
         <div class="decor-flower absolute top-4 left-4 sm:left-8 text-4xl sm:text-6xl z-10" style="transition-delay: 0.1s;">🌺</div>
         <div class="decor-flower absolute top-12 left-16 sm:left-24 text-3xl sm:text-5xl z-10" style="transition-delay: 0.2s;">🌸</div>
         <div class="decor-flower absolute top-2 left-28 sm:left-40 text-2xl sm:text-4xl z-10" style="transition-delay: 0.3s;">🌼</div>
+        <div class="decor-flower absolute top-28 left-4 sm:left-12 text-4xl sm:text-6xl z-10" style="transition-delay: 0.35s;">🌹</div>
+        <div class="decor-flower absolute top-40 left-8 sm:left-16 text-3xl sm:text-5xl z-10" style="transition-delay: 0.4s;">🌷</div>
 
-        <!-- Cụm hoa góc trên bên phải -->
         <div class="decor-flower absolute top-4 right-6 sm:right-12 text-5xl sm:text-7xl z-10" style="transition-delay: 0.2s;">🌸</div>
         <div class="decor-flower absolute top-16 right-20 sm:right-32 text-3xl sm:text-5xl z-10" style="transition-delay: 0.4s;">🌺</div>
         <div class="decor-flower absolute top-8 right-2 sm:right-6 text-2xl sm:text-4xl z-10" style="transition-delay: 0.5s;">💐</div>
+        <div class="decor-flower absolute top-32 right-8 sm:right-16 text-4xl sm:text-6xl z-10" style="transition-delay: 0.45s;">🌹</div>
+        <div class="decor-flower absolute top-44 right-12 sm:right-24 text-3xl sm:text-5xl z-10" style="transition-delay: 0.55s;">🌷</div>
 
-        <!-- Cụm hoa góc dưới bên trái -->
         <div class="decor-flower absolute bottom-12 left-2 sm:left-10 text-5xl sm:text-7xl z-10" style="transition-delay: 0.3s;">🌹</div>
         <div class="decor-flower absolute bottom-4 left-16 sm:left-28 text-4xl sm:text-6xl z-10" style="transition-delay: 0.5s;">🌸</div>
         <div class="decor-flower absolute bottom-24 left-12 sm:left-20 text-3xl sm:text-5xl z-10" style="transition-delay: 0.7s;">🌼</div>
         <div class="decor-flower absolute bottom-2 left-32 sm:left-44 text-3xl sm:text-5xl z-10" style="transition-delay: 0.8s;">🌺</div>
+        <div class="decor-flower absolute bottom-36 left-6 sm:left-16 text-4xl sm:text-6xl z-10" style="transition-delay: 0.6s;">🌷</div>
 
-        <!-- Cụm hoa góc dưới bên phải -->
         <div class="decor-flower absolute bottom-16 right-4 sm:right-12 text-5xl sm:text-7xl z-10" style="transition-delay: 0.4s;">🌷</div>
         <div class="decor-flower absolute bottom-6 right-20 sm:right-32 text-4xl sm:text-6xl z-10" style="transition-delay: 0.6s;">🌸</div>
         <div class="decor-flower absolute bottom-28 right-16 sm:right-24 text-3xl sm:text-5xl z-10" style="transition-delay: 0.8s;">🌼</div>
         <div class="decor-flower absolute bottom-2 right-36 sm:right-48 text-3xl sm:text-5xl z-10" style="transition-delay: 0.9s;">💐</div>
+        <div class="decor-flower absolute bottom-40 right-8 sm:right-20 text-4xl sm:text-6xl z-10" style="transition-delay: 0.7s;">🌹</div>
 
         <!-- NỘI DUNG VĂN BẢN THƠ MỘNG -->
         <div class="reveal-text text-xs uppercase tracking-[0.3em] text-rose-600 font-semibold mb-4">
@@ -317,13 +311,13 @@
         <div class="reveal-text mt-12 mb-8">
             <span class="text-xs uppercase tracking-[0.3em] text-rose-600 font-bold block mb-2">Khu Vườn Tri Ân</span>
             <h2 class="font-serif text-3xl sm:text-5xl font-bold text-brand-titleRed">
-                Mười lăm <span class="font-cursive font-normal text-rose-600">đóa hoa,</span><br class="sm:hidden"> mười lăm lời cảm ơn
+                Những <span class="font-cursive font-normal text-rose-600">đóa hoa,</span><br class="sm:hidden"> muôn vàn lời cảm ơn
             </h2>
             <p class="text-xs text-gray-500 italic mt-3">Chạm vào một đóa hoa để mở lời tri ân</p>
         </div>
     </section>
 
-    <!-- SECTION 3: DANH SÁCH THẦY CÔ (TỰ ĐỘNG CẬP NHẬT TỪ ADMIN) -->
+    <!-- SECTION 3: DANH SÁCH THẦY CÔ (CÓ THẦY NGUYỄN ĐÌNH MẠNH VÀ CÔ LƯU THỊ KIM OANH) -->
     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
         <div class="reveal-text mb-8 font-serif text-xl text-rose-900 border-b border-pink-200 pb-3 flex items-center justify-between">
             <div class="flex items-center">
@@ -401,7 +395,7 @@
         </div>
     </div>
 
-    <!-- MODAL ĐĂNG NHẬP ADMIN (MẬT KHẨU 123) -->
+    <!-- MODAL ĐĂNG NHẬP ADMIN -->
     <div id="admin-login-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100">
             <button onclick="closeAdminLogin()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center">
@@ -422,7 +416,7 @@
         </div>
     </div>
 
-    <!-- MODAL QUẢN TRỊ THÊM THẦY CÔ (ADMIN DASHBOARD) -->
+    <!-- MODAL QUẢN TRỊ THÊM THẦY CÔ -->
     <div id="admin-dashboard-modal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 relative shadow-2xl border border-pink-100 max-h-[90vh] overflow-y-auto">
             <button onclick="closeAdminDashboard()" class="absolute top-4 right-4 w-9 h-9 bg-gray-100 hover:bg-rose-100 text-gray-500 hover:text-rose-600 rounded-full flex items-center justify-center">
@@ -473,15 +467,23 @@
             if (el) el.scrollIntoView({ behavior: 'smooth' });
         }
 
-        // Quản lý dữ liệu Thầy Cô bằng localStorage để cập nhật trực tiếp
+        // Danh sách mặc định đã bao gồm Cô Lưu Thị Kim Oanh và Thầy Nguyễn Đình Mạnh
         const defaultTeachers = [
             {
                 id: 1,
                 name: "Cô Lưu Thị Kim Oanh",
-                role: "GIÁO VIÊN CHỦ NHIỆM 10A2",
+                role: "GIÁO VIÊN TOÁN/ĐOÀN ĐỘI",
                 quote: "Người gieo mầm tri thức, thắp sáng ước mơ và đồng hành cùng tập thể 10A2 THPT Sóc Sơn.",
                 fullMessage: "Tập thể 10A2 xin kính chúc Cô chủ nhiệm Lưu Thị Kim Oanh luôn ngập tràn niềm vui, sức khỏe, hạnh phúc và luôn giữ ngọn lửa yêu thương, dẫn dắt chúng em trong suốt 3 năm cấp 3 đáng nhớ dưới mái trường THPT Sóc Sơn!",
                 icon: "💐"
+            },
+            {
+                id: 2,
+                name: "Thầy Nguyễn Đình Mạnh",
+                role: "GIÁO VIÊN THPT SÓC SƠN",
+                quote: "Người thầy tâm huyết, luôn hết lòng vì học trò và chắp cánh cho những ước mơ của tập thể 10A2.",
+                fullMessage: "Kính chúc Thầy Nguyễn Đình Mạnh luôn dồi dào sức khỏe, luôn giữ vững nhiệt huyết trong sự nghiệp trồng người cao cả và dìu dắt nhiều thế hệ học sinh đến bến bờ thành công!",
+                icon: "🌷"
             }
         ];
 
@@ -497,7 +499,6 @@
             grid.innerHTML = teachers.map(teacher => `
                 <div class="reveal-text bg-white rounded-3xl p-6 sm:p-8 border border-pink-100 shadow-md card-tilt flex flex-col justify-between relative overflow-hidden group w-full">
                     
-                    <!-- Nút bấm ở góc trái xuất hiện khi rê chuột -->
                     <button onclick="openModal(${teacher.id})" class="quick-action-btn px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-full text-xs font-semibold shadow-md flex items-center space-x-1">
                         <i class="fa-solid fa-heart text-[10px]"></i>
                         <span>Xem lời tri ân</span>
@@ -535,7 +536,6 @@
             document.querySelectorAll('#teachers-grid .reveal-text').forEach(el => observer.observe(el));
         }
 
-        // Modal xem lời tri ân
         function openModal(id) {
             const teachers = getTeachers();
             const teacher = teachers.find(t => t.id === id);
@@ -557,7 +557,6 @@
             backdrop.classList.remove('flex');
         }
 
-        // Admin Auth & Actions
         function openAdminModal() {
             document.getElementById('admin-login-modal').classList.remove('hidden');
             document.getElementById('admin-login-modal').classList.add('flex');
@@ -621,7 +620,6 @@
             }
         }
 
-        // Observer cho hiệu ứng lướt
         const observerOptions = { root: null, threshold: 0.15 };
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -645,7 +643,6 @@
             }
         });
 
-        // Cánh hoa rơi lãng mạn
         const canvas = document.getElementById('petal-canvas');
         const ctx = canvas.getContext('2d');
 
