@@ -4,27 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SÓC SƠN OLYMPIA - Pixel Quiz Game</title>
-  <!-- Google Fonts: Pixel Fonts for Titles/HUD + Be Vietnam Pro for Vietnamese text -->
+  <!-- Google Fonts: Be Vietnam Pro cho Tiếng Việt chuẩn đẹp + Press Start 2P cho số/tiếng Anh -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400&family=Press+Start+2P&display=swap" rel="stylesheet">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tone.js for Retro Audio Effects -->
+  <!-- Tone.js cho Nhạc nền & Hiệu ứng âm thanh 8-bit -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <!-- Canvas Confetti cho hiệu ứng pháo giấy ăn mừng -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
-    /* Global Pixel Aesthetics */
     * {
-      image-rendering: pixelated;
       user-select: none;
+      box-sizing: border-box;
+    }
+
+    svg {
+      image-rendering: pixelated;
     }
 
     body {
       font-family: 'Be Vietnam Pro', sans-serif;
-      background-color: #0b1325;
+      background: radial-gradient(circle at center, #1e293b 0%, #090d16 100%);
       margin: 0;
-      padding: 0;
+      padding: 12px;
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -32,198 +37,279 @@
       overflow-x: hidden;
     }
 
-    /* Pixel Font class for Title / HUD / Numbers */
-    .font-pixel {
+    /* Chỉ dùng font Pixel cho số và từ tiếng Anh không dấu */
+    .font-pixel-en {
       font-family: 'Press Start 2P', monospace;
+      letter-spacing: 0.05em;
     }
 
-    /* Vietnamese Font Class for Question Content */
-    .font-vietnamese {
-      font-family: 'Be Vietnam Pro', sans-serif !important;
-      text-transform: none !important;
+    /* Font chuẩn Tiếng Việt sắc nét, đậm chất game */
+    .font-vi {
+      font-family: 'Be Vietnam Pro', sans-serif;
     }
 
-    /* Pixel Art Container Box */
+    .vi-title-shadow {
+      text-shadow: 2px 2px 0px #3a1a04, -1px -1px 0px #3a1a04, 1px -1px 0px #3a1a04, -1px 1px 0px #3a1a04;
+    }
+
+    /* Khung Game Chính */
     .game-container {
       position: relative;
       width: 100%;
-      max-width: 960px;
-      height: 640px;
-      background: linear-gradient(to bottom, #a7d8de 0%, #c4ebd0 68%, #8acb88 85%);
+      max-width: 980px;
+      min-height: 650px;
+      background: linear-gradient(180deg, #7dd3fc 0%, #bae6fd 45%, #dcfce7 75%, #86efac 90%);
       border: 8px solid #3a1a04;
-      border-radius: 12px;
-      box-shadow: 0 0 0 6px #8c4c14, 0 20px 40px rgba(0,0,0,0.6);
+      border-radius: 16px;
+      box-shadow: 0 0 0 6px #9a3412, 0 25px 50px -12px rgba(0, 0, 0, 0.75);
       overflow: hidden;
+      transition: transform 0.1s;
     }
 
-    /* Ground Layer */
+    /* Lớp mặt đất Pixel */
     .pixel-ground {
       position: absolute;
       bottom: 0;
       left: 0;
       width: 100%;
-      height: 70px;
+      height: 72px;
       background-color: #5c3818;
-      border-top: 14px solid #48a02c;
+      border-top: 14px solid #22c55e;
+      box-shadow: inset 0 6px 0 #15803d;
       background-image: 
-        radial-gradient(#3a200b 20%, transparent 20%),
-        radial-gradient(#2b1605 20%, transparent 20%);
+        radial-gradient(#3a200b 22%, transparent 22%),
+        radial-gradient(#2b1605 22%, transparent 22%);
       background-size: 16px 16px;
       background-position: 0 0, 8px 8px;
       z-index: 10;
     }
 
-    /* Retro Pixel Buttons */
+    /* Nút bấm phong cách Retro 3D */
     .pixel-btn {
-      font-family: 'Press Start 2P', monospace;
-      background-color: #d96b27;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-weight: 800;
+      background: linear-gradient(180deg, #f97316 0%, #ea580c 100%);
       color: #ffffff;
       border: 4px solid #3a1a04;
-      box-shadow: inset -4px -4px 0px #9e3d09, inset 4px 4px 0px #fca34d, 0 6px 0px #240e02;
-      border-radius: 8px;
-      transition: all 0.1s ease;
+      box-shadow: inset -3px -3px 0px #9a3412, inset 3px 3px 0px #fdba74, 0 5px 0px #240e02;
+      border-radius: 10px;
+      transition: all 0.12s cubic-bezier(0.4, 0, 0.2, 1);
       cursor: pointer;
-      text-shadow: 2px 2px 0px #3a1a04;
+      text-shadow: 1.5px 1.5px 0px #3a1a04;
       position: relative;
     }
 
     .pixel-btn:hover:not(:disabled) {
-      background-color: #e87933;
+      background: linear-gradient(180deg, #fb923c 0%, #f97316 100%);
       transform: translateY(-2px);
-      box-shadow: inset -4px -4px 0px #9e3d09, inset 4px 4px 0px #fdba74, 0 8px 0px #240e02;
+      box-shadow: inset -3px -3px 0px #9a3412, inset 3px 3px 0px #fed7aa, 0 7px 0px #240e02;
     }
 
     .pixel-btn:active:not(:disabled) {
-      transform: translateY(4px);
-      box-shadow: inset -4px -4px 0px #fca34d, inset 4px 4px 0px #9e3d09, 0 2px 0px #240e02;
+      transform: translateY(3px);
+      box-shadow: inset -3px -3px 0px #fdba74, inset 3px 3px 0px #9a3412, 0 2px 0px #240e02;
     }
 
-    /* Option Button (Vietnamese text inside pixel border) */
+    /* Nút đáp án */
     .option-btn {
       font-family: 'Be Vietnam Pro', sans-serif;
       font-weight: 600;
-      text-transform: none;
-      background-color: #ffffff;
+      background-color: rgba(255, 255, 255, 0.96);
       color: #1e293b;
       border: 4px solid #3a1a04;
       box-shadow: inset -3px -3px 0px #cbd5e1, inset 3px 3px 0px #ffffff, 0 5px 0px #240e02;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.1s ease;
+      transition: all 0.15s ease;
       text-align: left;
+      position: relative;
+      overflow: hidden;
     }
 
     .option-btn:hover:not(:disabled) {
-      background-color: #f8fafc;
-      border-color: #1e3a8a;
-      transform: translateY(-2px);
-      box-shadow: inset -3px -3px 0px #94a3b8, inset 3px 3px 0px #ffffff, 0 7px 0px #0f172a;
+      background-color: #fef3c7;
+      border-color: #b45309;
+      transform: translateY(-3px) scale(1.01);
+      box-shadow: inset -3px -3px 0px #fde68a, inset 3px 3px 0px #ffffff, 0 8px 0px #451a03;
     }
 
     .option-btn:active:not(:disabled) {
       transform: translateY(3px);
-      box-shadow: inset -3px -3px 0px #ffffff, inset 3px 3px 0px #94a3b8, 0 2px 0px #0f172a;
+      box-shadow: 0 2px 0px #240e02;
     }
 
     .option-btn-correct {
       background-color: #dcfce7 !important;
-      border-color: #14532d !important;
+      border-color: #15803d !important;
       color: #14532d !important;
       box-shadow: inset -3px -3px 0px #86efac, inset 3px 3px 0px #ffffff, 0 5px 0px #052e16 !important;
+      animation: pulseSuccess 0.5s ease;
     }
 
     .option-btn-wrong {
       background-color: #fee2e2 !important;
-      border-color: #7f1d1d !important;
-      color: #991b1b !important;
+      border-color: #b91c1c !important;
+      color: #7f1d1d !important;
       box-shadow: inset -3px -3px 0px #fca5a5, inset 3px 3px 0px #ffffff, 0 5px 0px #450a0a !important;
     }
 
-    /* Pixel Box Overlay */
+    /* Khung thẻ Pixel */
     .pixel-card {
-      background-color: rgba(255, 255, 255, 0.95);
-      border: 6px solid #3a1a04;
-      border-radius: 10px;
-      box-shadow: inset -4px -4px 0px #cbd5e1, inset 4px 4px 0px #ffffff, 0 8px 16px rgba(0,0,0,0.3);
+      background-color: rgba(255, 255, 255, 0.96);
+      border: 5px solid #3a1a04;
+      border-radius: 12px;
+      box-shadow: inset -4px -4px 0px #e2e8f0, inset 4px 4px 0px #ffffff, 0 10px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Thanh tiến trình câu hỏi */
+    .progress-track {
+      background: #451a03;
+      border: 3px solid #3a1a04;
+      border-radius: 999px;
+      height: 14px;
+      overflow: hidden;
+      padding: 2px;
+    }
+    .progress-fill {
+      background: linear-gradient(90deg, #f59e0b, #fde047);
+      height: 100%;
+      border-radius: 999px;
+      transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
     /* Animations */
     @keyframes floatClouds {
-      0% { transform: translateX(0px); }
-      50% { transform: translateX(25px); }
-      100% { transform: translateX(0px); }
+      0%, 100% { transform: translateX(0px); }
+      50% { transform: translateX(35px); }
     }
-    .animate-cloud { animation: floatClouds 6s ease-in-out infinite; }
+    .animate-cloud { animation: floatClouds 8s ease-in-out infinite; }
+
+    @keyframes spinSlow {
+      from { transform: translate(-50%, 0) rotate(0deg); }
+      to { transform: translate(-50%, 0) rotate(360deg); }
+    }
+    .animate-sun-rays { animation: spinSlow 25s linear infinite; }
 
     @keyframes flickerFire {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.85; transform: scale(1.1); }
+      0%, 100% { opacity: 1; transform: scale(1) skewX(0deg); }
+      50% { opacity: 0.85; transform: scale(1.12) skewX(3deg); }
     }
-    .animate-fire { animation: flickerFire 0.35s infinite alternate; }
+    .animate-fire { animation: flickerFire 0.3s infinite alternate; }
 
-    @keyframes bounceChest {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-8px) scale(1.05); }
+    @keyframes bounceIdle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-4px); }
     }
-    .animate-chest { animation: bounceChest 1.2s infinite; }
+    .animate-idle { animation: bounceIdle 1.2s ease-in-out infinite; }
+
+    @keyframes screenShake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    .shake-effect { animation: screenShake 0.4s ease-in-out; }
+
+    @keyframes pulseSuccess {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes chestPop {
+      0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+      70% { transform: scale(1.15) rotate(5deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .animate-chest-open { animation: chestPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+    @keyframes raysRotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .sunburst-bg {
+      background: repeating-conic-gradient(
+        from 0deg,
+        rgba(253, 224, 71, 0.35) 0deg 15deg,
+        transparent 15deg 30deg
+      );
+      animation: raysRotate 12s linear infinite;
+    }
+
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-enter { animation: fadeSlideUp 0.35s ease-out forwards; }
   </style>
 </head>
 <body>
 
-  <!-- MAIN GAME CONTAINER -->
+  <!-- KHUNG GAME CHÍNH -->
   <div class="game-container flex flex-col justify-between" id="gameScreen">
 
-    <!-- HUD / TOP HEADER -->
-    <div class="relative z-20 flex justify-between items-center p-4">
-      <!-- Level Indicator Badge -->
-      <div class="pixel-card px-3 py-2 text-xs md:text-sm text-amber-900 font-bold flex items-center gap-2">
-        <span class="inline-block w-3 h-3 bg-red-600 rounded-full animate-ping"></span>
-        <span id="levelIndicator" class="font-pixel">THPT SÓC SƠN</span>
+    <!-- THANH TRẠNG THÁI (HUD) -->
+    <div class="relative z-20 flex flex-wrap justify-between items-center p-4 gap-2">
+      <!-- Huy hiệu trường & Nút bật/tắt nhạc -->
+      <div class="flex items-center gap-2">
+        <div class="pixel-card px-3.5 py-2 text-xs md:text-sm text-amber-950 font-extrabold flex items-center gap-2">
+          <span class="inline-block w-3 h-3 bg-red-600 rounded-full animate-ping"></span>
+          <span>THPT SÓC SƠN</span>
+        </div>
+
+        <!-- Nút điều khiển âm thanh -->
+        <button id="musicToggleBtn" onclick="toggleMusic()" title="Bật/Tắt nhạc nền" class="pixel-btn px-3 py-2 text-xs flex items-center gap-1.5">
+          <span id="musicIcon">🔇</span>
+          <span class="hidden sm:inline">Nhạc: Tắt</span>
+        </button>
       </div>
 
-      <!-- Health Bar: 5 Pixel Hearts -->
-      <div class="flex items-center space-x-1" id="heartsContainer"></div>
+      <!-- Thanh máu: 5 Trái Tim Pixel -->
+      <div class="pixel-card px-3 py-1.5 flex items-center gap-1" id="heartsContainer"></div>
     </div>
 
-    <!-- BACKGROUND GRAPHICS LAYER -->
-    <div class="absolute inset-0 pointer-events-none z-0">
-      <!-- Pixel Sun -->
-      <svg class="absolute top-6 left-1/2 transform -translate-x-1/2 w-16 h-16" viewBox="0 0 16 16">
+    <!-- LỚP ĐỒ HỌA NỀN PIXEL ART -->
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+      <!-- Hào quang mặt trời -->
+      <div class="absolute -top-6 left-1/2 w-36 h-36 rounded-full bg-yellow-300/30 blur-md animate-sun-rays"></div>
+      <!-- Mặt trời Pixel -->
+      <svg class="absolute top-5 left-1/2 transform -translate-x-1/2 w-16 h-16" viewBox="0 0 16 16">
         <rect x="2" y="2" width="12" height="12" fill="#FBBF24" />
         <rect x="0" y="6" width="16" height="4" fill="#F59E0B" />
         <rect x="6" y="0" width="4" height="16" fill="#F59E0B" />
         <rect x="4" y="4" width="8" height="8" fill="#FEF08A" />
       </svg>
 
-      <!-- Pixel Clouds -->
-      <svg class="absolute top-8 left-10 w-24 h-12 animate-cloud" viewBox="0 0 24 12">
+      <!-- Mây trôi -->
+      <svg class="absolute top-10 left-8 w-28 h-14 animate-cloud opacity-90" viewBox="0 0 24 12">
         <rect x="4" y="4" width="16" height="6" fill="#FFFFFF" />
         <rect x="6" y="2" width="10" height="8" fill="#FFFFFF" />
         <rect x="2" y="6" width="20" height="4" fill="#E2E8F0" />
       </svg>
-      <svg class="absolute top-12 right-16 w-28 h-14 animate-cloud" style="animation-delay: 2s;" viewBox="0 0 24 12">
+      <svg class="absolute top-16 right-12 w-32 h-16 animate-cloud opacity-90" style="animation-delay: 2.5s;" viewBox="0 0 24 12">
         <rect x="4" y="4" width="16" height="6" fill="#FFFFFF" />
         <rect x="6" y="2" width="10" height="8" fill="#FFFFFF" />
         <rect x="2" y="6" width="20" height="4" fill="#CBD5E1" />
       </svg>
 
-      <!-- Flying Pixel Bird -->
-      <svg class="absolute top-16 left-1/3 w-8 h-6 animate-pulse" viewBox="0 0 12 8">
+      <!-- Chim Pixel -->
+      <svg class="absolute top-20 left-1/3 w-9 h-7 animate-idle" viewBox="0 0 12 8">
         <rect x="2" y="2" width="6" height="3" fill="#1E40AF" />
         <rect x="6" y="0" width="3" height="3" fill="#3B82F6" />
         <rect x="9" y="1" width="2" height="2" fill="#F97316" />
         <rect x="0" y="3" width="4" height="2" fill="#1D4ED8" />
       </svg>
 
-      <!-- Mountain (Left) -->
-      <svg class="absolute bottom-16 left-0 w-44 h-56" viewBox="0 0 100 120" preserveAspectRatio="none">
-        <polygon points="0,120 40,30 60,60 100,120" fill="#64748B" />
-        <polygon points="0,120 30,40 45,70 70,120" fill="#475569" />
-        <polygon points="40,30 48,45 35,45" fill="#F8FAFC" />
+      <!-- Núi Sóc (Trái) -->
+      <svg class="absolute bottom-16 left-0 w-52 h-60" viewBox="0 0 100 120" preserveAspectRatio="none">
+        <polygon points="0,120 40,25 65,60 100,120" fill="#64748B" />
+        <polygon points="0,120 30,38 48,70 72,120" fill="#475569" />
+        <polygon points="40,25 50,42 33,42" fill="#F8FAFC" />
       </svg>
 
-      <!-- Pixel Tree (Right) -->
-      <svg class="absolute bottom-16 right-4 w-36 h-48" viewBox="0 0 40 50">
+      <!-- Cây cổ thụ (Phải) -->
+      <svg class="absolute bottom-16 right-3 w-40 h-52" viewBox="0 0 40 50">
         <rect x="8" y="4" width="24" height="24" fill="#15803D" />
         <rect x="12" y="0" width="16" height="28" fill="#22C55E" />
         <rect x="4" y="8" width="32" height="16" fill="#166534" />
@@ -231,28 +317,29 @@
         <rect x="18" y="28" width="4" height="22" fill="#9A3412" />
       </svg>
 
-      <!-- Character (Left) -->
-      <svg class="absolute bottom-14 left-10 w-16 h-24" viewBox="0 0 16 24">
-        <rect x="4" y="2" width="8" height="4" fill="#FDE047" />
+      <!-- Nhân vật học sinh (Trái) -->
+      <svg class="absolute bottom-16 left-12 w-16 h-24 animate-idle" viewBox="0 0 16 24">
+        <rect x="4" y="2" width="8" height="4" fill="#1E293B" />
         <rect x="4" y="6" width="8" height="5" fill="#FFEDD5" />
-        <rect x="5" y="7" width="2" height="2" fill="#1E293B" />
-        <rect x="9" y="7" width="2" height="2" fill="#1E293B" />
-        <rect x="3" y="11" width="10" height="6" fill="#EA580C" />
-        <rect x="4" y="17" width="8" height="2" fill="#CA8A04" />
+        <rect x="5" y="7" width="2" height="2" fill="#0F172A" />
+        <rect x="9" y="7" width="2" height="2" fill="#0F172A" />
+        <rect x="3" y="11" width="10" height="6" fill="#FFFFFF" />
+        <rect x="7" y="11" width="2" height="5" fill="#EF4444" />
+        <rect x="4" y="17" width="8" height="2" fill="#1E3A8A" />
         <rect x="4" y="19" width="3" height="4" fill="#1E3A8A" />
         <rect x="9" y="19" width="3" height="4" fill="#1E3A8A" />
       </svg>
 
-      <!-- Campfire (Center Left) -->
-      <svg class="absolute bottom-14 left-44 w-10 h-10 animate-fire" viewBox="0 0 16 16">
+      <!-- Lửa trại -->
+      <svg class="absolute bottom-16 left-44 w-11 h-11 animate-fire" viewBox="0 0 16 16">
         <rect x="2" y="12" width="12" height="3" fill="#78350F" />
         <rect x="6" y="6" width="4" height="6" fill="#EF4444" />
         <rect x="7" y="4" width="2" height="4" fill="#F97316" />
         <rect x="7" y="8" width="2" height="2" fill="#FDE047" />
       </svg>
 
-      <!-- Black Cat Character (Right) -->
-      <svg class="absolute bottom-14 right-36 w-14 h-16" viewBox="0 0 16 18">
+      <!-- Mèo đen may mắn (Phải) -->
+      <svg class="absolute bottom-16 right-36 w-14 h-16 animate-idle" style="animation-delay: 0.6s;" viewBox="0 0 16 18">
         <rect x="3" y="2" width="3" height="3" fill="#1E293B" />
         <rect x="10" y="2" width="3" height="3" fill="#1E293B" />
         <rect x="3" y="4" width="10" height="7" fill="#0F172A" />
@@ -263,138 +350,180 @@
       </svg>
     </div>
 
-    <!-- MAIN INTERACTIVE CONTENT AREA -->
-    <div class="relative z-20 flex-1 flex flex-col justify-center items-center px-4 py-2">
+    <!-- KHU VỰC NỘI DUNG TƯƠNG TÁC -->
+    <div class="relative z-20 flex-1 flex flex-col justify-center items-center px-4 py-2 mb-12">
       
-      <!-- 1. START MENU SCREEN -->
-      <div id="startScreen" class="w-full max-w-lg text-center flex flex-col items-center">
-        <div class="pixel-card p-6 w-full mb-6">
-          <h1 class="text-2xl md:text-3xl font-extrabold text-amber-900 tracking-wider mb-2 font-pixel">
+      <!-- 1. MÀN HÌNH BẮT ĐẦU -->
+      <div id="startScreen" class="w-full max-w-lg text-center flex flex-col items-center animate-enter">
+        <div class="pixel-card p-7 w-full mb-6 bg-gradient-to-b from-white to-amber-50">
+          <div class="inline-block bg-amber-100 border-2 border-amber-700 text-amber-900 text-xs font-extrabold px-3 py-1 rounded-full mb-3">
+            🏆 CHÀO MỪNG ĐẾN VỚI
+          </div>
+          <h1 class="text-2xl md:text-3xl font-extrabold text-amber-600 tracking-wider mb-2 font-pixel-en vi-title-shadow">
             NIGHT GAME
           </h1>
-          <p class="text-sm font-bold text-amber-800 mb-1 font-vietnamese">TRƯỜNG THPT SÓC SƠN</p>
-          <p class="text-xs text-slate-600 font-medium font-vietnamese">Hành Trình Tìm Hiểu Truyền Thống Nhà Trường</p>
+          <h2 class="text-lg md:text-xl font-black text-amber-950 mb-1">
+            TRƯỜNG THPT SÓC SƠN
+          </h2>
+          <p class="text-xs md:text-sm text-slate-600 font-semibold">
+            Hành Trình Khám Phá Truyền Thống & Lịch Sử Nhà Trường
+          </p>
         </div>
 
-        <div class="flex flex-col space-y-4 w-64">
-          <button onclick="startGame()" class="pixel-btn py-3 text-xs md:text-sm font-bold">
-            LET'S PLAY
+        <div class="flex flex-col space-y-3.5 w-64">
+          <button onclick="startGame()" class="pixel-btn py-3.5 text-sm md:text-base tracking-wide">
+            ▶ BẮT ĐẦU CHƠI
           </button>
-          <button onclick="showInstructions()" class="pixel-btn py-3 text-xs md:text-sm font-bold">
-            HƯỚNG DẪN
+          <button onclick="showInstructions()" class="pixel-btn py-3 text-xs md:text-sm" style="background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%); box-shadow: inset -3px -3px 0px #1e40af, inset 3px 3px 0px #93c5fd, 0 5px 0px #172554;">
+            📜 HƯỚNG DẪN
           </button>
         </div>
       </div>
 
-      <!-- 2. INSTRUCTIONS SCREEN -->
-      <div id="instructionsScreen" class="hidden w-full max-w-lg text-center">
-        <div class="pixel-card p-6 text-left mb-4 font-vietnamese">
-          <h2 class="text-base font-bold text-amber-900 mb-4 text-center font-pixel">HƯỚNG DẪN CHƠI</h2>
-          <ul class="text-xs md:text-sm text-slate-800 space-y-3 leading-relaxed">
-            <li>• Bạn có <strong>5 Trái Tim (Máu)</strong> tương ứng với 5 lượt thử thách.</li>
-            <li>• Bộ câu hỏi gồm <strong>6 Câu hỏi trắc nghiệm</strong> về lịch sử & truyền thống THPT Sóc Sơn.</li>
-            <li>• Với mỗi câu trả lời <strong>ĐÚNG</strong>, bạn nhận được <strong>1 RƯƠNG BÁU PIXEL</strong> ngẫu nhiên.</li>
-            <li>• Trả lời sai bị trừ 1 tim. Hết tim trò chơi sẽ kết thúc!</li>
+      <!-- 2. MÀN HÌNH HƯỚNG DẪN -->
+      <div id="instructionsScreen" class="hidden w-full max-w-lg text-center animate-enter">
+        <div class="pixel-card p-6 text-left mb-5">
+          <h2 class="text-lg font-black text-amber-900 mb-4 text-center border-b-2 border-amber-200 pb-2">
+            📜 LUẬT CHƠI & HƯỚNG DẪN
+          </h2>
+          <ul class="text-xs md:text-sm text-slate-800 space-y-3 leading-relaxed font-medium">
+            <li class="flex items-start gap-2">
+              <span>❤️</span>
+              <span>Bạn khởi đầu với <strong>5 Trái Tim</strong> tương ứng với 5 lượt thử thách.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span>❓</span>
+              <span>Chinh phục <strong>6 Câu hỏi trắc nghiệm</strong> về lịch sử & truyền thống THPT Sóc Sơn.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span>🎁</span>
+              <span>Mỗi câu trả lời <strong>ĐÚNG</strong> sẽ mở khóa <strong>1 Rương Báu Truyền Thống</strong> kèm vật phẩm ngẫu nhiên.</span>
+            </li>
+            <li class="flex items-start gap-2">
+              <span>⚡</span>
+              <span>Trả lời sai sẽ bị trừ 1 tim. Hết tim trò chơi sẽ kết thúc!</span>
+            </li>
           </ul>
         </div>
-        <button onclick="showStartScreen()" class="pixel-btn py-3 px-8 text-xs font-bold">
-          TRỞ VỀ
+        <button onclick="showStartScreen()" class="pixel-btn py-3 px-8 text-xs md:text-sm">
+          ⬅ QUAY LẠI
         </button>
       </div>
 
-      <!-- 3. QUIZ QUESTION SCREEN -->
-      <div id="quizScreen" class="hidden w-full max-w-2xl flex flex-col items-center">
-        <!-- Question Box -->
-        <div class="pixel-card p-5 w-full mb-4 text-left">
-          <div class="text-xs text-amber-800 font-bold mb-2 font-pixel" id="questionNumber">
-            CÂU HỎI 1/6
-          </div>
-          <div class="text-sm md:text-base text-slate-900 font-semibold leading-relaxed font-vietnamese" id="questionText">
-            Nội dung câu hỏi ở đây...
+      <!-- 3. MÀN HÌNH CÂU HỎI -->
+      <div id="quizScreen" class="hidden w-full max-w-2xl flex flex-col items-center animate-enter">
+        <!-- Thanh tiến độ -->
+        <div class="w-full mb-3 flex items-center gap-3">
+          <span class="pixel-card px-2.5 py-1 text-xs font-extrabold text-amber-950 whitespace-nowrap" id="questionNumber">
+            Câu 1 / 6
+          </span>
+          <div class="progress-track flex-1">
+            <div id="progressBar" class="progress-fill" style="width: 16.6%;"></div>
           </div>
         </div>
 
-        <!-- Options Container -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mb-4" id="optionsGrid">
-          <!-- Dynamically populated -->
+        <!-- Hộp câu hỏi -->
+        <div class="pixel-card p-5 w-full mb-4 text-left bg-gradient-to-br from-white to-amber-50/60">
+          <div class="text-sm md:text-base text-slate-900 font-bold leading-relaxed" id="questionText">
+            Nội dung câu hỏi...
+          </div>
         </div>
 
-        <!-- Feedback & Explanation Banner -->
-        <div id="feedbackBanner" class="hidden pixel-card p-4 w-full text-center transition-all font-vietnamese">
-          <div id="feedbackText" class="text-sm font-bold mb-1"></div>
-          <div id="explanationText" class="text-xs text-slate-700 font-normal leading-relaxed mb-3"></div>
-          <button id="actionBtn" onclick="handleActionAfterAnswer()" class="pixel-btn py-2 px-6 text-xs font-bold">
+        <!-- Lưới đáp án -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mb-4" id="optionsGrid"></div>
+
+        <!-- Khung giải thích sau khi chọn -->
+        <div id="feedbackBanner" class="hidden pixel-card p-4 w-full text-center animate-enter">
+          <div id="feedbackText" class="text-sm md:text-base font-extrabold mb-1"></div>
+          <div id="explanationText" class="text-xs md:text-sm text-slate-700 font-medium leading-relaxed mb-3"></div>
+          <button id="actionBtn" onclick="handleActionAfterAnswer()" class="pixel-btn py-2.5 px-7 text-xs md:text-sm">
             TIẾP TỤC ➔
           </button>
         </div>
       </div>
 
-      <!-- 4. REWARD / LOOT BOX POPUP MODAL -->
-      <div id="rewardModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="pixel-card p-6 w-full max-w-sm text-center flex flex-col items-center animate-bounce-short">
-          <div class="text-xs text-amber-800 font-bold mb-2 font-pixel">PHẦN THƯỞNG PHÒNG TRUYỀN THỐNG</div>
-          
-          <!-- Animated Pixel Treasure Chest SVG -->
-          <div class="my-4 animate-chest">
-            <svg class="w-20 h-20" viewBox="0 0 16 16">
-              <rect x="2" y="6" width="12" height="8" fill="#78350F" />
-              <rect x="1" y="4" width="14" height="3" fill="#B45309" />
-              <rect x="7" y="7" width="2" height="3" fill="#FACC15" />
-              <rect x="2" y="9" width="12" height="1" fill="#451A03" />
-              <rect x="4" y="6" width="1" height="8" fill="#F59E0B" />
-              <rect x="11" y="6" width="1" height="8" fill="#F59E0B" />
-            </svg>
-          </div>
+      <!-- 4. POPUP MỞ RƯƠNG BÁU -->
+      <div id="rewardModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+        <div class="pixel-card p-6 w-full max-w-sm text-center flex flex-col items-center relative overflow-hidden animate-chest-open">
+          <!-- Tia sáng xoay nền -->
+          <div class="absolute inset-0 sunburst-bg pointer-events-none"></div>
 
-          <div class="text-sm font-extrabold text-green-700 mb-1 font-vietnamese" id="rewardName">
-            Huy Hiệu THPT Sóc Sơn
-          </div>
-          <div class="text-xs text-slate-600 mb-5 font-vietnamese" id="rewardDesc">
-            Bạn vừa mở khóa một vật phẩm truyền thống quý giá!
-          </div>
+          <div class="relative z-10 w-full flex flex-col items-center">
+            <span class="bg-amber-500 text-white text-xs font-extrabold px-3 py-1 rounded-full border-2 border-amber-900 mb-3 shadow">
+              ✨ RƯƠNG BÁU ĐÃ MỞ ✨
+            </span>
+            
+            <!-- SVG Rương Báu Đã Mở Nắp + Vật Phẩm Phát Sáng -->
+            <div class="my-3 relative">
+              <svg class="w-24 h-24 drop-shadow-lg" viewBox="0 0 16 16">
+                <!-- Nắp rương mở lên trên -->
+                <rect x="1" y="1" width="14" height="3" fill="#B45309" />
+                <rect x="2" y="0" width="12" height="1" fill="#D97706" />
+                <!-- Ánh vàng bên trong -->
+                <rect x="2" y="4" width="12" height="3" fill="#FEF08A" />
+                <rect x="6" y="3" width="4" height="3" fill="#FACC15" />
+                <!-- Thân rương -->
+                <rect x="2" y="7" width="12" height="8" fill="#78350F" />
+                <rect x="4" y="7" width="1" height="8" fill="#F59E0B" />
+                <rect x="11" y="7" width="1" height="8" fill="#F59E0B" />
+                <rect x="7" y="7" width="2" height="2" fill="#FACC15" />
+              </svg>
+            </div>
 
-          <button onclick="collectRewardAndContinue()" class="pixel-btn py-3 px-6 text-xs font-bold w-full">
-            NHẬN QUÀ & TIẾP TỤC
-          </button>
+            <div class="text-base md:text-lg font-black text-emerald-700 mb-1" id="rewardName">
+              Huy Hiệu THPT Sóc Sơn
+            </div>
+            <div class="text-xs md:text-sm text-slate-700 font-medium mb-5 px-2" id="rewardDesc">
+              Bạn vừa mở khóa một vật phẩm truyền thống quý giá!
+            </div>
+
+            <button onclick="collectRewardAndContinue()" class="pixel-btn py-3 px-6 text-xs md:text-sm w-full" style="background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%); box-shadow: inset -3px -3px 0px #14532d, inset 3px 3px 0px #86efac, 0 5px 0px #052e16;">
+              🎒 CẤT VÀO TÚI & TIẾP TỤC
+            </button>
+          </div>
         </div>
       </div>
 
-      <!-- 5. END GAME RESULT SCREEN -->
-      <div id="resultScreen" class="hidden w-full max-w-lg text-center">
-        <div class="pixel-card p-6 mb-4 font-vietnamese">
-          <h2 id="resultTitle" class="text-xl md:text-2xl font-bold mb-1 font-pixel">VICTORY!</h2>
-          <p id="resultSubtitle" class="text-xs md:text-sm text-slate-700 mb-4">Bạn thật xuất sắc!</p>
+      <!-- 5. MÀN HÌNH KẾT QUẢ -->
+      <div id="resultScreen" class="hidden w-full max-w-lg text-center animate-enter">
+        <div class="pixel-card p-6 mb-4">
+          <h2 id="resultTitle" class="text-2xl md:text-3xl font-extrabold mb-1 font-pixel-en vi-title-shadow">VICTORY!</h2>
+          <p id="resultSubtitle" class="text-xs md:text-sm text-slate-700 font-semibold mb-4">Bạn thật xuất sắc!</p>
           
-          <div class="text-sm font-bold text-amber-900 mb-2">
-            ĐIỂM SỐ: <span id="finalScore" class="text-red-600 font-pixel">6/6</span>
-          </div>
-          <div class="text-xs text-slate-600 mb-4" id="heartsRemainingText">
-            Số tim còn lại: 5/5
+          <div class="flex justify-center gap-4 mb-4">
+            <div class="bg-amber-100 border-2 border-amber-800 rounded-lg px-4 py-2">
+              <div class="text-xs text-amber-900 font-bold">ĐIỂM SỐ</div>
+              <div id="finalScore" class="text-lg font-extrabold text-red-600 font-pixel-en mt-1">6/6</div>
+            </div>
+            <div class="bg-red-50 border-2 border-red-800 rounded-lg px-4 py-2">
+              <div class="text-xs text-red-900 font-bold">TIM CÒN LẠI</div>
+              <div id="heartsRemainingText" class="text-lg font-extrabold text-red-600 font-pixel-en mt-1">5/5</div>
+            </div>
           </div>
 
-          <!-- Collected Inventory / Loot Summary -->
-          <div class="border-t-2 border-slate-300 pt-3 text-left">
-            <div class="text-xs font-bold text-amber-900 mb-2 font-pixel text-center">KHO BÁU ĐÃ THU THẬP</div>
-            <div class="grid grid-cols-2 gap-2" id="inventoryList">
-              <!-- Rendered items -->
+          <!-- Kho báu đã thu thập -->
+          <div class="border-t-2 border-slate-200 pt-3 text-left">
+            <div class="text-xs font-extrabold text-amber-950 mb-2.5 text-center uppercase tracking-wider">
+              🏆 KHO BÁU TRUYỀN THỐNG ĐÃ THU THẬP
             </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-36 overflow-y-auto pr-1" id="inventoryList"></div>
           </div>
         </div>
 
-        <button onclick="startGame()" class="pixel-btn py-3 px-8 text-xs font-bold">
-          CHƠI LẠI
+        <button onclick="startGame()" class="pixel-btn py-3.5 px-8 text-xs md:text-sm">
+          🔄 CHƠI LẠI TỪ ĐẦU
         </button>
       </div>
 
     </div>
 
-    <!-- BOTTOM PIXEL GROUND -->
+    <!-- MẶT ĐẤT PIXEL -->
     <div class="pixel-ground"></div>
   </div>
 
-  <!-- JAVASCRIPT GAME LOGIC -->
+  <!-- LOGIC TRÒ CHƠI & HỆ THỐNG ÂM THANH 8-BIT -->
   <script>
-    // 6 FULL QUESTIONS DATASET
+    // DỮ LIỆU 6 CÂU HỎI
     const quizData = [
       {
         question: "1. Truyền thống nào được xem là một trong những giá trị cốt lõi mà các thế hệ thầy và trò Trường THPT Sóc Sơn luôn gìn giữ?",
@@ -464,17 +593,17 @@
       }
     ];
 
-    // POSSIBLE REWARDS FOR CORRECT ANSWERS
+    // DANH SÁCH VẬT PHẨM RƯƠNG BÁU
     const rewardPool = [
-      { name: "Huy Hiệu Sóc Sơn", desc: "Huy hiệu vinh danh học sinh ưu tú THPT Sóc Sơn!" },
-      { name: "Kim Cương Olympia", desc: "Vật phẩm trí tuệ từ sân chơi Đường lên đỉnh Olympia!" },
-      { name: "Rương Báu Hoàng Gia", desc: "Chứa đựng bề dày lịch sử và truyền thống nhà trường!" },
-      { name: "Ngôi Sao May Mắn", desc: "Tăng thêm tự tin trên hành trình học tập!" },
-      { name: "Nấm Tăng Lực Pixel", desc: "Tiếp thêm năng lượng vượt qua thử thách!" },
-      { name: "Trái Tim Bí Ẩn", desc: "Biểu tượng cho tình đoàn kết thầy trò Sóc Sơn!" }
+      { icon: "🏅", name: "Huy Hiệu Sóc Sơn", desc: "Huy hiệu vinh danh học sinh ưu tú THPT Sóc Sơn!" },
+      { icon: "💎", name: "Vòng Nguyệt Quế Olympia", desc: "Biểu tượng trí tuệ từ 2 cầu truyền hình Đường lên đỉnh Olympia!" },
+      { icon: "📜", name: "Chiếu Dời Đô & Sử Ký", desc: "Ghi dấu mốc lịch sử thành lập từ năm 1983!" },
+      { icon: "⭐", name: "Ngôi Sao Hiếu Học", desc: "Tỏa sáng tinh thần vượt khó, thi đua dạy tốt - học tốt!" },
+      { icon: "🔥", name: "Ngọn Đuốc Truyền Thống", desc: "Thắp sáng ngọn lửa nhiệt huyết của tuổi trẻ Sóc Sơn!" },
+      { icon: "💖", name: "Trái Tim Đoàn Kết", desc: "Biểu tượng cho tình nghĩa thầy trò gắn bó keo sơn!" }
     ];
 
-    // GAME STATE VARIABLES
+    // TRẠNG THÁI GAME
     let currentQuestionIndex = 0;
     let score = 0;
     let lives = 5;
@@ -482,40 +611,104 @@
     let collectedRewards = [];
     let pendingReward = null;
 
-    // TONE.JS SOUND EFFECTS
-    const correctSynth = new Tone.Synth({
-      oscillator: { type: "square" },
-      envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }
-    }).toDestination();
+    // --- HỆ THỐNG ÂM THANH & NHẠC NỀN CHIPTUNE (TONE.JS) ---
+    let isMusicPlaying = false;
+    let bgmLoop = null;
 
-    const wrongSynth = new Tone.Synth({
-      oscillator: { type: "sawtooth" },
-      envelope: { attack: 0.01, decay: 0.2, sustain: 0, release: 0.2 }
+    // Synth cho nhạc nền nhẹ nhàng vui tươi
+    const bgmSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: "triangle" },
+      envelope: { attack: 0.02, decay: 0.15, sustain: 0.1, release: 0.4 }
     }).toDestination();
+    bgmSynth.volume.value = -16; // Âm lượng vừa phải để không át tiếng hiệu ứng
 
-    function playSound(isCorrect) {
-      Tone.start();
-      if (isCorrect) {
-        correctSynth.triggerAttackRelease("E5", "16n", Tone.now());
-        correctSynth.triggerAttackRelease("G5", "16n", Tone.now() + 0.08);
+    // Giai điệu chiptune phiêu lưu lặp lại
+    const melodyNotes = [
+      "C4", "E4", "G4", "E4", "A4", "G4", "E4", "C4",
+      "D4", "F4", "A4", "F4", "G4", "B4", "D5", "B4"
+    ];
+    let noteIndex = 0;
+
+    function initBGM() {
+      if (bgmLoop) return;
+      bgmLoop = new Tone.Loop((time) => {
+        const note = melodyNotes[noteIndex % melodyNotes.length];
+        bgmSynth.triggerAttackRelease(note, "8n", time);
+        noteIndex++;
+      }, "4n");
+      Tone.Transport.bpm.value = 128;
+    }
+
+    async function toggleMusic() {
+      await Tone.start();
+      initBGM();
+      const btn = document.getElementById('musicToggleBtn');
+      if (!isMusicPlaying) {
+        Tone.Transport.start();
+        bgmLoop.start(0);
+        isMusicPlaying = true;
+        btn.innerHTML = `<span>🔊</span><span class="hidden sm:inline">Nhạc: Bật</span>`;
       } else {
-        wrongSynth.triggerAttackRelease("C3", "8n", Tone.now());
+        bgmLoop.stop();
+        Tone.Transport.pause();
+        isMusicPlaying = false;
+        btn.innerHTML = `<span>🔇</span><span class="hidden sm:inline">Nhạc: Tắt</span>`;
       }
     }
 
-    // INITIAL RENDER
+    function ensureMusicStarted() {
+      if (!isMusicPlaying) {
+        toggleMusic();
+      }
+    }
+
+    // Hiệu ứng âm thanh trả lời Đúng / Sai
+    const sfxSynth = new Tone.PolySynth(Tone.Synth, {
+      oscillator: { type: "square" },
+      envelope: { attack: 0.01, decay: 0.15, sustain: 0.05, release: 0.2 }
+    }).toDestination();
+    sfxSynth.volume.value = -8;
+
+    function playAnswerSound(isCorrect) {
+      Tone.start();
+      const now = Tone.now();
+      if (isCorrect) {
+        sfxSynth.triggerAttackRelease("C5", "16n", now);
+        sfxSynth.triggerAttackRelease("E5", "16n", now + 0.08);
+        sfxSynth.triggerAttackRelease("G5", "8n", now + 0.16);
+      } else {
+        sfxSynth.triggerAttackRelease("Eb3", "8n", now);
+        sfxSynth.triggerAttackRelease("C3", "4n", now + 0.15);
+      }
+    }
+
+    // Hiệu ứng âm thanh MỞ RƯƠNG BÁU (Tiếng mở khóa + Fanfare lấp lánh)
+    function playChestOpenSound() {
+      Tone.start();
+      const now = Tone.now();
+      // Tiếng chốt khóa bật mở
+      sfxSynth.triggerAttackRelease("G4", "32n", now);
+      sfxSynth.triggerAttackRelease("C5", "32n", now + 0.05);
+      // Chuỗi hợp âm Fanfare nhận báu vật kiểu Zelda/Mario
+      sfxSynth.triggerAttackRelease("E5", "16n", now + 0.14);
+      sfxSynth.triggerAttackRelease("G5", "16n", now + 0.22);
+      sfxSynth.triggerAttackRelease("C6", "16n", now + 0.30);
+      sfxSynth.triggerAttackRelease(["E5", "G5", "C6", "E6"], "4n", now + 0.40);
+    }
+
+    // KHỞI TẠO BAN ĐẦU
     window.onload = function() {
       renderHearts();
     };
 
-    // RENDER LIVES (HEARTS)
+    // HIỂN THỊ TRÁI TIM
     function renderHearts() {
       const container = document.getElementById('heartsContainer');
       container.innerHTML = '';
       for (let i = 0; i < 5; i++) {
         const isFilled = i < lives;
         container.innerHTML += `
-          <svg class="w-6 h-6 md:w-7 md:h-7" viewBox="0 0 16 16">
+          <svg class="w-6 h-6 md:w-7 md:h-7 transition-transform duration-300 ${isFilled ? 'scale-100' : 'scale-75 opacity-40'}" viewBox="0 0 16 16">
             <path fill="${isFilled ? '#EF4444' : '#64748B'}" d="M2 3 h4 v2 h-4 z M10 3 h4 v2 h-4 z M0 5 h8 v2 h-8 z M8 5 h8 v2 h-8 z M0 7 h16 v4 h-16 z M2 11 h12 v2 h-12 z M4 13 h8 v2 h-8 z M6 15 h4 v1 h-4 z" />
             <path fill="${isFilled ? '#FCA5A5' : '#94A3B8'}" d="M3 4 h1 v1 h-1 z" />
           </svg>
@@ -523,7 +716,7 @@
       }
     }
 
-    // SCREEN NAVIGATION
+    // ĐIỀU HƯỚNG MÀN HÌNH
     function showStartScreen() {
       document.getElementById('startScreen').classList.remove('hidden');
       document.getElementById('instructionsScreen').classList.add('hidden');
@@ -536,8 +729,9 @@
       document.getElementById('instructionsScreen').classList.remove('hidden');
     }
 
-    // START / RESTART GAME
+    // BẮT ĐẦU / CHƠI LẠI
     function startGame() {
+      ensureMusicStarted(); // Tự động bật nhạc nền khi bấm Bắt đầu
       currentQuestionIndex = 0;
       score = 0;
       lives = 5;
@@ -554,13 +748,15 @@
       loadQuestion();
     }
 
-    // LOAD CURRENT QUESTION
+    // TẢI CÂU HỎI
     function loadQuestion() {
       answerSelected = false;
       pendingReward = null;
       const q = quizData[currentQuestionIndex];
 
-      document.getElementById('questionNumber').innerText = `CÂU HỎI ${currentQuestionIndex + 1}/6`;
+      document.getElementById('questionNumber').innerText = `Câu ${currentQuestionIndex + 1} / ${quizData.length}`;
+      const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+      document.getElementById('progressBar').style.width = `${progressPercent}%`;
       document.getElementById('questionText').innerText = q.question;
       
       const feedbackBanner = document.getElementById('feedbackBanner');
@@ -571,14 +767,15 @@
 
       q.options.forEach((opt, index) => {
         const btn = document.createElement('button');
-        btn.className = 'option-btn p-3 md:p-4 text-xs md:text-sm font-semibold leading-relaxed';
+        btn.className = 'option-btn p-3.5 md:p-4 text-xs md:text-sm leading-relaxed animate-enter';
+        btn.style.animationDelay = `${index * 0.06}s`;
         btn.innerText = opt;
         btn.onclick = () => selectOption(index);
         optionsGrid.appendChild(btn);
       });
     }
 
-    // OPTION SELECTION LOGIC
+    // XỬ LÝ CHỌN ĐÁP ÁN
     function selectOption(selectedIndex) {
       if (answerSelected) return;
       answerSelected = true;
@@ -587,21 +784,28 @@
       const isCorrect = selectedIndex === q.correct;
       const buttons = document.getElementById('optionsGrid').children;
 
-      playSound(isCorrect);
+      playAnswerSound(isCorrect);
 
       if (isCorrect) {
         score++;
         buttons[selectedIndex].classList.add('option-btn-correct');
-        // Select reward
         pendingReward = rewardPool[currentQuestionIndex % rewardPool.length];
+        // Pháo giấy nhỏ chúc mừng
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 35, spread: 55, origin: { y: 0.7 } });
+        }
       } else {
         lives--;
         renderHearts();
         buttons[selectedIndex].classList.add('option-btn-wrong');
         buttons[q.correct].classList.add('option-btn-correct');
+        // Rung màn hình khi trả lời sai
+        const screen = document.getElementById('gameScreen');
+        screen.classList.remove('shake-effect');
+        void screen.offsetWidth;
+        screen.classList.add('shake-effect');
       }
 
-      // Show Feedback Banner
       const feedbackBanner = document.getElementById('feedbackBanner');
       const feedbackText = document.getElementById('feedbackText');
       const explanationText = document.getElementById('explanationText');
@@ -610,31 +814,37 @@
       feedbackBanner.classList.remove('hidden');
 
       if (isCorrect) {
-        feedbackText.innerText = "★ CHÍNH XÁC! BẠN NHẬN ĐƯỢC 1 PHẦN QUÀ ★";
-        feedbackText.className = "text-green-700 font-bold mb-1 text-sm";
-        actionBtn.innerText = "MỞ RƯƠNG QUÀ 🎁";
+        feedbackText.innerText = "🎉 CHÍNH XÁC! BẠN NHẬN ĐƯỢC 1 RƯƠNG BÁU";
+        feedbackText.className = "text-emerald-700 font-black mb-1 text-sm md:text-base";
+        actionBtn.innerText = "🎁 MỞ RƯƠNG BÁU NGAY";
+        actionBtn.style.background = "linear-gradient(180deg, #f59e0b 0%, #d97706 100%)";
       } else {
-        feedbackText.innerText = "✖ CHƯA CHÍNH XÁC ✖";
-        feedbackText.className = "text-red-600 font-bold mb-1 text-sm";
+        feedbackText.innerText = "❌ CHƯA CHÍNH XÁC RỒI!";
+        feedbackText.className = "text-red-600 font-black mb-1 text-sm md:text-base";
         actionBtn.innerText = "TIẾP TỤC ➔";
+        actionBtn.style.background = "linear-gradient(180deg, #f97316 0%, #ea580c 100%)";
       }
 
       explanationText.innerText = q.explanation;
     }
 
-    // ACTION BUTTON CLICKED (NEXT OR OPEN REWARD)
+    // MỞ RƯƠNG HOẶC SANG CÂU TIẾP THEO
     function handleActionAfterAnswer() {
       if (pendingReward) {
-        // Show reward popup modal
-        document.getElementById('rewardName').innerText = pendingReward.name;
+        playChestOpenSound(); // Phát âm thanh mở rương!
+        document.getElementById('rewardName').innerText = `${pendingReward.icon} ${pendingReward.name}`;
         document.getElementById('rewardDesc').innerText = pendingReward.desc;
         document.getElementById('rewardModal').classList.remove('hidden');
+        
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        }
       } else {
         nextQuestion();
       }
     }
 
-    // COLLECT REWARD & GO TO NEXT QUESTION
+    // THU THẬP QUÀ & TIẾP TỤC
     function collectRewardAndContinue() {
       if (pendingReward) {
         collectedRewards.push(pendingReward);
@@ -644,7 +854,7 @@
       nextQuestion();
     }
 
-    // ADVANCE TO NEXT QUESTION OR RESULT
+    // CHUYỂN CÂU HỎI
     function nextQuestion() {
       if (lives <= 0) {
         showResultScreen();
@@ -659,7 +869,7 @@
       }
     }
 
-    // SHOW FINAL RESULT SCREEN
+    // MÀN HÌNH TỔNG KẾT
     function showResultScreen() {
       document.getElementById('quizScreen').classList.add('hidden');
       document.getElementById('rewardModal').classList.add('hidden');
@@ -672,28 +882,30 @@
       const inventoryList = document.getElementById('inventoryList');
 
       finalScore.innerText = `${score}/6`;
-      heartsRemainingText.innerText = `Số tim còn lại: ${lives}/5`;
+      heartsRemainingText.innerText = `${lives}/5`;
 
       if (lives > 0 && score >= 4) {
         resultTitle.innerText = "VICTORY!";
-        resultTitle.className = "text-xl md:text-2xl font-bold mb-1 text-green-700 font-pixel";
-        resultSubtitle.innerText = "Chúc mừng bạn đã hoàn thành xuất sắc thử thách truyền thống THPT Sóc Sơn!";
+        resultTitle.className = "text-2xl md:text-3xl font-extrabold mb-1 text-emerald-500 font-pixel-en vi-title-shadow";
+        resultSubtitle.innerText = "Chúc mừng bạn đã xuất sắc chinh phục thử thách truyền thống THPT Sóc Sơn!";
+        if (typeof confetti === 'function') {
+          confetti({ particleCount: 100, spread: 90, origin: { y: 0.6 } });
+        }
       } else {
         resultTitle.innerText = "GAME OVER!";
-        resultTitle.className = "text-xl md:text-2xl font-bold mb-1 text-red-600 font-pixel";
-        resultSubtitle.innerText = "Hãy thử lại lần nữa để tìm hiểu thêm về lịch sử nhà trường nhé!";
+        resultTitle.className = "text-2xl md:text-3xl font-extrabold mb-1 text-red-500 font-pixel-en vi-title-shadow";
+        resultSubtitle.innerText = "Hãy thử lại lần nữa để khám phá trọn vẹn lịch sử nhà trường nhé!";
       }
 
-      // Render collected inventory items
       inventoryList.innerHTML = '';
       if (collectedRewards.length === 0) {
-        inventoryList.innerHTML = `<div class="col-span-2 text-center text-xs text-slate-500 py-2">Chưa thu thập được phần quà nào</div>`;
+        inventoryList.innerHTML = `<div class="col-span-2 text-center text-xs text-slate-500 py-3 font-medium">Chưa thu thập được báu vật nào</div>`;
       } else {
         collectedRewards.forEach(item => {
           inventoryList.innerHTML += `
-            <div class="bg-amber-50 border border-amber-300 rounded p-2 text-xs flex items-center gap-2">
-              <span class="text-base">🎁</span>
-              <span class="font-bold text-amber-900">${item.name}</span>
+            <div class="bg-amber-50 border-2 border-amber-400 rounded-lg p-2 text-xs flex items-center gap-2 shadow-sm">
+              <span class="text-lg">${item.icon}</span>
+              <span class="font-bold text-amber-950">${item.name}</span>
             </div>
           `;
         });
