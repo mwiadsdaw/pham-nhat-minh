@@ -4,25 +4,25 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SÓC SƠN OLYMPIA - Pixel Quiz Game</title>
-  <!-- Google Fonts: Pixel Fonts -->
+  <!-- Google Fonts: Pixel Fonts for Titles/HUD + Be Vietnam Pro for Vietnamese text -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Tone.js for Sound Effects -->
+  <!-- Tone.js for Retro Audio Effects -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
 
   <style>
-    /* Custom Pixel Art Styles & Aesthetics */
+    /* Global Pixel Aesthetics */
     * {
       image-rendering: pixelated;
       user-select: none;
     }
 
     body {
-      font-family: 'Press Start 2P', monospace;
-      background-color: #0d1b2a;
+      font-family: 'Be Vietnam Pro', sans-serif;
+      background-color: #0b1325;
       margin: 0;
       padding: 0;
       min-height: 100vh;
@@ -32,13 +32,24 @@
       overflow-x: hidden;
     }
 
+    /* Pixel Font class for Title / HUD / Numbers */
+    .font-pixel {
+      font-family: 'Press Start 2P', monospace;
+    }
+
+    /* Vietnamese Font Class for Question Content */
+    .font-vietnamese {
+      font-family: 'Be Vietnam Pro', sans-serif !important;
+      text-transform: none !important;
+    }
+
     /* Pixel Art Container Box */
     .game-container {
       position: relative;
       width: 100%;
       max-width: 960px;
-      height: 600px;
-      background: linear-gradient(to bottom, #a7d8de 0%, #c4ebd0 70%, #8acb88 85%);
+      height: 640px;
+      background: linear-gradient(to bottom, #a7d8de 0%, #c4ebd0 68%, #8acb88 85%);
       border: 8px solid #3a1a04;
       border-radius: 12px;
       box-shadow: 0 0 0 6px #8c4c14, 0 20px 40px rgba(0,0,0,0.6);
@@ -87,71 +98,96 @@
       box-shadow: inset -4px -4px 0px #fca34d, inset 4px 4px 0px #9e3d09, 0 2px 0px #240e02;
     }
 
-    .pixel-btn-correct {
-      background-color: #22c55e !important;
-      border-color: #14532d !important;
-      color: #ffffff !important;
-      box-shadow: inset -4px -4px 0px #15803d, inset 4px 4px 0px #86efac, 0 6px 0px #052e16 !important;
+    /* Option Button (Vietnamese text inside pixel border) */
+    .option-btn {
+      font-family: 'Be Vietnam Pro', sans-serif;
+      font-weight: 600;
+      text-transform: none;
+      background-color: #ffffff;
+      color: #1e293b;
+      border: 4px solid #3a1a04;
+      box-shadow: inset -3px -3px 0px #cbd5e1, inset 3px 3px 0px #ffffff, 0 5px 0px #240e02;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+      text-align: left;
     }
 
-    .pixel-btn-wrong {
-      background-color: #ef4444 !important;
+    .option-btn:hover:not(:disabled) {
+      background-color: #f8fafc;
+      border-color: #1e3a8a;
+      transform: translateY(-2px);
+      box-shadow: inset -3px -3px 0px #94a3b8, inset 3px 3px 0px #ffffff, 0 7px 0px #0f172a;
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(3px);
+      box-shadow: inset -3px -3px 0px #ffffff, inset 3px 3px 0px #94a3b8, 0 2px 0px #0f172a;
+    }
+
+    .option-btn-correct {
+      background-color: #dcfce7 !important;
+      border-color: #14532d !important;
+      color: #14532d !important;
+      box-shadow: inset -3px -3px 0px #86efac, inset 3px 3px 0px #ffffff, 0 5px 0px #052e16 !important;
+    }
+
+    .option-btn-wrong {
+      background-color: #fee2e2 !important;
       border-color: #7f1d1d !important;
-      color: #ffffff !important;
-      box-shadow: inset -4px -4px 0px #b91c1c, inset 4px 4px 0px #fca5a5, 0 6px 0px #450a0a !important;
+      color: #991b1b !important;
+      box-shadow: inset -3px -3px 0px #fca5a5, inset 3px 3px 0px #ffffff, 0 5px 0px #450a0a !important;
     }
 
     /* Pixel Box Overlay */
     .pixel-card {
-      background-color: rgba(255, 255, 255, 0.92);
+      background-color: rgba(255, 255, 255, 0.95);
       border: 6px solid #3a1a04;
       border-radius: 10px;
       box-shadow: inset -4px -4px 0px #cbd5e1, inset 4px 4px 0px #ffffff, 0 8px 16px rgba(0,0,0,0.3);
     }
 
-    /* Floating Animations */
+    /* Animations */
     @keyframes floatClouds {
       0% { transform: translateX(0px); }
-      50% { transform: translateX(20px); }
+      50% { transform: translateX(25px); }
       100% { transform: translateX(0px); }
     }
-
-    .animate-cloud {
-      animation: floatClouds 6s ease-in-out infinite;
-    }
+    .animate-cloud { animation: floatClouds 6s ease-in-out infinite; }
 
     @keyframes flickerFire {
       0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.8; transform: scale(1.08); }
+      50% { opacity: 0.85; transform: scale(1.1); }
     }
+    .animate-fire { animation: flickerFire 0.35s infinite alternate; }
 
-    .animate-fire {
-      animation: flickerFire 0.4s infinite alternate;
+    @keyframes bounceChest {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-8px) scale(1.05); }
     }
+    .animate-chest { animation: bounceChest 1.2s infinite; }
   </style>
 </head>
 <body>
 
-  <!-- GAME CONTAINER MAIN -->
+  <!-- MAIN GAME CONTAINER -->
   <div class="game-container flex flex-col justify-between" id="gameScreen">
 
-    <!-- TOP HEADER / HUD -->
+    <!-- HUD / TOP HEADER -->
     <div class="relative z-20 flex justify-between items-center p-4">
-      <!-- Title Badge / Level Indicator -->
+      <!-- Level Indicator Badge -->
       <div class="pixel-card px-3 py-2 text-xs md:text-sm text-amber-900 font-bold flex items-center gap-2">
         <span class="inline-block w-3 h-3 bg-red-600 rounded-full animate-ping"></span>
-        <span id="levelIndicator">THPT SÓC SƠN OLYMPIA</span>
+        <span id="levelIndicator" class="font-pixel">THPT SÓC SƠN</span>
       </div>
 
-      <!-- Hearts Health Bar (5 Pixel Hearts) -->
-      <div class="flex items-center space-x-1" id="heartsContainer">
-        <!-- SVG Pixel Hearts Rendered via JS -->
-      </div>
+      <!-- Health Bar: 5 Pixel Hearts -->
+      <div class="flex items-center space-x-1" id="heartsContainer"></div>
     </div>
 
     <!-- BACKGROUND GRAPHICS LAYER -->
     <div class="absolute inset-0 pointer-events-none z-0">
-      <!-- Sun -->
+      <!-- Pixel Sun -->
       <svg class="absolute top-6 left-1/2 transform -translate-x-1/2 w-16 h-16" viewBox="0 0 16 16">
         <rect x="2" y="2" width="12" height="12" fill="#FBBF24" />
         <rect x="0" y="6" width="16" height="4" fill="#F59E0B" />
@@ -159,7 +195,7 @@
         <rect x="4" y="4" width="8" height="8" fill="#FEF08A" />
       </svg>
 
-      <!-- Clouds Left & Right -->
+      <!-- Pixel Clouds -->
       <svg class="absolute top-8 left-10 w-24 h-12 animate-cloud" viewBox="0 0 24 12">
         <rect x="4" y="4" width="16" height="6" fill="#FFFFFF" />
         <rect x="6" y="2" width="10" height="8" fill="#FFFFFF" />
@@ -171,7 +207,7 @@
         <rect x="2" y="6" width="20" height="4" fill="#CBD5E1" />
       </svg>
 
-      <!-- Flying Duck / Bird -->
+      <!-- Flying Pixel Bird -->
       <svg class="absolute top-16 left-1/3 w-8 h-6 animate-pulse" viewBox="0 0 12 8">
         <rect x="2" y="2" width="6" height="3" fill="#1E40AF" />
         <rect x="6" y="0" width="3" height="3" fill="#3B82F6" />
@@ -179,45 +215,37 @@
         <rect x="0" y="3" width="4" height="2" fill="#1D4ED8" />
       </svg>
 
-      <!-- Left Pixel Mountain -->
+      <!-- Mountain (Left) -->
       <svg class="absolute bottom-16 left-0 w-44 h-56" viewBox="0 0 100 120" preserveAspectRatio="none">
         <polygon points="0,120 40,30 60,60 100,120" fill="#64748B" />
         <polygon points="0,120 30,40 45,70 70,120" fill="#475569" />
         <polygon points="40,30 48,45 35,45" fill="#F8FAFC" />
       </svg>
 
-      <!-- Right Pixel Tree -->
+      <!-- Pixel Tree (Right) -->
       <svg class="absolute bottom-16 right-4 w-36 h-48" viewBox="0 0 40 50">
-        <!-- Leaves -->
         <rect x="8" y="4" width="24" height="24" fill="#15803D" />
         <rect x="12" y="0" width="16" height="28" fill="#22C55E" />
         <rect x="4" y="8" width="32" height="16" fill="#166534" />
-        <!-- Trunk -->
         <rect x="16" y="28" width="8" height="22" fill="#78350F" />
         <rect x="18" y="28" width="4" height="22" fill="#9A3412" />
       </svg>
 
-      <!-- Pixel Knight / Student Character (Left) -->
+      <!-- Character (Left) -->
       <svg class="absolute bottom-14 left-10 w-16 h-24" viewBox="0 0 16 24">
-        <!-- Hair -->
         <rect x="4" y="2" width="8" height="4" fill="#FDE047" />
-        <!-- Face -->
         <rect x="4" y="6" width="8" height="5" fill="#FFEDD5" />
         <rect x="5" y="7" width="2" height="2" fill="#1E293B" />
         <rect x="9" y="7" width="2" height="2" fill="#1E293B" />
-        <!-- Shirt -->
         <rect x="3" y="11" width="10" height="6" fill="#EA580C" />
         <rect x="4" y="17" width="8" height="2" fill="#CA8A04" />
-        <!-- Pants / Boots -->
         <rect x="4" y="19" width="3" height="4" fill="#1E3A8A" />
         <rect x="9" y="19" width="3" height="4" fill="#1E3A8A" />
       </svg>
 
       <!-- Campfire (Center Left) -->
       <svg class="absolute bottom-14 left-44 w-10 h-10 animate-fire" viewBox="0 0 16 16">
-        <!-- Wood -->
         <rect x="2" y="12" width="12" height="3" fill="#78350F" />
-        <!-- Flame -->
         <rect x="6" y="6" width="4" height="6" fill="#EF4444" />
         <rect x="7" y="4" width="2" height="4" fill="#F97316" />
         <rect x="7" y="8" width="2" height="2" fill="#FDE047" />
@@ -225,17 +253,12 @@
 
       <!-- Black Cat Character (Right) -->
       <svg class="absolute bottom-14 right-36 w-14 h-16" viewBox="0 0 16 18">
-        <!-- Ears -->
         <rect x="3" y="2" width="3" height="3" fill="#1E293B" />
         <rect x="10" y="2" width="3" height="3" fill="#1E293B" />
-        <!-- Head -->
         <rect x="3" y="4" width="10" height="7" fill="#0F172A" />
-        <!-- Yellow Eyes -->
         <rect x="5" y="6" width="2" height="2" fill="#FACC15" />
         <rect x="9" y="6" width="2" height="2" fill="#FACC15" />
-        <!-- Body -->
         <rect x="4" y="11" width="8" height="6" fill="#0F172A" />
-        <!-- Tail -->
         <rect x="12" y="13" width="3" height="2" fill="#0F172A" />
       </svg>
     </div>
@@ -246,18 +269,18 @@
       <!-- 1. START MENU SCREEN -->
       <div id="startScreen" class="w-full max-w-lg text-center flex flex-col items-center">
         <div class="pixel-card p-6 w-full mb-6">
-          <h1 class="text-2xl md:text-3xl font-extrabold text-amber-900 tracking-wider mb-2 drop-shadow">
+          <h1 class="text-2xl md:text-3xl font-extrabold text-amber-900 tracking-wider mb-2 font-pixel">
             NIGHT GAME
           </h1>
-          <p class="text-xs md:text-sm text-orange-800 font-bold mb-1">TRƯỜNG THPT SÓC SƠN</p>
-          <p class="text-xs text-slate-600 font-bold">Hành Trình Tìm Hiểu Truyền Thống</p>
+          <p class="text-sm font-bold text-amber-800 mb-1 font-vietnamese">TRƯỜNG THPT SÓC SƠN</p>
+          <p class="text-xs text-slate-600 font-medium font-vietnamese">Hành Trình Tìm Hiểu Truyền Thống Nhà Trường</p>
         </div>
 
         <div class="flex flex-col space-y-4 w-64">
-          <button onclick="startGame()" class="pixel-btn py-3 text-sm font-bold">
+          <button onclick="startGame()" class="pixel-btn py-3 text-xs md:text-sm font-bold">
             LET'S PLAY
           </button>
-          <button onclick="showInstructions()" class="pixel-btn py-3 text-sm font-bold">
+          <button onclick="showInstructions()" class="pixel-btn py-3 text-xs md:text-sm font-bold">
             HƯỚNG DẪN
           </button>
         </div>
@@ -265,13 +288,13 @@
 
       <!-- 2. INSTRUCTIONS SCREEN -->
       <div id="instructionsScreen" class="hidden w-full max-w-lg text-center">
-        <div class="pixel-card p-6 text-left mb-4">
-          <h2 class="text-base font-bold text-amber-900 mb-4 text-center">HƯỚNG DẪN CHƠI</h2>
-          <ul class="text-xs text-slate-800 space-y-2 leading-relaxed">
-            <li>• Bạn có <strong>5 Trái Tim (Máu)</strong> đại diện cho 5 cơ hội.</li>
-            <li>• Có tất cả <strong>6 Câu hỏi trắc nghiệm</strong> về truyền thống nhà trường THPT Sóc Sơn.</li>
-            <li>• Trả lời sai sẽ mất <strong>1 Trái tim</strong>. Hết tim game sẽ kết thúc!</li>
-            <li>• Hãy vượt qua tất cả câu hỏi để giành chiến thắng cao nhất!</li>
+        <div class="pixel-card p-6 text-left mb-4 font-vietnamese">
+          <h2 class="text-base font-bold text-amber-900 mb-4 text-center font-pixel">HƯỚNG DẪN CHƠI</h2>
+          <ul class="text-xs md:text-sm text-slate-800 space-y-3 leading-relaxed">
+            <li>• Bạn có <strong>5 Trái Tim (Máu)</strong> tương ứng với 5 lượt thử thách.</li>
+            <li>• Bộ câu hỏi gồm <strong>6 Câu hỏi trắc nghiệm</strong> về lịch sử & truyền thống THPT Sóc Sơn.</li>
+            <li>• Với mỗi câu trả lời <strong>ĐÚNG</strong>, bạn nhận được <strong>1 RƯƠNG BÁU PIXEL</strong> ngẫu nhiên.</li>
+            <li>• Trả lời sai bị trừ 1 tim. Hết tim trò chơi sẽ kết thúc!</li>
           </ul>
         </div>
         <button onclick="showStartScreen()" class="pixel-btn py-3 px-8 text-xs font-bold">
@@ -282,41 +305,79 @@
       <!-- 3. QUIZ QUESTION SCREEN -->
       <div id="quizScreen" class="hidden w-full max-w-2xl flex flex-col items-center">
         <!-- Question Box -->
-        <div class="pixel-card p-4 md:p-6 w-full mb-4 text-left">
-          <div class="text-xs text-amber-700 font-bold mb-2" id="questionNumber">
+        <div class="pixel-card p-5 w-full mb-4 text-left">
+          <div class="text-xs text-amber-800 font-bold mb-2 font-pixel" id="questionNumber">
             CÂU HỎI 1/6
           </div>
-          <div class="text-xs md:text-sm text-slate-900 font-semibold leading-relaxed" id="questionText">
+          <div class="text-sm md:text-base text-slate-900 font-semibold leading-relaxed font-vietnamese" id="questionText">
             Nội dung câu hỏi ở đây...
           </div>
         </div>
 
-        <!-- Options Container (4 Buttons) -->
+        <!-- Options Container -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3 w-full mb-4" id="optionsGrid">
-          <!-- Rendered dynamically -->
+          <!-- Dynamically populated -->
         </div>
 
-        <!-- Explanation / Feedback Banner -->
-        <div id="feedbackBanner" class="hidden pixel-card p-3 w-full text-center text-xs font-bold transition-all">
-          <div id="feedbackText" class="mb-1"></div>
-          <div id="explanationText" class="text-[10px] text-slate-700 font-normal"></div>
-          <button onclick="nextQuestion()" class="pixel-btn py-2 px-6 text-xs mt-2">
-            CÂU TIẾP THEO ➔
+        <!-- Feedback & Explanation Banner -->
+        <div id="feedbackBanner" class="hidden pixel-card p-4 w-full text-center transition-all font-vietnamese">
+          <div id="feedbackText" class="text-sm font-bold mb-1"></div>
+          <div id="explanationText" class="text-xs text-slate-700 font-normal leading-relaxed mb-3"></div>
+          <button id="actionBtn" onclick="handleActionAfterAnswer()" class="pixel-btn py-2 px-6 text-xs font-bold">
+            TIẾP TỤC ➔
           </button>
         </div>
       </div>
 
-      <!-- 4. END GAME RESULT SCREEN -->
+      <!-- 4. REWARD / LOOT BOX POPUP MODAL -->
+      <div id="rewardModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div class="pixel-card p-6 w-full max-w-sm text-center flex flex-col items-center animate-bounce-short">
+          <div class="text-xs text-amber-800 font-bold mb-2 font-pixel">PHẦN THƯỞNG PHÒNG TRUYỀN THỐNG</div>
+          
+          <!-- Animated Pixel Treasure Chest SVG -->
+          <div class="my-4 animate-chest">
+            <svg class="w-20 h-20" viewBox="0 0 16 16">
+              <rect x="2" y="6" width="12" height="8" fill="#78350F" />
+              <rect x="1" y="4" width="14" height="3" fill="#B45309" />
+              <rect x="7" y="7" width="2" height="3" fill="#FACC15" />
+              <rect x="2" y="9" width="12" height="1" fill="#451A03" />
+              <rect x="4" y="6" width="1" height="8" fill="#F59E0B" />
+              <rect x="11" y="6" width="1" height="8" fill="#F59E0B" />
+            </svg>
+          </div>
+
+          <div class="text-sm font-extrabold text-green-700 mb-1 font-vietnamese" id="rewardName">
+            Huy Hiệu THPT Sóc Sơn
+          </div>
+          <div class="text-xs text-slate-600 mb-5 font-vietnamese" id="rewardDesc">
+            Bạn vừa mở khóa một vật phẩm truyền thống quý giá!
+          </div>
+
+          <button onclick="collectRewardAndContinue()" class="pixel-btn py-3 px-6 text-xs font-bold w-full">
+            NHẬN QUÀ & TIẾP TỤC
+          </button>
+        </div>
+      </div>
+
+      <!-- 5. END GAME RESULT SCREEN -->
       <div id="resultScreen" class="hidden w-full max-w-lg text-center">
-        <div class="pixel-card p-6 mb-6">
-          <h2 id="resultTitle" class="text-xl font-bold mb-2">VICTORY!</h2>
-          <p id="resultSubtitle" class="text-xs text-slate-700 mb-4">Bạn thật xuất sắc!</p>
+        <div class="pixel-card p-6 mb-4 font-vietnamese">
+          <h2 id="resultTitle" class="text-xl md:text-2xl font-bold mb-1 font-pixel">VICTORY!</h2>
+          <p id="resultSubtitle" class="text-xs md:text-sm text-slate-700 mb-4">Bạn thật xuất sắc!</p>
           
           <div class="text-sm font-bold text-amber-900 mb-2">
-            ĐIỂM SỐ: <span id="finalScore" class="text-red-600">6/6</span>
+            ĐIỂM SỐ: <span id="finalScore" class="text-red-600 font-pixel">6/6</span>
           </div>
-          <div class="text-xs text-slate-600" id="heartsRemainingText">
+          <div class="text-xs text-slate-600 mb-4" id="heartsRemainingText">
             Số tim còn lại: 5/5
+          </div>
+
+          <!-- Collected Inventory / Loot Summary -->
+          <div class="border-t-2 border-slate-300 pt-3 text-left">
+            <div class="text-xs font-bold text-amber-900 mb-2 font-pixel text-center">KHO BÁU ĐÃ THU THẬP</div>
+            <div class="grid grid-cols-2 gap-2" id="inventoryList">
+              <!-- Rendered items -->
+            </div>
           </div>
         </div>
 
@@ -327,16 +388,16 @@
 
     </div>
 
-    <!-- BOTTOM GROUND LAYER -->
+    <!-- BOTTOM PIXEL GROUND -->
     <div class="pixel-ground"></div>
   </div>
 
   <!-- JAVASCRIPT GAME LOGIC -->
   <script>
-    // 6 QUESTION DATASET
+    // 6 FULL QUESTIONS DATASET
     const quizData = [
       {
-        question: "Truyền thống nào được xem là một trong những giá trị cốt lõi mà các thế hệ thầy và trò Trường THPT Sóc Sơn luôn gìn giữ?",
+        question: "1. Truyền thống nào được xem là một trong những giá trị cốt lõi mà các thế hệ thầy và trò Trường THPT Sóc Sơn luôn gìn giữ?",
         options: [
           "A. Đoàn kết, hiếu học, vượt khó, thi đua dạy tốt – học tốt.",
           "B. Chỉ chú trọng thành tích trong các kỳ thi.",
@@ -344,10 +405,10 @@
           "D. Chỉ quan tâm đến kết quả học tập cá nhân."
         ],
         correct: 0,
-        explanation: "Đoàn kết, hiếu học, vượt khó, thi đua dạy tốt – học tốt là cốt lõi truyền thống lâu đời của trường."
+        explanation: "Đoàn kết, hiếu học, vượt khó, thi đua dạy tốt – học tốt là cốt lõi truyền thống lâu đời của trường THPT Sóc Sơn."
       },
       {
-        question: "Là học sinh Trường THPT Sóc Sơn, hành động nào sau đây thiết thực nhất để phát huy truyền thống nhà trường?",
+        question: "2. Là học sinh Trường THPT Sóc Sơn, hành động nào sau đây thiết thực nhất để phát huy truyền thống nhà trường?",
         options: [
           "A. Chỉ cần đạt điểm cao trong các bài kiểm tra.",
           "B. Tích cực học tập, rèn luyện đạo đức, đoàn kết và tham gia hoạt động tập thể.",
@@ -358,7 +419,7 @@
         explanation: "Rèn luyện toàn diện cả đạo đức, tri thức và tinh thần tập thể là hành động thiết thực nhất."
       },
       {
-        question: "Thành tích đặc biệt nổi nổi bật nào của Trường THPT Sóc Sơn gắn với chương trình Đường lên đỉnh Olympia?",
+        question: "3. Thành tích đặc biệt nổi bật nào của Trường THPT Sóc Sơn gắn với chương trình Đường lên đỉnh Olympia?",
         options: [
           "A. Hai lần đưa cầu truyền hình trực tiếp về với nhà trường.",
           "B. Có học sinh đạt giải Nhất cuộc thi cấp trường.",
@@ -366,10 +427,10 @@
           "D. Được tổ chức cuộc thi Olympia thường niên."
         ],
         correct: 0,
-        explanation: "THPT Sóc Sơn tự hào 2 lần đưa cầu truyền hình chung kết Đường lên đỉnh Olympia về trường."
+        explanation: "THPT Sóc Sơn tự hào 2 lần đưa cầu truyền hình chung kết Đường lên đỉnh Olympia về với nhà trường."
       },
       {
-        question: "Phân hiệu Phù Lỗ – tiền thân của Trường THPT Sóc Sơn – được thành lập vào ngày nào?",
+        question: "4. Phân hiệu Phù Lỗ – tiền thân của Trường THPT Sóc Sơn – được thành lập vào ngày nào?",
         options: [
           "A. 19/9/1983.",
           "B. 20/11/1983.",
@@ -377,10 +438,10 @@
           "D. 24/9/1985."
         ],
         correct: 0,
-        explanation: "Ngày 19/9/1983 là mốc lịch sử thành lập Phân hiệu Phù Lỗ, tiền thân THPT Sóc Sơn."
+        explanation: "Ngày 19/9/1983 là mốc lịch sử thành lập Phân hiệu Phù Lỗ, tiền thân của Trường THPT Sóc Sơn."
       },
       {
-        question: "What can students do to preserve the good traditions of Soc Son High School?",
+        question: "5. What can students do to preserve the good traditions of Soc Son High School?",
         options: [
           "A. Respect teachers, follow school rules and help their classmates.",
           "B. Ignore school activities and only focus on personal interests.",
@@ -388,10 +449,10 @@
           "D. Forget the school's history and traditions."
         ],
         correct: 0,
-        explanation: "Respecting teachers, obeying rules, and helping friends help uphold traditions."
+        explanation: "Respecting teachers, obeying rules, and helping classmates build strong school traditions."
       },
       {
-        question: "Why is it essential for students to inherit and uphold the traditional values of Soc Son High School?",
+        question: "6. Why is it essential for students to inherit and uphold the traditional values of Soc Son High School?",
         options: [
           "A. To prioritize individual achievements over collective development.",
           "B. To strengthen their sense of pride, responsibility and commitment to preserving the school's cultural heritage.",
@@ -399,8 +460,18 @@
           "D. To reduce students' participation in community activities."
         ],
         correct: 1,
-        explanation: "Upholding traditions builds school pride, responsibility, and preserves cultural heritage."
+        explanation: "Upholding traditions strengthens student pride and commitment to preserving school culture."
       }
+    ];
+
+    // POSSIBLE REWARDS FOR CORRECT ANSWERS
+    const rewardPool = [
+      { name: "Huy Hiệu Sóc Sơn", desc: "Huy hiệu vinh danh học sinh ưu tú THPT Sóc Sơn!" },
+      { name: "Kim Cương Olympia", desc: "Vật phẩm trí tuệ từ sân chơi Đường lên đỉnh Olympia!" },
+      { name: "Rương Báu Hoàng Gia", desc: "Chứa đựng bề dày lịch sử và truyền thống nhà trường!" },
+      { name: "Ngôi Sao May Mắn", desc: "Tăng thêm tự tin trên hành trình học tập!" },
+      { name: "Nấm Tăng Lực Pixel", desc: "Tiếp thêm năng lượng vượt qua thử thách!" },
+      { name: "Trái Tim Bí Ẩn", desc: "Biểu tượng cho tình đoàn kết thầy trò Sóc Sơn!" }
     ];
 
     // GAME STATE VARIABLES
@@ -408,8 +479,10 @@
     let score = 0;
     let lives = 5;
     let answerSelected = false;
+    let collectedRewards = [];
+    let pendingReward = null;
 
-    // TONE.JS SOUND SYNTHS
+    // TONE.JS SOUND EFFECTS
     const correctSynth = new Tone.Synth({
       oscillator: { type: "square" },
       envelope: { attack: 0.01, decay: 0.1, sustain: 0.1, release: 0.1 }
@@ -469,6 +542,8 @@
       score = 0;
       lives = 5;
       answerSelected = false;
+      collectedRewards = [];
+      pendingReward = null;
       renderHearts();
 
       document.getElementById('startScreen').classList.add('hidden');
@@ -482,6 +557,7 @@
     // LOAD CURRENT QUESTION
     function loadQuestion() {
       answerSelected = false;
+      pendingReward = null;
       const q = quizData[currentQuestionIndex];
 
       document.getElementById('questionNumber').innerText = `CÂU HỎI ${currentQuestionIndex + 1}/6`;
@@ -495,7 +571,7 @@
 
       q.options.forEach((opt, index) => {
         const btn = document.createElement('button');
-        btn.className = 'pixel-btn text-left p-3 text-xs leading-relaxed font-semibold';
+        btn.className = 'option-btn p-3 md:p-4 text-xs md:text-sm font-semibold leading-relaxed';
         btn.innerText = opt;
         btn.onclick = () => selectOption(index);
         optionsGrid.appendChild(btn);
@@ -511,42 +587,64 @@
       const isCorrect = selectedIndex === q.correct;
       const buttons = document.getElementById('optionsGrid').children;
 
-      // Play retro sound effect
       playSound(isCorrect);
 
       if (isCorrect) {
         score++;
-        buttons[selectedIndex].classList.add('pixel-btn-correct');
+        buttons[selectedIndex].classList.add('option-btn-correct');
+        // Select reward
+        pendingReward = rewardPool[currentQuestionIndex % rewardPool.length];
       } else {
         lives--;
         renderHearts();
-        buttons[selectedIndex].classList.add('pixel-btn-wrong');
-        // Highlight the correct answer
-        buttons[q.correct].classList.add('pixel-btn-correct');
+        buttons[selectedIndex].classList.add('option-btn-wrong');
+        buttons[q.correct].classList.add('option-btn-correct');
       }
 
       // Show Feedback Banner
       const feedbackBanner = document.getElementById('feedbackBanner');
       const feedbackText = document.getElementById('feedbackText');
       const explanationText = document.getElementById('explanationText');
+      const actionBtn = document.getElementById('actionBtn');
 
       feedbackBanner.classList.remove('hidden');
-      if (isCorrect) {
-        feedbackText.innerText = "★ CHÍNH XÁC! ★";
-        feedbackText.className = "text-green-700 font-bold mb-1";
-      } else {
-        feedbackText.innerText = "✖ SAI RỒI! ✖";
-        feedbackText.className = "text-red-600 font-bold mb-1";
-      }
-      explanationText.innerText = q.explanation;
 
-      // Check Game Over (Lives = 0)
-      if (lives <= 0) {
-        setTimeout(showResultScreen, 1800);
+      if (isCorrect) {
+        feedbackText.innerText = "★ CHÍNH XÁC! BẠN NHẬN ĐƯỢC 1 PHẦN QUÀ ★";
+        feedbackText.className = "text-green-700 font-bold mb-1 text-sm";
+        actionBtn.innerText = "MỞ RƯƠNG QUÀ 🎁";
+      } else {
+        feedbackText.innerText = "✖ CHƯA CHÍNH XÁC ✖";
+        feedbackText.className = "text-red-600 font-bold mb-1 text-sm";
+        actionBtn.innerText = "TIẾP TỤC ➔";
+      }
+
+      explanationText.innerText = q.explanation;
+    }
+
+    // ACTION BUTTON CLICKED (NEXT OR OPEN REWARD)
+    function handleActionAfterAnswer() {
+      if (pendingReward) {
+        // Show reward popup modal
+        document.getElementById('rewardName').innerText = pendingReward.name;
+        document.getElementById('rewardDesc').innerText = pendingReward.desc;
+        document.getElementById('rewardModal').classList.remove('hidden');
+      } else {
+        nextQuestion();
       }
     }
 
-    // NEXT QUESTION OR FINISH
+    // COLLECT REWARD & GO TO NEXT QUESTION
+    function collectRewardAndContinue() {
+      if (pendingReward) {
+        collectedRewards.push(pendingReward);
+        pendingReward = null;
+      }
+      document.getElementById('rewardModal').classList.add('hidden');
+      nextQuestion();
+    }
+
+    // ADVANCE TO NEXT QUESTION OR RESULT
     function nextQuestion() {
       if (lives <= 0) {
         showResultScreen();
@@ -564,24 +662,41 @@
     // SHOW FINAL RESULT SCREEN
     function showResultScreen() {
       document.getElementById('quizScreen').classList.add('hidden');
+      document.getElementById('rewardModal').classList.add('hidden');
       document.getElementById('resultScreen').classList.remove('hidden');
 
       const resultTitle = document.getElementById('resultTitle');
       const resultSubtitle = document.getElementById('resultSubtitle');
       const finalScore = document.getElementById('finalScore');
       const heartsRemainingText = document.getElementById('heartsRemainingText');
+      const inventoryList = document.getElementById('inventoryList');
 
       finalScore.innerText = `${score}/6`;
       heartsRemainingText.innerText = `Số tim còn lại: ${lives}/5`;
 
       if (lives > 0 && score >= 4) {
         resultTitle.innerText = "VICTORY!";
-        resultTitle.className = "text-xl font-bold mb-2 text-green-700";
-        resultSubtitle.innerText = "Bạn là niềm tự hào của THPT Sóc Sơn!";
+        resultTitle.className = "text-xl md:text-2xl font-bold mb-1 text-green-700 font-pixel";
+        resultSubtitle.innerText = "Chúc mừng bạn đã hoàn thành xuất sắc thử thách truyền thống THPT Sóc Sơn!";
       } else {
         resultTitle.innerText = "GAME OVER!";
-        resultTitle.className = "text-xl font-bold mb-2 text-red-600";
-        resultSubtitle.innerText = "Hãy thử lại để hiểu rõ hơn về trường nhé!";
+        resultTitle.className = "text-xl md:text-2xl font-bold mb-1 text-red-600 font-pixel";
+        resultSubtitle.innerText = "Hãy thử lại lần nữa để tìm hiểu thêm về lịch sử nhà trường nhé!";
+      }
+
+      // Render collected inventory items
+      inventoryList.innerHTML = '';
+      if (collectedRewards.length === 0) {
+        inventoryList.innerHTML = `<div class="col-span-2 text-center text-xs text-slate-500 py-2">Chưa thu thập được phần quà nào</div>`;
+      } else {
+        collectedRewards.forEach(item => {
+          inventoryList.innerHTML += `
+            <div class="bg-amber-50 border border-amber-300 rounded p-2 text-xs flex items-center gap-2">
+              <span class="text-base">🎁</span>
+              <span class="font-bold text-amber-900">${item.name}</span>
+            </div>
+          `;
+        });
       }
     }
   </script>
